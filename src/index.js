@@ -2,6 +2,7 @@ var fs = require('fs-extra')
 var path = require('path')
 var errors = require('./errors')
 var Task = require('./Task')
+var TaskMake = require('./TaskMake')
 var TaskTree = require('./TaskTree')
 var util = require('./util')
 var DEFAULT_RADFILENAME = path.resolve(process.cwd(), 'rad.js')
@@ -9,6 +10,7 @@ var DEFAULT_RADFILENAME = path.resolve(process.cwd(), 'rad.js')
 var rad = {
   util,
   Task,
+  TaskMake,
   async getRadFilename (radFilename) {
     if (radFilename) {
       radFilename = path.isAbsolute(radFilename)
@@ -39,6 +41,7 @@ var rad = {
   },
   createTaskTree (radness) {
     if (!radness) throw new errors.RadError('no radness passed to createGraph')
+    console.warn('@TODO add radfile joi validation')
     if (!radness.tasks) throw new errors.RadNoTasksError('no tasks defind in radfile')
     return new TaskTree(radness.tasks)
   }

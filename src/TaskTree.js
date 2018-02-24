@@ -1,14 +1,24 @@
 var Tree = require('./Tree')
 var Task = require('./Task')
+var TaskMake = require('./TaskMake')
 var invariant = require('invariant')
+var errors = require('./errors')
 
 module.exports = class TaskTree extends Tree {
   constructor (tasks) {
     super()
     var taskMap = this.taskMap = {}
     for (let name in tasks) {
-      let task = new Task({ name, definition: tasks[name] })
-      taskMap[name] = task
+      let definition = tasks[name]
+      let taskType = definition.type
+      let CTor
+      if (taskType) {
+        if (taskType === 'make') CTor = TaskMake
+        else throw new errors.RadInvalidRadFile(`unsupport type "${taskType}" for task "${name}"`)
+      } else {
+        CTor = Task
+      }
+      taskMap[name] = new CTor({ name, definition })
     }
     this.graph = taskMap
     this.roots = []
