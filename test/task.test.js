@@ -19,6 +19,6 @@ ava('Task:basic', async function (t) {
       fn: () => 'task_result'
     }
   })
-  var res = await task.toPromise()
+  var res = await task.first().toPromise()
   t.is(res.value, 'task_result')
 })

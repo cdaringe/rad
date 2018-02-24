@@ -16,7 +16,7 @@ ava('TaskMake:tree', async function (t) {
   var { radness } = await fixtures.loadFixture(fixtures.basicMakeTreeDirname, t.context.dirname)
   var tree = await rad.createTaskTree(radness)
   var task = tree.taskMap.bundle
-  var res = await task.toPromise()
+  var res = await task.first().toPromise()
   var testDocHelloWorld = (await fs.readFile(radness.tasks.docs.target)).toString()
   t.truthy(res.upstream.docs, 'docs task feeds bundle task')
   t.truthy(testDocHelloWorld.match(/test_world/), 'make doc task created file')

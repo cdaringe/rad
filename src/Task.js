@@ -76,7 +76,7 @@ class Task extends rxjs.Observable {
     var pending = dependents.length
       ? rxjs.Observable.combineLatest(dependents)
       : rxjs.Observable.of([])
-    return pending.toPromise().then(async function (upstream_) {
+    return pending.subscribe(async function (upstream_) {
       var upstream = upstream_.reduce((agg, curr) => {
         agg[curr.name] = curr
         return agg
@@ -97,7 +97,6 @@ class Task extends rxjs.Observable {
         value
       }
       subscriber.next(payload)
-      subscriber.complete()
       this.state = STATE.COMPLETE
     }.bind(this))
   }
