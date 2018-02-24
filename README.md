@@ -15,7 +15,7 @@ see our `releases` section
 ## what is it
 
 - bottom-up, make-style build targets
-  - fast builds, skip duplicate tasks!
+  - fast builds, skip redundant tasks when inputs haven't changed!
 - pipeline style builds
   - easy to understand, declaritive build steps
 - standalone executable means build automation for _any_ language or project
