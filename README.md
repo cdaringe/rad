@@ -17,7 +17,7 @@ see our `releases` section
 - bottom-up, make-style build targets
   - fast builds, skip redundant tasks when inputs haven't changed!
 - pipeline style builds
-  - easy to understand, declaritive build steps
+  - easy to understand, declarative build steps
 - standalone executable means build automation for _any_ language or project
 - generic package management
 - great UX is priority 1

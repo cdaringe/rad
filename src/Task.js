@@ -3,6 +3,7 @@ var util = require('./util')
 var invariant = require('invariant')
 var execa = require('execa')
 var errors = require('./errors')
+var memoize = require('lodash/memoize')
 var EventEmitter = require('events').EventEmitter
 var STATE = {
   STOPPED: 1,
@@ -30,6 +31,7 @@ class Task extends rxjs.Observable {
     this.state = STATE.STOPPED
     this.trigger = new rxjs.Subject()
     if (definition.cmd) this.commandifyTask()
+    this.count = memoize(this.count)
   }
   commandifyTask () {
     var definition = this.definition
@@ -68,6 +70,15 @@ class Task extends rxjs.Observable {
     if (!task) return this._dependsOn
     this._dependsOn[task.name] = task
     return this
+  }
+  count () {
+    return 1 + Object.values(this._dependsOn).reduce((total, node) => total + node.count(), 0)
+  }
+  height () {
+    var values = Object.values(this._dependsOn)
+    if (!values.length) return 0
+    var max = Math.max.apply(null, values.map(node => node.height()))
+    return 1 + max
   }
   /**
    *

@@ -26,7 +26,7 @@ void async function suchRad () { // eslint-disable-line
   var radness = rad.init({
     radFilename: cli.flags.radfile
   })
-  var tree = rad.createTaskTree(radness)
+  var tree = rad.createTaskGraph(radness)
   var taskName = last(cli.input)
   if (taskName) await tree.run(taskName)
 }()
