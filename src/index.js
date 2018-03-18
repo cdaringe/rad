@@ -21,8 +21,11 @@ var rad = {
       }
       return radFilename
     }
-    if (!(await fs.exists(DEFAULT_RADFILENAME))) {
-      throw new errors.RadMissingRadFile(`cannot find radfile "${DEFAULT_RADFILENAME}"`)
+    var radFileExists = await fs.exists(DEFAULT_RADFILENAME)
+    if (!radFileExists) {
+      throw new errors.RadMissingRadFile([
+        `cannot find radfile "${DEFAULT_RADFILENAME}"`
+      ].join(''))
     }
     return DEFAULT_RADFILENAME
   },
@@ -39,10 +42,16 @@ var rad = {
       throw new errors.RadInvalidRadFile()
     }
   },
+  createRadfile (destFolder) {
+    return fs.copyFile(
+      path.resolve(__dirname, '../assets/rad.js'),
+      path.resolve(destFolder, 'rad.js')
+    )
+  },
   createTaskGraph (radness) {
     if (!radness) throw new errors.RadError('no radness passed to createGraph')
     console.warn('@TODO add radfile joi validation')
-    if (!radness.tasks) throw new errors.RadNoTasksError('no tasks defind in radfile')
+    if (!radness.tasks) throw new errors.RadNoTasksError('no tasks defined in radfile')
     return new TaskGraph(radness.tasks)
   }
 }

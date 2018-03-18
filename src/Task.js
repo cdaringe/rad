@@ -76,7 +76,7 @@ class Task extends rxjs.Observable {
   }
   height () {
     var values = Object.values(this._dependsOn)
-    if (!values.length) return 0
+    if (!values.length) return 1
     var max = Math.max.apply(null, values.map(node => node.height()))
     return 1 + max
   }
