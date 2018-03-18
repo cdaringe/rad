@@ -1,3 +1,4 @@
+var take = require('lodash/take')
 class RadError extends Error {}
 RadError.code = 'ERADERROR'
 RadError.emoji = '🚨'
@@ -26,11 +27,14 @@ RadNoTasksError.emoji = '💣'
 function register () {
   var perish = {
     fail (err) {
+      let emoji = err.constructor.emoji ? `${err.constructor.emoji} ` : ''
       var toLog
-      if (err instanceof RadError) {
-        let emoji = err.constructor.emoji ? `${err.constructor.emoji} ` : ''
-        let msg = err.message || err.constructor.message
-        let reason = (err.reason && err.reason.message) ? err.reason.message : ''
+      let msg = err.message || err.constructor.message
+      let reason = (err.reason && err.reason.message) ? err.reason.message : ''
+      if (err instanceof SyntaxError) {
+        emoji = RadInvalidRadFile.emoji
+        toLog = `${emoji} syntax error detected\n\n${take(err.stack.split('\n'), 3).join('\n')}`
+      } else if (err instanceof RadError) {
         toLog = `${emoji} ${msg}\n${reason}`
       } else {
         if (!(err instanceof Error)) console.warn('warning: unhandled error is not an `Error` instance. consider looking into it.')

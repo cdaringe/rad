@@ -35,12 +35,7 @@ var rad = {
     }
     opts = opts || {}
     var radFilename = await this.getRadFilename(opts.radFilename)
-    try {
-      return require(radFilename)
-    } catch (err) {
-      // @TODO catch syntax error, and pretty print it
-      throw new errors.RadInvalidRadFile()
-    }
+    return require(radFilename)
   },
   createRadfile (destFolder) {
     return fs.copyFile(
@@ -50,7 +45,6 @@ var rad = {
   },
   createTaskGraph (radness) {
     if (!radness) throw new errors.RadError('no radness passed to createGraph')
-    console.warn('@TODO add radfile joi validation')
     if (!radness.tasks) throw new errors.RadNoTasksError('no tasks defined in radfile')
     return new TaskGraph(radness.tasks)
   }

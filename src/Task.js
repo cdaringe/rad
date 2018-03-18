@@ -1,6 +1,5 @@
 var rxjs = require('rxjs')
 var util = require('./util')
-var invariant = require('invariant')
 var execa = require('execa')
 var errors = require('./errors')
 var memoize = require('lodash/memoize')
@@ -15,15 +14,21 @@ var EVENTS = {
 // sugar imports
 var path = require('path')
 var fs = require('fs-extra')
+var joi = require('joi')
 
 class Task extends rxjs.Observable {
   constructor (opts) {
     super()
     var { name, definition } = opts
+    if (name && !definition.name) definition.name = name
+    try {
+      joi.assert(definition, this.schemad)
+    } catch (err) {
+      if (!err.isJoi || !err.details) throw err
+      throw new errors.RadInvalidRadFile(`invalid radfile schema detected: ${err.details.map(dt => dt.message).join(',')}`)
+    }
     this.emitter = new EventEmitter()
     this._definition = Object.assign({}, opts.definition) // clean copy
-    invariant(name, 'task name required')
-    invariant(definition, 'task definition required')
     this.name = name
     this.definition = definition
     this._dependsOn = {}
@@ -35,7 +40,6 @@ class Task extends rxjs.Observable {
   }
   commandifyTask () {
     var definition = this.definition
-    invariant(!definition.fn, 'task cannot have both a `fn` and a `cmd`')
     definition.fn = async (opts) => {
       var cmd = definition.cmd
       var cmdStr
@@ -118,7 +122,22 @@ class Task extends rxjs.Observable {
     return this._taskSubscription
   }
 }
+Task.compileSchema = function (Cls) {
+  return joi.object(Cls.schema).xor('cmd', 'fn')
+}
+
 Task.STATES = STATE
 Task.EVENTS = EVENTS
 
 module.exports = Task
+Task.schema = {
+  cmd: joi.alternatives().try([
+    joi.string().min(1),
+    joi.func()
+  ]),
+  dependsOn: joi.array().items(joi.string(), joi.object().keys(Task.schema)).optional(),
+  fn: joi.func(),
+  name: joi.string().required().min(1),
+  type: joi.string().optional().min(1)
+}
+Task.prototype.schemad = Task.compileSchema(Task)

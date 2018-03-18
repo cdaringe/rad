@@ -1,12 +1,10 @@
-var Tree = require('./Tree')
 var Task = require('./Task')
 var TaskMake = require('./TaskMake')
 var invariant = require('invariant')
 var errors = require('./errors')
 
-module.exports = class TaskGraph extends Tree {
+module.exports = class TaskGraph {
   constructor (tasks) {
-    super()
     var taskMap = this.taskMap = {}
     for (let name in tasks) {
       let definition = tasks[name]
@@ -36,9 +34,6 @@ module.exports = class TaskGraph extends Tree {
         this.roots.push(task)
       }
     }
-  }
-  height () {
-
   }
   async run (taskName) {
     /** @type {Rx.Observable} */

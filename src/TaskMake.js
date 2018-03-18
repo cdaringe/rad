@@ -1,13 +1,12 @@
 var Task = require('./Task')
-var invariant = require('invariant')
 var hasher = require('folder-hash').hashElement
 var fs = require('fs-extra')
 var errors = require('./errors')
+var joi = require('joi')
 
 class TaskMake extends Task {
   constructor (opts) {
     super(opts)
-    invariant(opts.definition.target, 'make-style tasks must specify a target')
     var userFn = opts.definition.fn
     this.definition.fn = async function hashTarget () {
       var target = this.definition.target
@@ -34,3 +33,7 @@ TaskMake.EVENTS = Object.assign(Task.EVENTS, {
 })
 
 module.exports = TaskMake
+TaskMake.schema = Object.assign({
+  target: joi.string().min(1)
+}, Task.schema)
+TaskMake.prototype.schemad = Task.compileSchema(TaskMake)
