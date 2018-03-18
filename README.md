@@ -38,4 +38,4 @@ see our `releases` section
 ## the future
 
 currently this tool uses/embeds nodejs for a runtime and js as the scripting language.  this is great!  however, it does make for a fat executable.  long term we want to migrate to smaller binary, convert the engine to Rust (safe, fast, on-the-metal), and embed a smaller scripting language.  ATM, we are looking
-at Juila for that replacement.  Julia is "nearly as fast as C", small, and gives developers a proper language to script build tasks with (read: not bash, & embeddable).  Julia debugging support, or any commo, embeddable scripting language for that matter, is not nearly as stable & easy as node.  Therefore, we will stick with node until further notice!
+at Juila for that replacement.  Julia is "nearly as fast as C", small, and gives developers a proper language to script build tasks with (read: not bash, & embeddable).  Julia debugging support, or any common, embeddable scripting language for that matter, is not nearly as stable & easy as node.  Therefore, we will stick with node until further notice!
