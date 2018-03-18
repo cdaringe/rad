@@ -5,7 +5,6 @@ var targetDocs = path.join(__dirname, './build/dummy.md')
 module.exports = {
   tasks: {
     docs: {
-      type: 'make',
       target: targetDocs,
       fn: async function makeDocs (opts) {
         var { fs, path, task: { target } } = opts
@@ -18,7 +17,6 @@ module.exports = {
       }
     },
     bundle: {
-      type: 'make',
       target: targetBundle,
       dependsOn: ['docs'],
       cmd: opts => {

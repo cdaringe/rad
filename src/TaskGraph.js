@@ -1,6 +1,5 @@
 var Task = require('./Task')
 var TaskMake = require('./TaskMake')
-var invariant = require('invariant')
 var errors = require('./errors')
 
 module.exports = class TaskGraph {
@@ -24,8 +23,13 @@ module.exports = class TaskGraph {
       if (defintion.dependsOn && defintion.dependsOn.length) {
         for (let dependentName of defintion.dependsOn) {
           let dependent = taskMap[dependentName]
-          invariant(dependent, `task "${dependentName}" requested by "${name}" not found`)
-          task.dependsOn(dependent)
+          if (!dependent) {
+            throw new errors.RadInvalidRadFile(`task "${dependentName}" requested by task "${name}" not found`)
+          }
+          if (task.dependsOn[dependent.name]) {
+            throw new errors.RadInvalidRadFile(`duplicate task "${dependent.name}" found`)
+          }
+          task.dependsOn[dependent.name] = dependent
           taskMap[dependentName].feeds(dependent)
         }
       } else {

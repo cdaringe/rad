@@ -33,7 +33,7 @@ class Task extends rxjs.Observable {
     this._definition = Object.assign({}, opts.definition) // clean copy
     this.name = name
     this.definition = definition
-    this._dependsOn = {}
+    this.dependsOn = {}
     this._feedsInto = {}
     this.state = STATE.STOPPED
     this.trigger = new rxjs.Subject()
@@ -45,9 +45,9 @@ class Task extends rxjs.Observable {
     definition.fn = async (opts) => {
       var cmd = definition.cmd
       var cmdStr
-      if (typeof cmd === 'string') cmd = () => cmd
+      if (typeof cmd === 'string') cmdStr = cmd
       try {
-        cmdStr = cmd(opts)
+        cmdStr = cmdStr || cmd(opts)
       } catch (reason) {
         let err = new errors.RadTaskCmdFormationError([
           `task "${this.name}" has a malformed command. if it's a function,`,
@@ -72,16 +72,11 @@ class Task extends rxjs.Observable {
     this._feedsInto[task.name] = task
     return this
   }
-  dependsOn (task) {
-    if (!task) return this._dependsOn
-    this._dependsOn[task.name] = task
-    return this
-  }
   count () {
-    return 1 + Object.values(this._dependsOn).reduce((total, node) => total + node.count(), 0)
+    return 1 + Object.values(this.dependsOn).reduce((total, node) => total + node.count(), 0)
   }
   height () {
-    var values = Object.values(this._dependsOn)
+    var values = Object.values(this.dependsOn)
     if (!values.length) return 1
     var max = Math.max.apply(null, values.map(node => node.height()))
     return 1 + max
@@ -93,10 +88,9 @@ class Task extends rxjs.Observable {
   async _subscribe (subscriber) {
     if (this._taskSubscription) return this._taskSubscription // hot Observable'ify
     this.state = STATE.RUNNING
-    var dependents = Object.values(this._dependsOn)
+    var dependents = Object.values(this.dependsOn)
     dependents.push(this.trigger)
     var pending = rxjs.Observable.combineLatest(dependents)
-    setTimeout(() => this.trigger.next(null), 10)
     this._taskSubscription = pending.subscribe(async function (upstream_) {
       var upstream = upstream_
         .filter(i => i)
@@ -114,6 +108,8 @@ class Task extends rxjs.Observable {
       if (value && value.then && value.catch) value = await value
       var duration = timer()
       var payload = {
+        _task: this,
+        task: this.definition,
         upstream,
         duration,
         name: this.name,
@@ -121,6 +117,7 @@ class Task extends rxjs.Observable {
       }
       subscriber.next(payload)
     }.bind(this))
+    setImmediate(() => this.trigger.next(null))
     return this._taskSubscription
   }
 }
@@ -139,7 +136,6 @@ Task.schema = {
   ]),
   dependsOn: joi.array().items(joi.string(), joi.object().keys(Task.schema)).optional(),
   fn: joi.func(),
-  name: joi.string().required().min(1),
-  type: joi.string().optional().min(1)
+  name: joi.string().required().min(1)
 }
 Task.prototype.schemad = Task.compileSchema(Task)

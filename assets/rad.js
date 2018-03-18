@@ -1,17 +1,18 @@
 module.exports = {
   tasks: {
-    docs: {
-      target: 'node_modules',
-      fn: async function installNodeModules (opts) {
-        var { execa } = opts
-        await execa('yarn')
-      }
+    yarn: {
+      target: 'package.json',
+      cmd: 'yarn'
     },
-    bundle: {
-      type: 'make',
-      target: './build/bundle.zip',
-      dependsOn: ['docs'],
-      cmd: opts => `zip build/${opts.task.target} build/${opts.dependsOn.docs.target}`
+    build: {
+      target: 'bundle.zip',
+      dependsOn: ['yarn'],
+      cmd: opts => `
+        zip ${opts.task.target} \\
+          src \\
+          node_modules \\
+          ${opts.upstream.yarn.task.target} # i.e package json
+      `
     }
   }
 }
