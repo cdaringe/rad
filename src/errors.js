@@ -35,7 +35,7 @@ function register () {
         emoji = RadInvalidRadFile.emoji
         toLog = `${emoji} syntax error detected\n\n${take(err.stack.split('\n'), 3).join('\n')}`
       } else if (err instanceof RadError) {
-        toLog = `${emoji} ${msg}\n${reason}`
+        toLog = `${emoji} ${msg}${reason ? `\n${reason}` : ''}`
       } else {
         if (!(err instanceof Error)) console.warn('warning: unhandled error is not an `Error` instance. consider looking into it.')
         if (err === undefined || err === null) err = new Error('empty, unhandled error detected')

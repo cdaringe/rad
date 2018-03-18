@@ -31,5 +31,5 @@ void async function suchRad () { // eslint-disable-line
     radFilename: cli.flags.radfile
   })
   var tree = rad.createTaskGraph(radness)
-  if (taskName) await tree.run(taskName)
+  await tree.run(taskName || 'build')
 }()

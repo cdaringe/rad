@@ -8,11 +8,9 @@ module.exports = class TaskGraph {
     var taskMap = this.taskMap = {}
     for (let name in tasks) {
       let definition = tasks[name]
-      let taskType = definition.type
       let CTor
-      if (taskType) {
-        if (taskType === 'make') CTor = TaskMake
-        else throw new errors.RadInvalidRadFile(`unsupport type "${taskType}" for task "${name}"`)
+      if (definition.hasOwnProperty('target')) {
+        CTor = TaskMake
       } else {
         CTor = Task
       }
@@ -38,6 +36,8 @@ module.exports = class TaskGraph {
   async run (taskName) {
     /** @type {Rx.Observable} */
     var task = this.taskMap[taskName]
+    if (!taskName) throw new errors.RadError(`task name required, given ${toString(taskName)}`)
+    if (!task) throw new errors.RadError(`task "${taskName}" not found`)
     var res = await task.toPromise()
     return res
   }

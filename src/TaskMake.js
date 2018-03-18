@@ -34,6 +34,6 @@ TaskMake.EVENTS = Object.assign(Task.EVENTS, {
 
 module.exports = TaskMake
 TaskMake.schema = Object.assign({
-  target: joi.string().min(1)
+  target: joi.string().min(1).required()
 }, Task.schema)
 TaskMake.prototype.schemad = Task.compileSchema(TaskMake)

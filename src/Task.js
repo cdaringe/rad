@@ -25,7 +25,9 @@ class Task extends rxjs.Observable {
       joi.assert(definition, this.schemad)
     } catch (err) {
       if (!err.isJoi || !err.details) throw err
-      throw new errors.RadInvalidRadFile(`invalid radfile schema detected: ${err.details.map(dt => dt.message).join(',')}`)
+      throw new errors.RadInvalidRadFile(
+        `invalid task "${name}": ${err.details.map(dt => dt.message).join(',')}`
+      )
     }
     this.emitter = new EventEmitter()
     this._definition = Object.assign({}, opts.definition) // clean copy
