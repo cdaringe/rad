@@ -8,7 +8,7 @@ module.exports = class TaskGraph {
     for (let name in tasks) {
       let definition = tasks[name]
       let CTor
-      if (definition.hasOwnProperty('target')) {
+      if (definition.hasOwnProperty('output')) {
         CTor = TaskMake
       } else {
         CTor = Task
@@ -30,7 +30,6 @@ module.exports = class TaskGraph {
             throw new errors.RadInvalidRadFile(`duplicate task "${dependent.name}" found`)
           }
           task.dependsOn[dependent.name] = dependent
-          taskMap[dependentName].feeds(dependent)
         }
       } else {
         this.roots.push(task)
@@ -42,7 +41,7 @@ module.exports = class TaskGraph {
     var task = this.taskMap[taskName]
     if (!taskName) throw new errors.RadError(`task name required, given ${toString(taskName)}`)
     if (!task) throw new errors.RadError(`task "${taskName}" not found`)
-    var res = await task.toPromise()
+    var res = await task.first().toPromise()
     return res
   }
 }

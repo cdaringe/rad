@@ -1,21 +1,21 @@
 module.exports = {
   tasks: {
     docs: {
-      type: 'make',
-      target: './build/dummy.md',
+      input: './doc.md',
+      output: './build/dummy.md',
       fn: async function makeDocs (opts) {
-        var { fs, path, task: { target } } = opts
+        var { fs, path, task: { output } } = opts
         var content = (await fs.readFile('./doc.md')).toString()
         content += `\nCreated on ${new Date().toISOString()}`
-        await fs.mkdirp(path.dirname(target))
-        await fs.writeFile(target, content)
+        await fs.mkdirp(path.dirname(output))
+        await fs.writeFile(output, content)
       }
     },
     bundle: {
-      type: 'make',
-      target: './build/bundle.zip',
+      input: './build/dummy.md',
+      output: './build/bundle.zip',
       dependsOn: ['docs'],
-      cmd: opts => `zip build/${opts.task.target} build/${opts.dependsOn.docs.target}`
+      cmd: opts => `zip build/${opts.task.output} build/${opts.dependsOn.docs.output}`
     }
   }
 }

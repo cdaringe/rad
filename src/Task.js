@@ -3,14 +3,8 @@ var util = require('./util')
 var execa = require('execa')
 var errors = require('./errors')
 var memoize = require('lodash/memoize')
-var EventEmitter = require('events').EventEmitter
-var STATE = {
-  STOPPED: 1,
-  RUNNING: 2,
-  COMPLETE: 3
-}
-var EVENTS = {
-}
+var debug = require('debug')('Task')
+
 // sugar imports
 var path = require('path')
 var fs = require('fs-extra')
@@ -29,21 +23,16 @@ class Task extends rxjs.Observable {
         `invalid task "${name}": ${err.details.map(dt => dt.message).join(',')}`
       )
     }
-    this.emitter = new EventEmitter()
-    this._definition = Object.assign({}, opts.definition) // clean copy
+    this.definition = Object.assign({}, definition) // clean copy
     this.name = name
-    this.definition = definition
     this.dependsOn = {}
-    this._feedsInto = {}
-    this.state = STATE.STOPPED
     this.trigger = new rxjs.Subject()
     if (definition.cmd) this.commandifyTask()
     this.count = memoize(this.count)
   }
   commandifyTask () {
-    var definition = this.definition
-    definition.fn = async (opts) => {
-      var cmd = definition.cmd
+    this.definition.fn = async (opts) => {
+      var cmd = this.definition.cmd
       var cmdStr
       if (typeof cmd === 'string') cmdStr = cmd
       try {
@@ -57,7 +46,14 @@ class Task extends rxjs.Observable {
         throw err
       }
       try {
-        return execa.shell(cmdStr)
+        var res = await execa.shell(
+          cmdStr,
+          {
+            stdio: debug.enabled ? 'inherit' : null,
+            env: Object.assign({}, process.env)
+          }
+        )
+        return res
       } catch (reason) {
         let err = new errors.RadTaskCmdExecutionError([
           `task ${this.name} failed to execute`
@@ -66,11 +62,6 @@ class Task extends rxjs.Observable {
         throw err
       }
     }
-  }
-  feeds (task) {
-    if (!task) return this._feedsInto
-    this._feedsInto[task.name] = task
-    return this
   }
   count () {
     return 1 + Object.values(this.dependsOn).reduce((total, node) => total + node.count(), 0)
@@ -81,52 +72,57 @@ class Task extends rxjs.Observable {
     var max = Math.max.apply(null, values.map(node => node.height()))
     return 1 + max
   }
+  result (upstream) {
+    return Promise.resolve(this.definition.fn({
+      fs,
+      path,
+      task: this.definition,
+      upstream
+    }))
+  }
   /**
    *
-   * @param {Rx.Subscriber} subscriber
+   * @param {Rx.Observer} observer
    */
-  async _subscribe (subscriber) {
-    if (this._taskSubscription) return this._taskSubscription // hot Observable'ify
-    this.state = STATE.RUNNING
-    var dependents = Object.values(this.dependsOn)
-    dependents.push(this.trigger)
-    var pending = rxjs.Observable.combineLatest(dependents)
-    this._taskSubscription = pending.subscribe(async function (upstream_) {
-      var upstream = upstream_
-        .filter(i => i)
-        .reduce((agg, curr) => {
-          agg[curr.name] = curr
-          return agg
-        }, {})
-      var timer = util.timer()
-      var value = this.definition.fn({
-        path,
-        fs,
-        task: this._definition,
-        upstream
-      })
-      if (value && value.then && value.catch) value = await value
-      var duration = timer()
-      var payload = {
-        _task: this,
-        task: this.definition,
-        upstream,
-        duration,
-        name: this.name,
-        value
-      }
-      subscriber.next(payload)
-    }.bind(this))
-    setImmediate(() => this.trigger.next(null))
-    return this._taskSubscription
+  async _subscribe (observer) {
+    if (this._taskSubject) return this._taskSubject
+    var name = this.definition.name
+    var dependents = Object.values(this.dependsOn).concat(this.trigger)
+    var inner = rxjs.Observable.combineLatest(dependents)
+    inner.subscribe(
+      async function (upstream_) {
+        var upstream = upstream_
+          .filter(i => i)
+          .reduce((agg, curr) => {
+            agg[curr.name] = curr
+            return agg
+          }, {})
+        var timer = util.timer()
+        var value = await this.result(upstream)
+        var duration = timer()
+        var payload = {
+          _task: this,
+          task: this.definition,
+          upstream,
+          duration,
+          name,
+          value
+        }
+        debug(`task ${name} executed`)
+        observer.next(payload)
+      }.bind(this)
+    )
+    this._taskSubject = inner
+        // leaf node tasks have no dependents, and are comprised only of the trigger.
+    // always fire it on subscribe so the inner observable does _something_!.
+    // non-leaf nodes also need it to trigger as it's part of `combineAll`
+    // operator used by the inner.  needs at least 1 value to kick off.
+    this.trigger.next(null)
   }
 }
 Task.compileSchema = function (Cls) {
   return joi.object(Cls.schema).xor('cmd', 'fn')
 }
-
-Task.STATES = STATE
-Task.EVENTS = EVENTS
 
 module.exports = Task
 Task.schema = {
