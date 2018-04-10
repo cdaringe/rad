@@ -1,17 +1,17 @@
 module.exports = {
   tasks: {
     yarn: {
-      target: 'package.json',
+      input: 'package.json',
       cmd: 'yarn'
     },
     build: {
-      target: 'bundle.zip',
+      output: 'bundle.zip',
       dependsOn: ['yarn'],
       cmd: opts => `
-        zip ${opts.task.target} \\
+        zip ${opts.task.output} \\
           src \\
           node_modules \\
-          ${opts.upstream.yarn.task.target} # i.e package json
+          ${opts.upstream.yarn.task.input}
       `
     }
   }
