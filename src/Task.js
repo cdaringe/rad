@@ -19,9 +19,10 @@ class Task extends rxjs.Observable {
       joi.assert(definition, this.schemad)
     } catch (err) {
       if (!err.isJoi || !err.details) throw err
-      throw new errors.RadInvalidRadFile(
-        `invalid task "${name}": ${err.details.map(dt => dt.message).join(',')}`
-      )
+      throw new errors.RadInvalidRadFile([
+        `task '${name}' [type: ${this.constructor.name}] is invalid:`,
+        `${err.details.map(dt => dt.message).join(',')}`
+      ].join(' '))
     }
     this.definition = Object.assign({}, definition) // clean copy
     this.name = name
@@ -45,12 +46,18 @@ class Task extends rxjs.Observable {
         err.reason = reason
         throw err
       }
+      var env = Object.assign({}, process.env)
+      // feature, append node_modules/.bin to path if it exists
+      var nodeModulesBinDirname = path.resolve(__dirname, 'node_modules', '.bin')
+      if (await fs.exists(nodeModulesBinDirname)) {
+        env.PATH = `${nodeModulesBinDirname}:${env.PATH}`
+      }
       try {
         var res = await execa.shell(
           cmdStr,
           {
             stdio: debug.enabled ? 'inherit' : null,
-            env: Object.assign({}, process.env)
+            env
           }
         )
         return res

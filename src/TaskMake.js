@@ -6,7 +6,10 @@ var debug = require('debug')('TaskMake')
 var errors = require('./errors')
 var isString = require('lodash/isString')
 var xor = require('lodash/xor')
+var flatten = require('lodash/flatten')
 var bluebird = require('bluebird')
+var util = require('util')
+var globp = util.promisify(require('glob'))
 
 class TaskMake extends Task {
   constructor (opts) {
@@ -18,7 +21,12 @@ class TaskMake extends Task {
     this.inputsHashes = []
     this.definition.fn = async function hashInput () {
       var output = this.definition.output
-      var inputsHashes = await this.calculateInputsHashes(this.inputs)
+      var nestedGlobbedInputs = await bluebird.map(this.inputs, async input => {
+        var res = await globp(input)
+        return res
+      })
+      var globbedInputs = flatten(nestedGlobbedInputs)
+      var inputsHashes = await this.calculateInputsHashes(globbedInputs)
       var hashesDiff = xor(inputsHashes, this.inputsHashes)
       if (!hashesDiff.length) {
         debug(`hashes unchanged: ${this.name}`)
@@ -36,7 +44,7 @@ class TaskMake extends Task {
     }.bind(this)
   }
   async calculateInputsHashes (inputs) {
-    var fileHashes = await bluebird.map(inputs, hasher, { concurrency: 10 })
+    var fileHashes = await bluebird.map(inputs, i => hasher(i, { algo: 'md5' })) // md5 is faster hash
     return fileHashes.map(fh => `${fh.name}_${fh.hash}`)
   }
 }

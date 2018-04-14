@@ -43,7 +43,7 @@ ava('TaskMake:trigger', async function (t) {
   t.is(evtCount, 2, 'exactly two events have occurred')
 })
 
-ava('TaskMake:updates-on-change', async function (t) {
+ava.only('TaskMake:updates-on-change', async function (t) {
   var { radness } = await fixtures.loadFixture(fixtures.basicMakeTreeDirname, t.context.dirname)
   var tree = await rad.createTaskGraph(radness)
   var task = tree.taskMap.bundle.share()

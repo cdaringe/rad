@@ -1,17 +1,18 @@
+var { dirname } = require('path')
 module.exports = {
   tasks: {
     yarn: {
       input: 'package.json',
+      output: 'node_modules',
       cmd: 'yarn'
     },
     build: {
-      output: 'bundle.zip',
+      input: 'node_modules',
+      output: 'build/rad',
       dependsOn: ['yarn'],
       cmd: opts => `
-        zip ${opts.task.output} \\
-          src \\
-          node_modules \\
-          ${opts.upstream.yarn.task.input}
+        mkdir -p ${dirname(opts.task.output)} && \\
+        nexe --verbose -o ${opts.task.output}
       `
     }
   }

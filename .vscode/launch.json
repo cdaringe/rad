@@ -17,6 +17,18 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "bin_",
+      "program": "${workspaceFolder}/src/bin.js",
+      "args": [
+
+      ],
+      "skipFiles": [
+        "<node_internals>/**/*.js"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "bin - basic",
       "program": "${workspaceFolder}/src/bin.js",
       "args": [

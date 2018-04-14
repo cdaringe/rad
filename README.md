@@ -35,6 +35,14 @@ see our `releases` section
 - no dependents
   - e.g. you don't need bash, or java, etc.  we bundle everything we need
 
+## features
+
+- adds node_modules/.bin/ to your PATH, so you can run node bins easily
+- TaskMake
+  - input
+  - output
+    - name of file, folder, or [glob](https://github.com/isaacs/node-glob). for simplicity, everything internally is just a passed to glob
+
 ## the future
 
 currently this tool uses/embeds nodejs for a runtime and js as the scripting language.  this is great!  however, it does make for a fat executable.  long term we want to migrate to smaller binary, convert the engine to Rust (safe, fast, on-the-metal), and embed a smaller scripting language.  ATM, we are looking
