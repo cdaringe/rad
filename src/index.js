@@ -16,16 +16,18 @@ var rad = {
       radFilename = path.isAbsolute(radFilename)
         ? radFilename
         : path.resolve(process.cwd(), radFilename)
-      if (!(await fs.exists(radFilename))) {
-        throw new errors.RadMissingRadFile(`cannot read radfile "${radFilename}". does it exist?`)
+      if (!await fs.exists(radFilename)) {
+        throw new errors.RadMissingRadFile(
+          `cannot read radfile "${radFilename}". does it exist?`
+        )
       }
       return radFilename
     }
     var radFileExists = await fs.exists(DEFAULT_RADFILENAME)
     if (!radFileExists) {
-      throw new errors.RadMissingRadFile([
-        `cannot find radfile "${DEFAULT_RADFILENAME}"`
-      ].join(''))
+      throw new errors.RadMissingRadFile(
+        [`cannot find radfile "${DEFAULT_RADFILENAME}"`].join('')
+      )
     }
     return DEFAULT_RADFILENAME
   },
@@ -45,7 +47,7 @@ var rad = {
   },
   createTaskGraph (radness) {
     if (!radness) throw new errors.RadError('no radness passed to createGraph')
-    if (!radness.tasks) throw new errors.RadNoTasksError('no tasks defined in radfile')
+    if (!radness.tasks) { throw new errors.RadNoTasksError('no tasks defined in radfile') }
     return new TaskGraph(radness.tasks)
   }
 }

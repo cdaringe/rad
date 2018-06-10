@@ -4,7 +4,8 @@ var rad = require('./')
 var meow = require('meow')
 var last = require('lodash/last')
 
-var cli = meow(`
+var cli = meow(
+  `
   Usage
     $ rad <task>
     $ rad init # create a new rad file template in current working directory
@@ -15,16 +16,19 @@ var cli = meow(`
   Examples
     $ rad
     $ rad -r /path/to/rad.js
-`, {
-  flags: {
-    radfile: {
-      type: 'string',
-      alias: 'r'
+`,
+  {
+    flags: {
+      radfile: {
+        type: 'string',
+        alias: 'r'
+      }
     }
   }
-})
+)
 
-void async function suchRad () { // eslint-disable-line
+void (async function suchRad () {
+  // eslint-disable-line
   var taskName = last(cli.input)
   if (taskName === 'init') return rad.createRadfile(process.cwd())
   var radness = await rad.init({
@@ -32,4 +36,4 @@ void async function suchRad () { // eslint-disable-line
   })
   var tree = rad.createTaskGraph(radness)
   await tree.run(taskName || 'build')
-}()
+})()

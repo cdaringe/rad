@@ -48,11 +48,11 @@ ava.only('TaskMake:updates-on-change', async function (t) {
   var tree = await rad.createTaskGraph(radness)
   var task = tree.taskMap.bundle.share()
   task.subscribe(evt => {}) // @TODO WHY DO I NEED YOU
-  var docHashes = []
-  var bundleHashes = []
+  var docStats = []
+  var bundleStats = []
   var res = await task.take(1).toPromise()
-  docHashes = docHashes.concat(res.upstream.docs.value.inputsHashes)
-  bundleHashes = bundleHashes.concat(res.value.inputsHashes)
+  docStats = docStats.concat(res.upstream.docs.value.fileStats)
+  bundleStats = bundleStats.concat(res.value.fileStats)
   var testDocHelloWorld = (await fs.readFile(radness.tasks.docs.output)).toString()
   t.truthy(res.upstream.docs, 'docs task feeds bundle task')
   t.truthy(testDocHelloWorld.match(/test_world/), 'make doc task created file')
@@ -65,10 +65,10 @@ ava.only('TaskMake:updates-on-change', async function (t) {
   var res2p = task.take(1).toPromise()
   tree.taskMap.docs.trigger.next(null)
   var res2 = await res2p
-  docHashes = docHashes.concat(res2.upstream.docs.value.inputsHashes)
-  bundleHashes = bundleHashes.concat(res2.value.inputsHashes)
+  docStats = docStats.concat(res2.upstream.docs.value.fileStats)
+  bundleStats = bundleStats.concat(res2.value.fileStats)
   // observe that the hash on that file has changed!
-  t.not(docHashes[0], docHashes[1], 'hashes unique on file after change')
+  t.not(docStats[0], docStats[1], 'hashes unique on file after change')
   // observe that the zip file gets rebuilt by observing its hash change
-  t.not(bundleHashes[0], bundleHashes[1], 'hashes unique on file after change')
+  t.not(bundleStats[0], bundleStats[1], 'hashes unique on file after change')
 })

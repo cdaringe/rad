@@ -30,19 +30,26 @@ function register () {
       let emoji = err.constructor.emoji ? `${err.constructor.emoji} ` : ''
       var toLog
       let msg = err.message || err.constructor.message
-      let reason = (err.reason && err.reason.message) ? err.reason.message : ''
+      let reason = err.reason && err.reason.message ? err.reason.message : ''
       if (err instanceof SyntaxError) {
         emoji = RadInvalidRadFile.emoji
-        toLog = `${emoji} syntax error detected\n\n${take(err.stack.split('\n'), 3).join('\n')}`
+        toLog = `${emoji} syntax error detected\n\n${take(
+          err.stack.split('\n'),
+          3
+        ).join('\n')}`
       } else if (err instanceof RadError) {
         toLog = `${emoji} ${msg}${reason ? `\n${reason}` : ''}`
       } else {
-        if (!(err instanceof Error)) console.warn('warning: unhandled error is not an `Error` instance. consider looking into it.')
-        if (err === undefined || err === null) err = new Error('empty, unhandled error detected')
+        if (!(err instanceof Error)) {
+          console.warn(
+            'warning: unhandled error is not an `Error` instance. consider looking into it.'
+          )
+        }
+        if (err === undefined || err === null) { err = new Error('empty, unhandled error detected') }
         toLog = err && err.stack
         try {
           // stacktrace _usually_ embeds the messgae. if it doesn't, log it
-          if (err.message && err.stack.indexOf(err.message) === -1) console.error(err.message)
+          if (err.message && err.stack.indexOf(err.message) === -1) { console.error(err.message) }
         } catch (err) {
           /* pass */
         }

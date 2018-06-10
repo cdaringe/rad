@@ -7,7 +7,7 @@ module.exports = {
       cmd: 'yarn'
     },
     build: {
-      input: 'node_modules',
+      input: 'src',
       output: 'build/rad',
       dependsOn: ['yarn'],
       cmd: opts => `

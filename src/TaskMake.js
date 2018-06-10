@@ -1,5 +1,4 @@
 var Task = require('./Task')
-var hasher = require('folder-hash').hashElement
 var fs = require('fs-extra')
 var joi = require('joi')
 var debug = require('debug')('TaskMake')
@@ -18,46 +17,65 @@ class TaskMake extends Task {
     this.inputs = isString(opts.definition.input)
       ? [opts.definition.input]
       : opts.definition.input
-    this.inputsHashes = []
-    this.definition.fn = async function hashInput () {
+    this.fileStats = []
+    this.definition.fn = async function maybePerformTask () {
       var output = this.definition.output
       var nestedGlobbedInputs = await bluebird.map(this.inputs, async input => {
         var res = await globp(input)
         return res
       })
       var globbedInputs = flatten(nestedGlobbedInputs)
-      var inputsHashes = await this.calculateInputsHashes(globbedInputs)
-      var hashesDiff = xor(inputsHashes, this.inputsHashes)
-      if (!hashesDiff.length) {
+      var fileStats = await this.calculateFileChanges(globbedInputs)
+      var filesDiff = xor(fileStats, this.fileStats)
+      if (!filesDiff.length) {
         debug(`hashes unchanged: ${this.name}`)
-        return { inputsHashes }
+        return { fileStats }
       }
-      debug(`hashes changed: ${this.name} [${hashesDiff.join(', ')}]`)
-      this.inputsHashes = inputsHashes
+      debug(`hashes changed: ${this.name} [${filesDiff.join(', ')}]`)
+      this.fileStats = fileStats
       await Promise.resolve(userFn.apply(this.definition, arguments))
-      if (!(await fs.exists(output))) {
+      if (!await fs.exists(output)) {
         throw new errors.RadMakeTaskError(
           `task "${this.name}" output "${output}" does not exist after task`
         )
       }
-      return { inputsHashes }
+      return { fileStats }
     }.bind(this)
   }
-  async calculateInputsHashes (inputs) {
-    var fileHashes = await bluebird.map(inputs, i => hasher(i, { algo: 'md5' })) // md5 is faster hash
-    return fileHashes.map(fh => `${fh.name}_${fh.hash}`)
+  async calculateFileChanges (inputs) {
+    var fileHashes = await bluebird.map(inputs, async i => {
+      // await fs.
+      var stat = await fs.lstat(i)
+      return `${i}_c:${stat.ctimeMs}_m:${stat.mtimeMs}`
+    })
+    return fileHashes
   }
 }
 
 module.exports = TaskMake
-TaskMake.schema = Object.assign({
-  input: joi.alternatives().try([
-    joi.string().min(1),
-    joi.array().items(joi.string().min(1)).min(1)
-  ]).required(),
-  output: joi.alternatives().try([
-    joi.string().min(1),
-    joi.array().items(joi.string().min(1)).min(1)
-  ]).required()
-}, Task.schema)
+TaskMake.schema = Object.assign(
+  {
+    input: joi
+      .alternatives()
+      .try([
+        joi.string().min(1),
+        joi
+          .array()
+          .items(joi.string().min(1))
+          .min(1)
+      ])
+      .required(),
+    output: joi
+      .alternatives()
+      .try([
+        joi.string().min(1),
+        joi
+          .array()
+          .items(joi.string().min(1))
+          .min(1)
+      ])
+      .required()
+  },
+  Task.schema
+)
 TaskMake.prototype.schemad = Task.compileSchema(TaskMake)

@@ -10,9 +10,11 @@ var logger = winston.createLogger({
 // `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
 var TransportCTor = winston.transports.Console
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new TransportCTor({
-    format: winston.format.simple()
-  }))
+  logger.add(
+    new TransportCTor({
+      format: winston.format.simple()
+    })
+  )
 }
 
 module.exports = logger

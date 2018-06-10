@@ -4,7 +4,7 @@ var errors = require('./errors')
 
 module.exports = class TaskGraph {
   constructor (tasks) {
-    var taskMap = this.taskMap = {}
+    var taskMap = (this.taskMap = {})
     for (let name in tasks) {
       let definition = tasks[name]
       let CTor
@@ -24,10 +24,14 @@ module.exports = class TaskGraph {
         for (let dependentName of defintion.dependsOn) {
           let dependent = taskMap[dependentName]
           if (!dependent) {
-            throw new errors.RadInvalidRadFile(`task "${dependentName}" requested by task "${name}" not found`)
+            throw new errors.RadInvalidRadFile(
+              `task "${dependentName}" requested by task "${name}" not found`
+            )
           }
           if (task.dependsOn[dependent.name]) {
-            throw new errors.RadInvalidRadFile(`duplicate task "${dependent.name}" found`)
+            throw new errors.RadInvalidRadFile(
+              `duplicate task "${dependent.name}" found`
+            )
           }
           task.dependsOn[dependent.name] = dependent
         }
@@ -39,7 +43,11 @@ module.exports = class TaskGraph {
   async run (taskName) {
     /** @type {Rx.Observable} */
     var task = this.taskMap[taskName]
-    if (!taskName) throw new errors.RadError(`task name required, given ${toString(taskName)}`)
+    if (!taskName) {
+      throw new errors.RadError(
+        `task name required, given ${toString(taskName)}`
+      )
+    }
     if (!task) throw new errors.RadError(`task "${taskName}" not found`)
     var res = await task.first().toPromise()
     return res
