@@ -8,13 +8,36 @@ the best general purpose build tool that money won't buy.
 
 `$ rad`
 
+```js
+// rad.js - your buildfile
+var { dirname } = require('path')
+module.exports = {
+  tasks: {
+    yarn: {
+      input: 'package.json',
+      output: 'node_modules',
+      cmd: 'yarn'
+    },
+    build: {
+      input: 'src',
+      output: 'build/rad',
+      dependsOn: ['yarn'],
+      cmd: opts => `
+        mkdir -p ${dirname(opts.task.output)} && \\
+        nexe --verbose -o ${opts.task.output}
+      `
+    }
+  }
+}
+```
+
 ## install
 
 see our `releases` section
 
 ## what is it
 
-- bottom-up, make-style build targets
+- bottom-up, `make`-style build targets
   - fast builds, skip redundant tasks when inputs haven't changed!
 - pipeline style builds
   - easy to understand, declarative build steps
@@ -24,24 +47,24 @@ see our `releases` section
 
 ## why
 
-- stop using make and bash--use a modern syntax and a real scripting language
-  - <ref to why bash is awful>
-- no custom DSL--uses POJOs with a verified interface
-- you can actually DEBUG it!
-- beautiful
-- take it anywhere
-  - osx, linux, windows!
-    - help us support other architectures
-- no dependents
-  - e.g. you don't need bash, or java, etc.  we bundle everything we need
+no build tools in 2018 have a complete feature set that the average polyglot programmer needs without coercing it or piling on extraneous complexity.
+
+see [why not just use <my-favorite-build-tool>](./why-not.md)
 
 ## features
 
-- adds node_modules/.bin/ to your PATH, so you can run node bins easily
-- TaskMake
-  - input
-  - output
-    - name of file, folder, or [glob](https://github.com/isaacs/node-glob). for simplicity, everything internally is just a passed to glob
+- stop using `make` and `bash`.  use a modern syntax and a real scripting language
+  - `<ref to why bash is not fit for general purpose scripting>`
+- no DSL.  your **build is code**--tasks are POJOs with a verified interface
+- debuggable. :bug: halt the runtime, inspect your data, tasks, or even _rad_ itself
+- beautiful.
+- take it anywhere.
+  - osx, linux, windows!
+    - help us support other architectures
+- no dependencies.
+  - e.g. you don't need bash, or java, this lib, that lib, etc.  we bundle everything we need.
+- adds `node_modules/.bin/` to your PATH, so you can run node bins easily
+
 
 ## the future
 
