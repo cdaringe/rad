@@ -4537,9 +4537,9 @@ negotiator@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
 
-nexe@2.0.0-rc.26:
-  version "2.0.0-rc.26"
-  resolved "https://registry.yarnpkg.com/nexe/-/nexe-2.0.0-rc.26.tgz#a71cf71d65427cea0fbb49961a2e5f6fe4b031ba"
+nexe@2.0.0-rc.34:
+  version "2.0.0-rc.34"
+  resolved "https://registry.yarnpkg.com/nexe/-/nexe-2.0.0-rc.34.tgz#7ad082a3b11bfa2d53885e0fb6ca4d4ba0c5b0f2"
   dependencies:
     app-builder "^5.1.0"
     caw "^2.0.1"
