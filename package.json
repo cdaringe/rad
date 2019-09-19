@@ -9,7 +9,7 @@
   "author": "cdaringe <christopher.dieringer@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "ava": "1.0.0-beta.3",
+    "ava": "1.4.1",
     "counsel": "0.5.2",
     "counsel-ruleset-nodelib": "0.5.2",
     "husky": "0.14.3",
