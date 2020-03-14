@@ -20,7 +20,7 @@
     "nsp": "3.2.1",
     "nyc": "11.6.0",
     "prettier-standard": "8.0.1",
-    "standard": "10.0.3"
+    "standard": "14.3.2"
   },
   "scripts": {
     "precommit": "run-p check lint test check-vulnerablities",
