@@ -19,7 +19,7 @@
     "npm-run-all": "4.1.2",
     "nsp": "3.2.1",
     "nyc": "11.6.0",
-    "prettier-standard": "8.0.1",
+    "prettier-standard": "16.2.1",
     "standard": "10.0.3"
   },
   "scripts": {
