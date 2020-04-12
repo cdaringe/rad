@@ -1,13 +1,13 @@
 module.exports = {
   tasks: {
     a: {
-      fn: () => 'a'
+      fn: () => "a",
     },
     b: {
-      fn: () => 'b',
+      fn: () => "b",
       dependsOn: [
-        'a'
-      ]
-    }
-  }
-}
+        "a",
+      ],
+    },
+  },
+};

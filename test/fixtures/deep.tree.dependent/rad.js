@@ -2,57 +2,57 @@ module.exports = {
   tasks: {
     a: {
       fn: ({ upstream }) => {
-        return 'a_1_' + upstream.b.value
+        return "a_1_" + upstream.b.value;
       },
       dependsOn: [
-        'b',
-        'x'
-      ]
+        "b",
+        "x",
+      ],
     },
     x: {
       fn: ({ upstream }) => {
-        return 'x'
+        return "x";
       },
       dependsOn: [
-        'y'
-      ]
+        "y",
+      ],
     },
     y: {
       fn: ({ upstream }) => {
-        return 'y'
+        return "y";
       },
       dependsOn: [
-        'z'
-      ]
+        "z",
+      ],
     },
     z: {
       fn: ({ upstream }) => {
-        return 'z'
+        return "z";
       },
       dependsOn: [
-        'w'
-      ]
+        "w",
+      ],
     },
     w: {
       fn: ({ upstream }) => {
-        return 'w'
-      }
+        return "w";
+      },
     },
     b: {
-      fn: ({ upstream }) => 'b_2_' + upstream.c.value,
+      fn: ({ upstream }) => "b_2_" + upstream.c.value,
       dependsOn: [
-        'c',
-        'd'
-      ]
+        "c",
+        "d",
+      ],
     },
     c: {
-      fn: () => 'c_3'
+      fn: () => "c_3",
     },
     d: {
-      fn: () => 'd'
-    }
-  }
-}
+      fn: () => "d",
+    },
+  },
+};
 // 4 3 2 1 0
 // w-|
 //   z-|

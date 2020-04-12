@@ -1,4 +1,4 @@
-
+.rad
 /target/
 **/*.rs.bk
 Cargo.lock
@@ -8,3 +8,5 @@ coverage
 **/*.log
 .DS_Store
 build
+src/3p/*
+!src/3p/*.ts
