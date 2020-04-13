@@ -1,3 +1,12 @@
+/**
+ * Tasks are things that rad executes.
+ *
+ * Task, either a
+ *   - string, or
+ *   - Taskerooni (fully defined _userland task)
+ *
+ * RadTask, internal task representation
+ */
 import * as path from "https://deno.land/std/node/path.ts";
 import * as errors from "./errors.ts";
 import { logger } from "./logger.ts";
@@ -28,17 +37,26 @@ export type TaskFn<T = any> = (input: {
   dependentResults: any[]; // @todo add _sweet_ generics to unpack dependent result types
   logger: typeof logger;
   path: typeof path;
-  task: Task;
+  task: RadTask;
 }) => void | T | Promise<T | void>;
 
-export type UserTasks = Record<string, UserTask>;
+export type Task = string | Taskerooni;
 
-export type UserTask<T = {}> = {
+/**
+ * Maximally expressive, user-definable task.
+ * Use me in your rad.ts!
+ */
+export type Taskerooni<T=any> = {
   cmd?: string;
-  dependsOn?: UserTask[];
+  dependsOn?: Task[];
   fn?: TaskFn;
   specialized?: T;
-};
+}
+
+export const asTaskerooni = (task: Task): Taskerooni =>
+  typeof task === 'string'
+    ? { fn: ({ sh }) => sh(task) } as Taskerooni
+    : task
 
 type TaskReport = {
   message: string;
@@ -49,15 +67,16 @@ type TaskReport = {
   };
 };
 
-export type Task<T = {}> = {
+export type RadTask<T = {}> = {
   cmd?: string;
-  name: string;
-  dependsOn?: Task[];
+  complete?: Promise<any>;
+  dependsOn?: RadTask[];
   fn: TaskFn;
   kind?: string;
+  name: string;
+  report?: TaskReport;
   specialized?: T;
   state: TaskState;
-  report?: TaskReport;
 };
 
 /**
@@ -65,14 +84,16 @@ export type Task<T = {}> = {
  */
 export function getParialFromUserTask(
   { key, value }: { key: string; value: any },
-): Task {
+): RadTask {
   if (!key) throw new errors.RadInvalidTaskError(`missing task key`);
   if (!value) {
     throw new errors.RadInvalidTaskError(`missing task value for key "${key}"`);
   }
   // @todo schema validate
-  const validated = value as UserTask;
-  const task: Task = {
+  const validated: Taskerooni = typeof value === 'string'
+    ? asTaskerooni(value)
+    : value as Taskerooni;
+  const task: RadTask = {
     ...validated,
     dependsOn: [],
     fn: validated.fn || ((() => {}) as TaskFn), // other task types are responsible for overwriting this
@@ -82,116 +103,53 @@ export function getParialFromUserTask(
   return task;
 }
 
-// commandifyTask () {
-//   if (this.opts.userDefinition.fn)  return
-//   this.opts.userDefinition.fn = async (opts: unknown) => {
-//     var cmd = this.opts.userDefinition.cmd
-//     var cmdStr
-//     if (typeof cmd === 'string') cmdStr = cmd
-//     try {
-//       cmdStr = cmdStr || cmd(opts)
-//     } catch (reason) {
-//       let err = new errors.RadTaskCmdFormationError(
-//         [
-//           `task "${this.opts.name}" has a malformed command. if it's a function,`,
-//           `please inspect any variables extracted.`
-//         ].join(' ')
-//       )
-//       err.reason = reason
-//       throw err
-//     }
-//     var env = Object.assign({}, Deno.env())
-//     // feature, append node_modules/.bin to path if it exists
-//     var nodeModulesBinDirname = path.resolve(
-//       path.basename(import.meta.url),
-//       'node_modules',
-//       '.bin'
-//     )
-//     if (await Deno.lstat(nodeModulesBinDirname).catch(() => false)) {
-//       env.PATH = `${nodeModulesBinDirname}:${env.PATH}`
-//     }
-//     try {
-//       var pp = Deno.run({
-//         cmd: [ cmdStr ],
-//         env
-//       })
-//       return pp.status()
-//     } catch (reason) {
-//       let err = new errors.RadTaskCmdExecutionError(
-//         [`task ${this.opts.name} failed to execute`].join('')
-//       )
-//       err.reason = reason
-//       throw err
-//     }
-//   }
-// }
-// count (): number {
-//   return (
-//     1 +
-//     Object.values(this.opts.dependsOn || {}).reduce(
-//       (total, node) => total + node.count(),
-//       0
-//     )
-//   )
-// }
-// height () {
-//   var values = Object.values(this.dependsOn)
-//   if (!values.length) return 1
-//   var max = Math.max.apply(null, values.map(node => node.height()))
-//   return 1 + max
-// }
-// result (upstream: unknown) {
-//   return Promise.resolve(
-//     this.opts.userDefinition.fn({
-//       Deno,
-//       path,
-//       task: this.opts.userDefinition,
-//       upstream
-//     })
-//   )
-// }
-
-export async function execute(task: Task) {
+export async function execute(task: RadTask) {
   const dependents = task.dependsOn || [];
   const getTotalDuration = timer();
   const getDependentsDuration = timer();
-  task.state = TASK_STATES.RUNNING_WAITING_UPSTREAM;
-  const dependentResults: any[] = await Promise.all(
-    dependents.map((dependent) => execute(dependent)),
-  );
-  const dependentsDuration = getDependentsDuration();
-  const getActiveDuration = timer();
-  task.state = TASK_STATES.RUNNING_ACTIVE;
-  try {
-    var result = await Promise.resolve(
-      task.fn({
-        Deno,
-        fs,
-        sh,
-        logger,
-        path,
-        task,
-        dependentResults,
-      }),
+  if (task.complete) return task.complete;
+  task.complete = async function executeToComplete() {
+    task.state = TASK_STATES.RUNNING_WAITING_UPSTREAM;
+    const dependentResults: any[] = await Promise.all(
+      dependents.map((dependent) => execute(dependent)),
     );
-    task.state = TASK_STATES.FINISHED_OK;
-    return result;
-  } catch (error) {
-    const err = error instanceof Error
-      ? error
-      : { message: `non-Error entity thrown: ${String(error)}`, stack: "" };
-    task.state = TASK_STATES.FINISHED_NOT_OK;
-    throw new errors.RadTaskCmdExecutionError(err.stack || "stack unavailable");
-  } finally {
-    task.report = {
-      timing: {
-        active: getActiveDuration(),
-        dependents: dependentsDuration,
-        total: getTotalDuration(),
-      },
-      message: TASK_STATES.FINISHED_OK ? "ok" : "not ok",
-    };
-  }
+    const dependentsDuration = getDependentsDuration();
+    const getActiveDuration = timer();
+    task.state = TASK_STATES.RUNNING_ACTIVE;
+    try {
+      var result = await Promise.resolve(
+        task.fn({
+          Deno,
+          dependentResults,
+          fs,
+          logger,
+          path,
+          sh,
+          task,
+        }),
+      );
+      task.state = TASK_STATES.FINISHED_OK;
+      return result;
+    } catch (error) {
+      const err = error instanceof Error
+        ? error
+        : { message: `non-Error entity thrown: ${String(error)}`, stack: "" };
+      task.state = TASK_STATES.FINISHED_NOT_OK;
+      throw new errors.RadTaskCmdExecutionError(
+        err.stack || "stack unavailable",
+      );
+    } finally {
+      task.report = {
+        timing: {
+          active: getActiveDuration(),
+          dependents: dependentsDuration,
+          total: getTotalDuration(),
+        },
+        message: TASK_STATES.FINISHED_OK ? "ok" : "not ok",
+      };
+    }
+  }();
+  return task.complete!;
 }
 //   async _subscribe (observer: rxjs.Subject) {
 //     if (this.taskSubject) return this.taskSubject

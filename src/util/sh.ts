@@ -5,7 +5,7 @@ export async function sh(
   opts?: { encoding?: "utf-8"; ignoreExitCode?: boolean },
 ) {
   const proc = Deno.run({
-    cmd: ["sh", "-c", cmd], // @todo detect `sh` location mo betta
+    cmd: ["sh", "-c", cmd],
     stdin: "piped",
     stdout: "piped",
     stderr: "piped",

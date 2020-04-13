@@ -1,4 +1,4 @@
-import { Task, execute, getParialFromUserTask, UserTask } from "./Task.ts";
+import { RadTask, execute, getParialFromUserTask, Task, Taskerooni, asTaskerooni } from "./Task.ts";
 // var TaskMake = require('./TaskMake')
 import * as errors from "./errors.ts";
 import { Radness } from "./Radness.ts";
@@ -10,18 +10,18 @@ export function fromTasks(userTasks: Radness["tasks"]) {
   const userTaskNamesByTask = userTaskNames.reduce((acc, name) => {
     acc.set(userTasks[name], name);
     return acc;
-  }, new Map<UserTask, string>());
+  }, new Map<Task, string>());
   const tasks = userTaskNames.map((key) =>
     getParialFromUserTask({ key, value: userTasks[key] })
   );
-  const graph: Record<string, Task> = tasks.reduce(
+  const graph: Record<string, RadTask> = tasks.reduce(
     (acc, v) => ({ ...acc, [v.name]: v }),
     {},
   );
   // dangerously mutate new task memory to swap user input tasks with owned tasks
   userTaskNames.forEach((taskName, i) => {
     const task = graph[taskName];
-    task.dependsOn = (userTasks[taskName].dependsOn || []).map(
+    task.dependsOn = (asTaskerooni(userTasks[taskName])?.dependsOn || []).map(
       (userDependentTask) => {
         const taskName = userTaskNamesByTask.get(userDependentTask);
         if (!taskName) {

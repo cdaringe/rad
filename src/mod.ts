@@ -1,6 +1,5 @@
 import * as path from "https://deno.land/std/node/path.ts";
 import * as errors from "./errors.ts";
-import { Task } from "./Task.ts";
 import { Radness, from } from "./Radness.ts";
 // var TaskMake = require('./TaskMake')
 import * as taskGraph from "./TaskGraph.ts";
@@ -32,9 +31,6 @@ export type InitOptions = {
   radFilename: string;
 };
 export async function init(opts?: InitOptions) {
-  if (["object", "undefined"].indexOf(typeof opts) === -1) {
-    throw new errors.RadError("invalid first argument to rad.init(...)");
-  }
   opts = opts || { radFilename: "" };
   var radFilename = await getRadFilename(opts.radFilename);
   return import(radFilename).then((mod) => from(mod));

@@ -17,7 +17,6 @@ const mod = {
   basicMakeTreeDirname: path.resolve(__dirname, "basic.make.tree"),
   deepMakeTreeDirname: path.resolve(__dirname, "deep.tree.dependent"),
   async copyContents(src: string, dest: string) {
-    logger.info(`reading src @ ${src}`);
     var files = await Deno.readdir(src);
     await Promise.all(files.map(async (fileinfo) => {
       const filename = fileinfo.name;

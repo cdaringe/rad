@@ -1,8 +1,7 @@
 import { assertEquals, assert } from "https://deno.land/std/testing/asserts.ts";
 import { Radness } from "../src/Radness.ts";
 import { run, fromTasks } from "../src/TaskGraph.ts";
-import { UserTask } from "../src/Task.ts";
-import { logger } from "../src/logger.ts";
+import { Task } from "../src/Task.ts";
 
 const basicRadness: Radness = {
   tasks: {
@@ -16,17 +15,17 @@ const sumDependentResultsWith = (input: any) =>
   ({ dependentResults }: { dependentResults: any[] }) =>
     dependentResults.reduce((acc, v) => acc + v, input);
 
-const d: UserTask = {
+    const d: Task = {
   fn: sumDependentResultsWith("d"),
 };
-const c: UserTask = {
+const c: Task = {
   fn: sumDependentResultsWith("c"),
 };
-const b: UserTask = {
+const b: Task = {
   dependsOn: [c, d],
   fn: sumDependentResultsWith("b"),
 };
-const a: UserTask = {
+const a: Task = {
   dependsOn: [b],
   fn: sumDependentResultsWith("a"),
 };
