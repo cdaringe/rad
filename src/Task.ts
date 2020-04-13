@@ -23,13 +23,6 @@ export enum TASK_STATES {
 }
 export type TaskState = keyof typeof TASK_STATES;
 
-var debug = (...args: any[]) => logger.debug(`Task`, ...args);
-
-// sugar imports
-// var path = require('path')
-// var fs = require('fs-extra')
-// var joi = require('joi')
-
 export type TaskFn<T = any> = (input: {
   Deno: typeof Deno;
   fs: typeof fs;
@@ -151,55 +144,3 @@ export async function execute(task: RadTask) {
   }();
   return task.complete!;
 }
-//   async _subscribe (observer: rxjs.Subject) {
-//     if (this.taskSubject) return this.taskSubject
-//     var name = this.opts.userDefinition.name
-//     var dependents = Object.values(this.opts.dependsOn || {}).concat(this.trigger)
-//     var inner = rxjs.Observable.combineLatest(dependents)
-//     inner.subscribe(
-//       async function (upstream_) {
-//         var upstream = upstream_.filter(i => i).reduce((agg, curr) => {
-//           agg[curr.name] = curr
-//           return agg
-//         }, {})
-//         var getDuration = timer()
-//         var value = await this.result(upstream)
-//         var duration = getDuration()
-//         var payload = {
-//           _task: this,
-//           task: this.userDefinition,
-//           upstream,
-//           duration,
-//           name,
-//           value
-//         }
-//         debug(`task ${name} executed`)
-//         observer.next(payload)
-//       }.bind(this)
-//     )
-//     this.taskSubject = inner
-//     // leaf node tasks have no dependents, and are comprised only of the trigger.
-//     // always fire it on subscribe so the inner observable does _something_!.
-//     // non-leaf nodes also need it to trigger as it's part of `combineAll`
-//     // operator used by the inner.  needs at least 1 value to kick off.
-//     this.trigger.next(null)
-//   }
-// }
-// Task.compileSchema = function (Cls) {
-//   return joi.object(Cls.schema).xor('cmd', 'fn')
-// }
-
-// module.exports = Task
-// Task.schema = {
-//   cmd: joi.alternatives().try([joi.string().min(1), joi.func()]),
-//   dependsOn: joi
-//     .array()
-//     .items(joi.string(), joi.object().keys(Task.schema))
-//     .optional(),
-//   fn: joi.func(),
-//   name: joi
-//     .string()
-//     .required()
-//     .min(1)
-// }
-// Task.prototype.schemad = Task.compileSchema(Task)
