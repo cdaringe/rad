@@ -15,7 +15,7 @@ const sumDependentResultsWith = (input: any) =>
   ({ dependentResults }: { dependentResults: any[] }) =>
     dependentResults.reduce((acc, v) => acc + v, input);
 
-    const d: Task = {
+const d: Task = {
   fn: sumDependentResultsWith("d"),
 };
 const c: Task = {

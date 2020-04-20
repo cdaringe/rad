@@ -8,4 +8,4 @@ export const from = (radness: Radness) => {
   return radness as Radness;
 };
 
-export { Task }
+export { Task };

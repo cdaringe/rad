@@ -3,6 +3,7 @@ import * as errors from "./errors.ts";
 import { Radness, from } from "./Radness.ts";
 // var TaskMake = require('./TaskMake')
 import * as taskGraph from "./TaskGraph.ts";
+import { logger } from "./logger.ts";
 
 var DEFAULT_RADFILENAME = path.resolve("rad.ts");
 
@@ -18,7 +19,10 @@ export async function getRadFilename(radFilename: string) {
     }
     return radFilename;
   }
-  var radFileExists = await Deno.lstat(DEFAULT_RADFILENAME).catch(() => false);
+  var radFileExists = await Deno.lstat(DEFAULT_RADFILENAME).catch(err => {
+    logger.debug(err)
+    false
+  });
   if (!radFileExists) {
     throw new errors.RadMissingRadFile(
       [`cannot find radfile "${DEFAULT_RADFILENAME}"`].join(""),

@@ -12,10 +12,9 @@ const parsed = parse(Deno.args, {
     "radfile": ["r"],
   },
   boolean: [
-    'help'
-  ]
+    "help",
+  ],
 });
-
 
 const helpText = `
 rad: a general-purpose, typed & portable build tool.
@@ -33,11 +32,11 @@ rad: a general-purpose, typed & portable build tool.
      $ rad
      $ rad -r /path/to/rad.ts
 
-`
+`;
 
 async function suchRad(args: Args) {
   if (args.help || args.h) {
-    return console.info(helpText)
+    return console.info(helpText);
   }
   var requestedTaskName = last(args._);
   if (args.init) return rad.createRadfile(Deno.cwd());
@@ -47,10 +46,10 @@ async function suchRad(args: Args) {
 
   var tree = rad.createTaskGraph(radness);
 
-  logger.info("no task requested, trying \"build\"")
+  if (!requestedTaskName) logger.info('no task requested, trying "build"');
   const taskName = requestedTaskName || "build";
-  const task = tree.graph[taskName]
-  if (!task) throw new errors.RadError(`no task "${taskName}" found`)
+  const task = tree.graph[taskName];
+  if (!task) throw new errors.RadError(`no task "${taskName}" found`);
   await execute(task);
 }
 

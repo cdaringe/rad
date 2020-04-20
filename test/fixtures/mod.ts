@@ -18,15 +18,15 @@ const mod = {
   deepMakeTreeDirname: path.resolve(__dirname, "deep.tree.dependent"),
   async copyContents(src: string, dest: string) {
     var files = await Deno.readdir(src);
-    await Promise.all(files.map(async (fileinfo) => {
+    for await (const fileinfo of files) {
       const filename = fileinfo.name;
-      if (!filename || filename === "." || filename === "..") return;
+      if (!filename || filename === "." || filename === "..") continue;
       await copy(
         path.join(src, filename),
         path.join(dest, filename),
         { overwrite: true },
       );
-    }));
+    }
   },
   async createTestFolderContext() {
     var dirname = path.join(

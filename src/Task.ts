@@ -3,7 +3,9 @@
  *
  * Task, either a
  *   - string, or
- *   - Taskerooni (fully defined _userland task)
+ *   - Funcarooni
+ *   - Commandarooni
+ *   - Makearooni
  *
  * RadTask, internal task representation
  */
@@ -13,6 +15,8 @@ import { logger } from "./logger.ts";
 import * as fs from "./util/fs.ts";
 import { sh } from "./util/sh.ts";
 import { timer } from "./util/timer.ts";
+import { glob } from "./util/glob.ts";
+import { WalkEntry } from "https://deno.land/std/fs/walk.ts";const noop = (a: any, b: any) => {};
 
 export enum TASK_STATES {
   IDLE = "IDLE",
@@ -23,7 +27,7 @@ export enum TASK_STATES {
 }
 export type TaskState = keyof typeof TASK_STATES;
 
-export type TaskFn<T = any> = (input: {
+export type Toolkit = {
   Deno: typeof Deno;
   fs: typeof fs;
   sh: typeof sh;
@@ -31,25 +35,91 @@ export type TaskFn<T = any> = (input: {
   logger: typeof logger;
   path: typeof path;
   task: RadTask;
-}) => void | T | Promise<T | void>;
-
-export type Task = string | Taskerooni;
+};
+export type TaskFn<A2 = undefined> = (
+  toolkit: Toolkit,
+  arg: A2,
+) => any;
 
 /**
  * Maximally expressive, user-definable task.
  * Use me in your rad.ts!
  */
-export type Taskerooni<T=any> = {
-  cmd?: string;
-  dependsOn?: Task[];
-  fn?: TaskFn;
-  specialized?: T;
-}
+export type Task = Funcarooni | Commandarooni | Makearooni;
 
-export const asTaskerooni = (task: Task): Taskerooni =>
-  typeof task === 'string'
-    ? { fn: ({ sh }) => sh(task) } as Taskerooni
-    : task
+export type Dependarooni = {
+  dependsOn?: Task[];
+};
+
+/**
+ *
+ */
+export type Funcarooni = Dependarooni & {
+  fn: TaskFn;
+};
+export type Commandarooni = string | (Dependarooni & {
+  cmd: string;
+});
+
+/**
+ * a make task needs prereqs
+ */
+export type Makearooni = Dependarooni & {
+  target: string;
+  cwd?: string;
+  /**
+   * globs, filenames, of input files that will be considered as inputs to
+   * building the target
+   */
+  prereqs: string[];
+  onMake: TaskFn<{ prereqs: AsyncIterable<WalkEntry> }>;
+};
+// make task
+/**
+ * target: bundle.es5.js
+ * files?: entry.esnext.js 'lib\**\*.js'
+ * dependsOn?: [otherThing]
+ */
+
+export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
+  task,
+) => {
+  const { target, onMake, prereqs = [], cwd = Deno.cwd(), ...rest } = task;
+  const funcer: Funcarooni = {
+    fn: async (toolkit) => {
+      const targetWalkEntry: WalkEntry = await glob(cwd, target).next().then(({
+        value,
+      }) => value);
+      const targetModified = targetWalkEntry?.info?.modified || -1;
+      const prereqsToMake = async function* prereqsToMake() {
+        for (const prereq of prereqs) {
+          for await (const walkEntry of glob(cwd, prereq)) {
+            const { created, modified } = walkEntry.info;
+            const isPrereqChanged =
+              (modified || created || 0) >= targetModified;
+            if (isPrereqChanged) yield walkEntry;
+          }
+        }
+      }();
+      return onMake(toolkit, { prereqs: prereqsToMake });
+    },
+    ...rest,
+  };
+  return funcer;
+};
+
+export const asFuncarooni = (task: Task): Funcarooni => {
+  if (typeof task === "string") {
+    return { fn: ({ sh }) => sh(task) } as Funcarooni;
+  } else if ("cmd" in task) {
+    const { cmd, ...rest } = task;
+    return { fn: ({ sh }) => sh(task.cmd), ...rest } as Funcarooni;
+  } else if ("prereqs" in task) {
+    return makearooniToFuncarooni(task);
+  } else {
+    return task;
+  }
+};
 
 type TaskReport = {
   message: string;
@@ -83,13 +153,13 @@ export function getParialFromUserTask(
     throw new errors.RadInvalidTaskError(`missing task value for key "${key}"`);
   }
   // @todo schema validate
-  const validated: Taskerooni = typeof value === 'string'
-    ? asTaskerooni(value)
-    : value as Taskerooni;
+  const validated: Exclude<Task, string> = typeof value === "string"
+    ? asFuncarooni(value)
+    : value;
   const task: RadTask = {
     ...validated,
     dependsOn: [],
-    fn: validated.fn || ((() => {}) as TaskFn), // other task types are responsible for overwriting this
+    fn: (("fn" in validated && validated.fn) || noop) as TaskFn, // other task types are responsible for overwriting this
     name: key,
     state: TASK_STATES.IDLE,
   };
@@ -119,7 +189,7 @@ export async function execute(task: RadTask) {
           path,
           sh,
           task,
-        }),
+        }, undefined),
       );
       task.state = TASK_STATES.FINISHED_OK;
       return result;

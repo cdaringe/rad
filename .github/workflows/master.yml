@@ -1,0 +1,32 @@
+# @info
+# master & pull_request jobs cannot de-dupe their workflow configuration :(
+# https://github.community/t5/GitHub-Actions/Start-a-workflow-from-another-workflow/td-p/37586
+name: master
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.com/JamesIves/github-pages-deploy-action#getting-started-airplane
+      - name: checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      # https://github.com/denolib/setup-deno
+      - uses: denolib/setup-deno@master
+        with:
+          deno-version: 0.x
+      - name: test
+        run: ./rad test
+      # - name: gh-pages
+      #   run: |
+      #     set -ex
+      #     NODE_DEBUG=gh-pages \
+      #     GH_TOKEN=${{ secrets.GH_TOKEN }} \
+      #     node \
+      #       -r perish \
+      #       -e "require('gh-pages').publish('packages/effects-docs/public', { repo: 'https://' + process.env.GH_TOKEN + '@github.com/effectsjs/effectsjs.git', user: { name: 'cdaringe', email: 'cdaringe@nope.com' } })"

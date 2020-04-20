@@ -4,6 +4,7 @@ export async function sh(
   cmd: string,
   opts?: { encoding?: "utf-8"; ignoreExitCode?: boolean },
 ) {
+  logger.debug(["sh", "-c", cmd].join(" "));
   const proc = Deno.run({
     cmd: ["sh", "-c", cmd],
     stdin: "piped",
@@ -20,18 +21,21 @@ export async function sh(
   if (code != 0 && !opts?.ignoreExitCode) {
     // @todo do better.
     if (!proc.stderr) throw new Error(`stderr not available in sh`);
-    let stderr = await Deno.readAll(proc.stderr);
     let decoder = new TextDecoder("utf-8");
-    let error = decoder.decode(stderr).trim();
-    throw new Error(`non-zero exit code: ${code} ${error}`);
+    let [strOut, strErr] = [stdout, stderr].map((uintarr) =>
+      decoder.decode(uintarr).trim()
+    );
+    throw new Error(
+      `non-zero exit code: ${code}.\nstdout:\n\t${strOut}\nstderr:\n\t${strErr}`,
+    );
   }
   if (!opts?.encoding) {
     if (stdout.length) {
-      logger.info("stdout:\n");
+      logger.debug("stdout:\n");
       await Deno.stdout.write(stdout);
     }
     if (stderr.length) {
-      logger.info("stderr:\n");
+      logger.debug("stderr:\n");
       await Deno.stderr.write(stderr);
     }
     return null;
