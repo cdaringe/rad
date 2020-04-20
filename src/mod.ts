@@ -19,9 +19,9 @@ export async function getRadFilename(radFilename: string) {
     }
     return radFilename;
   }
-  var radFileExists = await Deno.lstat(DEFAULT_RADFILENAME).catch(err => {
-    logger.debug(err)
-    false
+  var radFileExists = await Deno.lstat(DEFAULT_RADFILENAME).catch((err) => {
+    logger.debug(err);
+    false;
   });
   if (!radFileExists) {
     throw new errors.RadMissingRadFile(
@@ -52,5 +52,6 @@ export function createTaskGraph(radness: Radness) {
   if (!radness.tasks) {
     throw new errors.RadNoTasksError("no tasks defined in radfile");
   }
-  return taskGraph.fromTasks(radness.tasks);
+  const graph = taskGraph.fromTasks(radness.tasks);
+  return graph
 }

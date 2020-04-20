@@ -5,5 +5,9 @@ import {
 
 export const glob = (root: string, pattern: string) =>
   walk(root, {
-    match: [path.globToRegExp(pattern)],
+    match: [path.globToRegExp(pattern, {
+      flags: "g",
+      extended: true,
+      globstar: true
+    })],
   });

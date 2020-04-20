@@ -16,7 +16,10 @@ import * as fs from "./util/fs.ts";
 import { sh } from "./util/sh.ts";
 import { timer } from "./util/timer.ts";
 import { glob } from "./util/glob.ts";
-import { WalkEntry } from "https://deno.land/std/fs/walk.ts";const noop = (a: any, b: any) => {};
+import * as iter from "./util/iterable.ts";
+import { WalkEntry } from "https://deno.land/std/fs/walk.ts";
+
+const noop = (a: any, b: any) => {};
 
 export enum TASK_STATES {
   IDLE = "IDLE",
@@ -35,6 +38,7 @@ export type Toolkit = {
   logger: typeof logger;
   path: typeof path;
   task: RadTask;
+  iter: typeof iter;
 };
 export type TaskFn<A2 = undefined> = (
   toolkit: Toolkit,
@@ -72,7 +76,19 @@ export type Makearooni = Dependarooni & {
    * building the target
    */
   prereqs: string[];
-  onMake: TaskFn<{ prereqs: AsyncIterable<WalkEntry> }>;
+  onMake: TaskFn<{
+    /**
+     * prereqs that have been modified since the target has been modified.
+     * all prereqs are hit if the target is missing, phony, or older than
+     * all prereqs.
+     */
+    prereqs: AsyncIterable<WalkEntry>,
+    /**
+     * a sugar function that collects all items in the `prereqs` iterator,
+     * and maps into the filenames for prereq (vs the full file data)
+     */
+    getPrereqs: () => Promise<string[]>
+  }>;
 };
 // make task
 /**
@@ -84,9 +100,9 @@ export type Makearooni = Dependarooni & {
 export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
   task,
 ) => {
-  const { target, onMake, prereqs = [], cwd = Deno.cwd(), ...rest } = task;
+  const { target, onMake, prereqs = [], cwd = ".", ...rest } = task;
   const funcer: Funcarooni = {
-    fn: async (toolkit) => {
+    fn: async function makeTaskFn (toolkit) {
       const targetWalkEntry: WalkEntry = await glob(cwd, target).next().then(({
         value,
       }) => value);
@@ -101,7 +117,7 @@ export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
           }
         }
       }();
-      return onMake(toolkit, { prereqs: prereqsToMake });
+      return onMake(toolkit, { prereqs: prereqsToMake, getPrereqs: () => iter.toArray(prereqsToMake).then(reqs => reqs.map(req => req.filename)) });
     },
     ...rest,
   };
@@ -153,9 +169,7 @@ export function getParialFromUserTask(
     throw new errors.RadInvalidTaskError(`missing task value for key "${key}"`);
   }
   // @todo schema validate
-  const validated: Exclude<Task, string> = typeof value === "string"
-    ? asFuncarooni(value)
-    : value;
+  const validated: Exclude<Task, string> = asFuncarooni(value);
   const task: RadTask = {
     ...validated,
     dependsOn: [],
@@ -186,6 +200,7 @@ export async function execute(task: RadTask) {
           dependentResults,
           fs,
           logger,
+          iter,
           path,
           sh,
           task,
