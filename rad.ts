@@ -6,13 +6,17 @@ const test: Task = {
   target: "phony",
   prereqs: [`test/**.test.ts`],
   async onMake({ sh }, { getPrereqs }) {
-    const testFilenames = await getPrereqs().then(reqs => reqs.join(' '))
+    const testFilenames = await getPrereqs().then((reqs) => reqs.join(" "));
     return sh(`deno test ${testFilenames} -A`);
   },
 };
 
 export const tasks: Radness["tasks"] = {
   ...{ genTypes, g: genTypes },
-  ...{ format, f: format },
-  ...{ test, t: test },
+  ...{ f: format, format },
+  ...{ t: test, test },
+  check: {
+    dependsOn: [format, test],
+    fn: () => {},
+  },
 };

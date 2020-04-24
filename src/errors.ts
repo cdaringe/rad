@@ -1,5 +1,4 @@
 import take from "https://deno.land/x/lodash/take.js";
-import { logger } from "./logger.ts";
 
 export class RadError extends Error {
   public static message?: string;

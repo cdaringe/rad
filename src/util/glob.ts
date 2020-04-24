@@ -8,6 +8,6 @@ export const glob = (root: string, pattern: string) =>
     match: [path.globToRegExp(pattern, {
       flags: "g",
       extended: true,
-      globstar: true
+      globstar: true,
     })],
   });

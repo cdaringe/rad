@@ -3,11 +3,10 @@ import * as errors from "./errors.ts";
 import { Radness, from } from "./Radness.ts";
 // var TaskMake = require('./TaskMake')
 import * as taskGraph from "./TaskGraph.ts";
-import { logger } from "./logger.ts";
-
+import { Logger, WithLogger } from "./logger.ts";
 var DEFAULT_RADFILENAME = path.resolve("rad.ts");
 
-export async function getRadFilename(radFilename: string) {
+export async function getRadFilename({ radFilename, logger }: InitOptions) {
   if (radFilename) {
     radFilename = path.isAbsolute(radFilename)
       ? radFilename
@@ -33,10 +32,10 @@ export async function getRadFilename(radFilename: string) {
 
 export type InitOptions = {
   radFilename: string;
+  logger: Logger;
 };
-export async function init(opts?: InitOptions) {
-  opts = opts || { radFilename: "" };
-  var radFilename = await getRadFilename(opts.radFilename);
+export async function init(opts: InitOptions) {
+  var radFilename = await getRadFilename(opts);
   return import(radFilename).then((mod) => from(mod));
 }
 
@@ -47,11 +46,11 @@ export function createRadfile(targetDirname: string) {
   );
 }
 
-export function createTaskGraph(radness: Radness) {
+export function createTaskGraph(radness: Radness, { logger }: WithLogger) {
   if (!radness) throw new errors.RadError("no radness passed to createGraph");
   if (!radness.tasks) {
     throw new errors.RadNoTasksError("no tasks defined in radfile");
   }
-  const graph = taskGraph.fromTasks(radness.tasks);
-  return graph
+  const graph = taskGraph.fromTasks(radness.tasks, { logger });
+  return graph;
 }

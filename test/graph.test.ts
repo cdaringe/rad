@@ -2,7 +2,7 @@ import { assertEquals, assert } from "https://deno.land/std/testing/asserts.ts";
 import { Radness } from "../src/Radness.ts";
 import { run, fromTasks } from "../src/TaskGraph.ts";
 import { Task } from "../src/Task.ts";
-
+import fixtures from "./fixtures/mod.ts";
 const basicRadness: Radness = {
   tasks: {
     radness_format_test: {
@@ -44,7 +44,8 @@ Deno.test({
   fn: async () => {
     const result = await run({
       name: "radness_format_test",
-      graph: fromTasks(basicRadness.tasks),
+      graph: fromTasks(basicRadness.tasks, fixtures.withTestLogger),
+      ...fixtures.withTestLogger,
     });
     assertEquals(result, 1, "task fn returns result");
   },
@@ -55,7 +56,11 @@ Deno.test({
   fn: async () => {
     const result = await run({
       name: "a",
-      graph: fromTasks(basicRadnessWithDependencies.tasks),
+      graph: fromTasks(
+        basicRadnessWithDependencies.tasks,
+        fixtures.withTestLogger,
+      ),
+      ...fixtures.withTestLogger,
     });
     assertEquals(result, "abcd", "tasks execute in order");
   },
@@ -64,10 +69,14 @@ Deno.test({
 Deno.test({
   name: "tasks builds reports on traversal",
   fn: async () => {
-    const graph = fromTasks(basicRadnessWithDependencies.tasks);
+    const graph = fromTasks(
+      basicRadnessWithDependencies.tasks,
+      fixtures.withTestLogger,
+    );
     const result = await run({
       name: "a",
       graph,
+      ...fixtures.withTestLogger,
     });
     assert(result, "has result");
     Object.values(graph.graph).map((task) => {

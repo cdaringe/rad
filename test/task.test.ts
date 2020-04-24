@@ -7,6 +7,9 @@ import {
 } from "../src/Task.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { toArray } from "../src/util/iterable.ts";
+import fixtures from "./fixtures/mod.ts";
+
+const logster = { logger: await fixtures.getTestLogger() };
 
 Deno.test({
   name: "user task",
@@ -15,7 +18,8 @@ Deno.test({
       fn: () => 1,
     };
     const result = await execute(
-      getParialFromUserTask({ key: "user_task", value: userTask }),
+      getParialFromUserTask({ key: "user_task", value: userTask }, logster),
+      logster,
     );
     assertEquals(result, 1, "task fn returns result");
   },
@@ -51,12 +55,13 @@ Deno.test({
         ++onMakeCallCount;
       },
     };
-    const funcarooni = asFuncarooni(makearooni);
+    const funcarooni = asFuncarooni(makearooni, logster);
     const getTask = () =>
       getParialFromUserTask(
         { key: "user_make_task", value: { ...funcarooni } },
+        logster,
       );
-    await execute(getTask());
+    await execute(getTask(), logster);
     assertEquals(onMakeCallCount, 1);
     // modified time has ~1s resolution. wait at least 1s
     await new Promise((res) => setTimeout(res, 1000));
@@ -64,7 +69,7 @@ Deno.test({
       targetFilename,
       Uint8Array.from("test_change".split("").map((c) => c.charCodeAt(0))),
     );
-    await execute(getTask());
+    await execute(getTask(), logster);
     assertEquals(onMakeCallCount, 2);
   },
 });

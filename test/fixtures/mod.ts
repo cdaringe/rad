@@ -2,7 +2,7 @@ import { copy } from "https://deno.land/std/fs/mod.ts";
 import * as path from "https://deno.land/std/node/path.ts";
 import { Radness } from "../../src/Radness.ts";
 import { mkdirp } from "../../src/util/fs.ts";
-import { logger } from "../../src/logger.ts";
+import { createLogger } from "../../src/logger.ts";
 
 const __dirname = path.dirname(import.meta.url).replace("file://", "");
 
@@ -45,6 +45,8 @@ const mod = {
     var radness: Radness = await import(radFilename);
     return { radFilename, radness };
   },
+  getTestLogger: () => createLogger("CRITICAL"),
+  withTestLogger: { logger: await createLogger("CRITICAL") },
 };
 
 export default mod;

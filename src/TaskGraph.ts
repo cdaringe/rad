@@ -8,17 +8,17 @@ import {
 // var TaskMake = require('./TaskMake')
 import * as errors from "./errors.ts";
 import { Radness } from "./Radness.ts";
-
+import { WithLogger } from "./logger.ts";
 export type TaskGraph = ReturnType<typeof fromTasks>;
 
-export function fromTasks(userTasks: Radness["tasks"]) {
+export function fromTasks(userTasks: Radness["tasks"], { logger }: WithLogger) {
   const userTaskNames = Object.keys(userTasks);
   const userTaskNamesByTask = userTaskNames.reduce((acc, name) => {
     acc.set(userTasks[name], name);
     return acc;
   }, new Map<Task, string>());
   const tasks = userTaskNames.map((key) =>
-    getParialFromUserTask({ key, value: userTasks[key] })
+    getParialFromUserTask({ key, value: userTasks[key] }, { logger })
   );
   const graph: Record<string, RadTask> = tasks.reduce(
     (acc, v) => ({ ...acc, [v.name]: v }),
@@ -27,7 +27,8 @@ export function fromTasks(userTasks: Radness["tasks"]) {
   // dangerously mutate new task memory to swap user input tasks with owned tasks
   userTaskNames.forEach((taskName, i) => {
     const task = graph[taskName];
-    const dependents: Task[] = asFuncarooni(userTasks[taskName])?.dependsOn ||
+    const dependents: Task[] =
+      asFuncarooni(userTasks[taskName], { logger })?.dependsOn ||
       [];
     task.dependsOn = dependents.map(
       (userDependentTask) => {
@@ -53,7 +54,9 @@ export function fromTasks(userTasks: Radness["tasks"]) {
   };
 }
 
-export async function run({ name, graph }: { name: string; graph: TaskGraph }) {
+export async function run(
+  { name, graph, logger }: { name: string; graph: TaskGraph } & WithLogger,
+) {
   var task = graph.graph[name];
   if (!name) {
     throw new errors.RadError(
@@ -61,6 +64,6 @@ export async function run({ name, graph }: { name: string; graph: TaskGraph }) {
     );
   }
   if (!task) throw new errors.RadError(`task "${name}" not found`);
-  var res = await execute(task);
+  var res = await execute(task, { logger });
   return res;
 }

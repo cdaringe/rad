@@ -11,14 +11,14 @@
  */
 import * as path from "https://deno.land/std/node/path.ts";
 import * as errors from "./errors.ts";
-import { logger } from "./logger.ts";
 import * as fs from "./util/fs.ts";
 import { sh } from "./util/sh.ts";
 import { timer } from "./util/timer.ts";
 import { glob } from "./util/glob.ts";
 import * as iter from "./util/iterable.ts";
 import { WalkEntry } from "https://deno.land/std/fs/walk.ts";
-
+import { Logger, WithLogger } from "./logger.ts";
+import { italic, bold } from "https://deno.land/std/fmt/colors.ts";
 const noop = (a: any, b: any) => {};
 
 export enum TASK_STATES {
@@ -35,7 +35,7 @@ export type Toolkit = {
   fs: typeof fs;
   sh: typeof sh;
   dependentResults: any[]; // @todo add _sweet_ generics to unpack dependent result types
-  logger: typeof logger;
+  logger: Logger;
   path: typeof path;
   task: RadTask;
   iter: typeof iter;
@@ -82,12 +82,12 @@ export type Makearooni = Dependarooni & {
      * all prereqs are hit if the target is missing, phony, or older than
      * all prereqs.
      */
-    prereqs: AsyncIterable<WalkEntry>,
+    prereqs: AsyncIterable<WalkEntry>;
     /**
      * a sugar function that collects all items in the `prereqs` iterator,
      * and maps into the filenames for prereq (vs the full file data)
      */
-    getPrereqs: () => Promise<string[]>
+    getPrereqs: () => Promise<string[]>;
   }>;
 };
 // make task
@@ -97,39 +97,52 @@ export type Makearooni = Dependarooni & {
  * dependsOn?: [otherThing]
  */
 
-export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
-  task,
-) => {
-  const { target, onMake, prereqs = [], cwd = ".", ...rest } = task;
-  const funcer: Funcarooni = {
-    fn: async function makeTaskFn (toolkit) {
-      const targetWalkEntry: WalkEntry = await glob(cwd, target).next().then(({
-        value,
-      }) => value);
-      const targetModified = targetWalkEntry?.info?.modified || -1;
-      const prereqsToMake = async function* prereqsToMake() {
-        for (const prereq of prereqs) {
-          for await (const walkEntry of glob(cwd, prereq)) {
-            const { created, modified } = walkEntry.info;
-            const isPrereqChanged =
-              (modified || created || 0) >= targetModified;
-            if (isPrereqChanged) yield walkEntry;
+export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni =
+  (task) => {
+    const { target, onMake, prereqs = [], cwd = ".", ...rest } = task;
+    const funcer: Funcarooni = {
+      fn: async function makeTaskFn(toolkit) {
+        const targetWalkEntry: WalkEntry = await glob(cwd, target).next().then((
+          {
+            value,
+          },
+        ) => value);
+        const targetModified = targetWalkEntry?.info?.modified || -1;
+        const prereqsToMake = async function* prereqsToMake() {
+          for (const prereq of prereqs) {
+            for await (const walkEntry of glob(cwd, prereq)) {
+              const { created, modified } = walkEntry.info;
+              const isPrereqChanged =
+                (modified || created || 0) >= targetModified;
+              if (isPrereqChanged) yield walkEntry;
+            }
           }
-        }
-      }();
-      return onMake(toolkit, { prereqs: prereqsToMake, getPrereqs: () => iter.toArray(prereqsToMake).then(reqs => reqs.map(req => req.filename)) });
-    },
-    ...rest,
+        }();
+        return onMake(
+          toolkit,
+          {
+            prereqs: prereqsToMake,
+            getPrereqs: () =>
+              iter.toArray(prereqsToMake).then((reqs) =>
+                reqs.map((req) => req.filename)
+              ),
+          },
+        );
+      },
+      ...rest,
+    };
+    return funcer;
   };
-  return funcer;
-};
 
-export const asFuncarooni = (task: Task): Funcarooni => {
+export const asFuncarooni = (
+  task: Task,
+  { logger }: WithLogger,
+): Funcarooni => {
   if (typeof task === "string") {
-    return { fn: ({ sh }) => sh(task) } as Funcarooni;
+    return { fn: ({ sh }) => sh(task, { logger }) } as Funcarooni;
   } else if ("cmd" in task) {
     const { cmd, ...rest } = task;
-    return { fn: ({ sh }) => sh(task.cmd), ...rest } as Funcarooni;
+    return { fn: ({ sh }) => sh(task.cmd, { logger }), ...rest } as Funcarooni;
   } else if ("prereqs" in task) {
     return makearooniToFuncarooni(task);
   } else {
@@ -163,13 +176,14 @@ export type RadTask<T = {}> = {
  */
 export function getParialFromUserTask(
   { key, value }: { key: string; value: any },
+  { logger }: WithLogger,
 ): RadTask {
   if (!key) throw new errors.RadInvalidTaskError(`missing task key`);
   if (!value) {
     throw new errors.RadInvalidTaskError(`missing task value for key "${key}"`);
   }
   // @todo schema validate
-  const validated: Exclude<Task, string> = asFuncarooni(value);
+  const validated: Exclude<Task, string> = asFuncarooni(value, { logger });
   const task: RadTask = {
     ...validated,
     dependsOn: [],
@@ -180,15 +194,16 @@ export function getParialFromUserTask(
   return task;
 }
 
-export async function execute(task: RadTask) {
+export async function execute(task: RadTask, { logger }: WithLogger) {
   const dependents = task.dependsOn || [];
   const getTotalDuration = timer();
   const getDependentsDuration = timer();
   if (task.complete) return task.complete;
   task.complete = async function executeToComplete() {
     task.state = TASK_STATES.RUNNING_WAITING_UPSTREAM;
+    logger.info(`${bold(task.name)} ${italic("start")}`);
     const dependentResults: any[] = await Promise.all(
-      dependents.map((dependent) => execute(dependent)),
+      dependents.map((dependent) => execute(dependent, { logger })),
     );
     const dependentsDuration = getDependentsDuration();
     const getActiveDuration = timer();
@@ -202,7 +217,7 @@ export async function execute(task: RadTask) {
           logger,
           iter,
           path,
-          sh,
+          sh: (cmd, opts) => sh(cmd, { logger, ...opts }),
           task,
         }, undefined),
       );
@@ -225,6 +240,14 @@ export async function execute(task: RadTask) {
         },
         message: TASK_STATES.FINISHED_OK ? "ok" : "not ok",
       };
+      const { message, timing: { active, total } } = task.report!;
+      logger.info(
+        `${bold(task.name)} ${italic(
+          "end",
+        )} : ${message} : active ${active} (${((active / total) * 100).toFixed(
+          0,
+        )}%): total ${total} `,
+      );
     }
   }();
   return task.complete!;

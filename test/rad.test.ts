@@ -9,7 +9,12 @@ Deno.test({
   fn: async () => {
     var { dirname } = await fixtures.createTestFolderContext();
     await fixtures.copyContents(fixtures.basicDirname, dirname);
-    var radness = await rad.init({ radFilename: path.join(dirname, "rad.ts") });
+    var radness = await rad.init(
+      {
+        radFilename: path.join(dirname, "rad.ts"),
+        logger: await fixtures.getTestLogger(),
+      },
+    );
     assert(radness.tasks, "tasks found in radfile");
   },
 });
