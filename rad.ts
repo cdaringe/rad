@@ -1,7 +1,7 @@
 import { Radness, Task } from "./src/Radness.ts";
 
 const format: Task = { fn: ({ sh }) => sh(`deno fmt`) };
-const genTypes: Task = `deno types > deno.d.ts`;
+const genDenoTypes: Task = `deno types > deno.d.ts`;
 const test: Task = {
   target: "phony",
   prereqs: [`test/**.test.ts`],
@@ -12,7 +12,7 @@ const test: Task = {
 };
 
 export const tasks: Radness["tasks"] = {
-  ...{ genTypes, g: genTypes },
+  ...{ genDenoTypes, g: genDenoTypes },
   ...{ f: format, format },
   ...{ t: test, test },
   check: {
