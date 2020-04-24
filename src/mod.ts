@@ -39,9 +39,11 @@ export async function init(opts: InitOptions) {
   return import(radFilename).then((mod) => from(mod));
 }
 
-export function createRadfile(targetDirname: string) {
+export function createRadfile(targetDirname: string, { logger }: WithLogger) {
+  const src = path.resolve(import.meta.url.replace("file://", ""), "../../assets/rad.ts");
+  logger.info(`initialing radfile from source: ${src}`)
   return Deno.copyFile(
-    path.resolve(import.meta.url, "../assets/rad.ts"),
+    src,
     path.resolve(targetDirname, "rad.ts"),
   );
 }

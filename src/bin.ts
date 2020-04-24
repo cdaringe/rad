@@ -42,7 +42,7 @@ async function suchRad(args: Args) {
   }
   const logger = await createLogger(args.logLevel);
   var requestedTaskName = last(args._);
-  if (args.init) return rad.createRadfile(Deno.cwd());
+  if (args.init) return rad.createRadfile(Deno.cwd(), { logger });
   var radness = await rad.init({
     radFilename: args.radfile,
     logger,
