@@ -40,8 +40,11 @@ export async function init(opts: InitOptions) {
 }
 
 export function createRadfile(targetDirname: string, { logger }: WithLogger) {
-  const src = path.resolve(import.meta.url.replace("file://", ""), "../../assets/rad.ts");
-  logger.info(`initialing radfile from source: ${src}`)
+  const src = path.resolve(
+    import.meta.url.replace("file://", ""),
+    "../../assets/rad.ts",
+  );
+  logger.info(`initialing radfile from source: ${src}`);
   return Deno.copyFile(
     src,
     path.resolve(targetDirname, "rad.ts"),

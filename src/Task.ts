@@ -97,41 +97,42 @@ export type Makearooni = Dependarooni & {
  * dependsOn?: [otherThing]
  */
 
-export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
-  task,
-) => {
-  const { target, onMake, prereqs = [], cwd = ".", ...rest } = task;
-  const funcer: Funcarooni = {
-    fn: async function makeTaskFn(toolkit) {
-      const targetWalkEntry: WalkEntry = await glob(cwd, target).next().then(({
-        value,
-      }) => value);
-      const targetModified = targetWalkEntry?.info?.modified || -1;
-      const prereqsToMake = async function* prereqsToMake() {
-        for (const prereq of prereqs) {
-          for await (const walkEntry of glob(cwd, prereq)) {
-            const { created, modified } = walkEntry.info;
-            const isPrereqChanged =
-              (modified || created || 0) >= targetModified;
-            if (isPrereqChanged) yield walkEntry;
+export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni =
+  (task) => {
+    const { target, onMake, prereqs = [], cwd = ".", ...rest } = task;
+    const funcer: Funcarooni = {
+      fn: async function makeTaskFn(toolkit) {
+        const targetWalkEntry: WalkEntry = await glob(cwd, target).next().then((
+          {
+            value,
+          },
+        ) => value);
+        const targetModified = targetWalkEntry?.info?.modified || -1;
+        const prereqsToMake = async function* prereqsToMake() {
+          for (const prereq of prereqs) {
+            for await (const walkEntry of glob(cwd, prereq)) {
+              const { created, modified } = walkEntry.info;
+              const isPrereqChanged =
+                (modified || created || 0) >= targetModified;
+              if (isPrereqChanged) yield walkEntry;
+            }
           }
-        }
-      }();
-      return onMake(
-        toolkit,
-        {
-          prereqs: prereqsToMake,
-          getPrereqs: () =>
-            iter.toArray(prereqsToMake).then((reqs) =>
-              reqs.map((req) => req.filename)
-            ),
-        },
-      );
-    },
-    ...rest,
+        }();
+        return onMake(
+          toolkit,
+          {
+            prereqs: prereqsToMake,
+            getPrereqs: () =>
+              iter.toArray(prereqsToMake).then((reqs) =>
+                reqs.map((req) => req.filename)
+              ),
+          },
+        );
+      },
+      ...rest,
+    };
+    return funcer;
   };
-  return funcer;
-};
 
 export const asFuncarooni = (
   task: Task,
