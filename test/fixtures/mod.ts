@@ -1,7 +1,7 @@
 import { copy } from "https://deno.land/std/fs/mod.ts";
 import * as path from "https://deno.land/std/node/path.ts";
 import { Radness } from "../../src/Radness.ts";
-import { mkdirp } from "../../src/util/fs.ts";
+import { WithFsU } from "../../src/util/fs.ts";
 import { createLogger } from "../../src/logger.ts";
 
 const __dirname = path.dirname(import.meta.url).replace("file://", "");
@@ -28,12 +28,12 @@ const mod = {
       );
     }
   },
-  async createTestFolderContext() {
+  async createTestFolderContext({ fsU }: WithFsU) {
     var dirname = path.join(
       await Deno.makeTempDir(),
       `rad-${Math.random().toString().substr(3, 5)}`,
     );
-    await mkdirp(dirname);
+    await fsU.mkdirp(dirname);
     return { dirname };
   },
   async destroyTestFolderContext(context: Context) {

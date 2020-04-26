@@ -1,16 +1,32 @@
-export async function readFile(filename: string, type?: string) {
-  return new TextDecoder(type || "utf-8").decode(
-    await Deno.readFile(filename),
-  );
-}
+import { WithLogger } from "../logger.ts";
 
-export async function writeFile(filename: string, data: any) {
-  const encoder = new TextEncoder();
-  return Deno.writeFileSync(filename, encoder.encode(data));
-}
+export const createFsUtil = ({ logger }: WithLogger) => {
+  async function readFile(filename: string, type?: string) {
+    logger.debug(`read file: ${filename}`);
+    return new TextDecoder(type || "utf-8").decode(
+      await Deno.readFile(filename),
+    );
+  }
 
-export async function mkdirp(filename: string, opts?: any) {
-  const recursiveOpts = opts || {};
-  recursiveOpts.recursive = true;
-  return Deno.mkdir(filename, recursiveOpts);
-}
+  async function writeFile(filename: string, data: any) {
+    logger.debug(`write file: ${filename}`);
+    const encoder = new TextEncoder();
+    return Deno.writeFileSync(filename, encoder.encode(data));
+  }
+
+  async function mkdirp(filename: string, opts?: any) {
+    const recursiveOpts = opts || {};
+    recursiveOpts.recursive = true;
+    logger.debug(`mkdirp: ${filename}`);
+    return Deno.mkdir(filename, recursiveOpts);
+  }
+
+  return {
+    readFile,
+    writeFile,
+    mkdirp,
+  };
+};
+
+export type FsUtil = ReturnType<typeof createFsUtil>;
+export type WithFsU = { fsU: FsUtil };

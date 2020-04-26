@@ -32,7 +32,7 @@ export type TaskState = keyof typeof TASK_STATES;
 
 export type Toolkit = {
   Deno: typeof Deno;
-  fs: typeof fs;
+  fs: fs.FsUtil;
   sh: typeof sh;
   dependentResults: any[]; // @todo add _sweet_ generics to unpack dependent result types
   logger: Logger;
@@ -231,7 +231,7 @@ export async function execute(task: RadTask, { logger }: WithLogger) {
         task.fn({
           Deno,
           dependentResults,
-          fs,
+          fs: fs.createFsUtil({ logger }),
           logger,
           iter,
           path,
