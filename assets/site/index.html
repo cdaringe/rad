@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>rad - general purpose, typed build tools</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism-okaidia.min.css" rel="stylesheet" />
+<style>
+/**
+ * override okaidia bogus operator
+ */
+.token.operator {
+ background-color: transparent !important;
+}
+html, body {
+  height: 100%;
+  margin: 0;
+}
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:800);
+.baby-rad {
+  transition: all 5s;
+}
+svg text {
+  fill: white;
+  stroke-width: 1;
+  stroke: beige;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: #303030;
+  color: white;
+}
+div.content {
+  margin: auto;
+  max-width: 800px;
+  padding: 1em;
+}
+svg {
+  background: #303030;
+  font: 5em/1 Open Sans, Impact;
+  text-transform: uppercase;
+  margin: 0;
+  width: 100%;
+  height: 300px;
+}
+#big_baby {
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<svg id=radness viewBox="0 0 800 300">
+  <symbol id="repeatme">
+    <text text-anchor="middle" x="0" y="0" dx='1em' dy="1em">RAD</text>
+  </symbol>
+  <g id="repeats" />
+  <use class="text" xlink:href="#big_baby" />
+  <symbol id="big_baby">
+    <text text-anchor="middle" x="85%" y="80%" dy=".35em">RAD</text>
+  </symbol>
+</svg>
+<div class='content'>
+  bodybody
+</div>
+<script>
+  function paintBabies () {
+    let max_rads = 50
+    const [w, h] = [ 800, 300 ]
+    const center = [w/2, h/2]
+    var group = document.getElementById("repeats")
+    const xforms = []
+    const getTranslateProposal = () => [(Math.random() * w *.85), (h * Math.random())]
+    const distance = ([a,b], [x, y]) => Math.sqrt(
+      Math.pow(a - x, 2) + Math.pow(b - y, 2)
+    )
+    const walk = ([a,b], [stepX, stepY] = [10, 30]) => [
+      a + ((Math.random()) + stepX) * (Math.random() > 0.5 ? 1 : -1),
+      b + ((1 + Math.random()) + stepY) * (Math.random() > 0.5 ? 1 : -1),
+    ]
+    let i = max_rads
+    while (i) {
+      let translate = getTranslateProposal()
+      while (distance(translate, [700, 280]) < 190) translate = walk(translate)
+      xforms.push({
+        translate,
+        rotate: [360 * Math.random()],
+      })
+      --i
+    }
+    const getTransformString = ({ translate, rotate }) => `translate(${translate.join(' ')}) rotate(${rotate.join(' ')}) scale(0.5)`
+    if (group.innerHTML) {
+      var babies = Array.from(group.children)
+      xforms.forEach((xform, i) => { babies[i].setAttribute('transform', getTransformString(xform)) })
+    } else {
+     group.innerHTML= xforms.map((xform, i) => `
+      <use id='baby_${i}' class='text baby-rad' xlink:href="#repeatme"
+        transform="${getTransformString(xform)}"
+      />
+    `).join('')
+    }
+  }
+  paintBabies()
+  setTimeout(() => {
+    window.requestAnimationFrame(paintBabies)
+  }, 500) // gimme one eager animation ;)
+  setInterval(paintBabies, 60000)
+  document.getElementById('big_baby').addEventListener('click', paintBabies)
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

@@ -10,6 +10,7 @@ const site: Task = {
   target: "./index.html",
   prereqs: ["assets/site/**/*.{html,md}"],
   onMake: async ({ fs }, { getPrereqFilenames }) => {
+    await fs.mkdirp('public')
     const filenames = await getPrereqFilenames();
     const { html, md } = filenames.reduce(({ html, md }, filename) => ({
       html: filename.match(/html$/) ? [filename, ...html] : html,
@@ -28,7 +29,7 @@ const site: Task = {
       [fs.readFile(html[0]), ...mdContentsP],
     );
     await fs.writeFile(
-      "./index.html",
+      "./public/index.html",
       index.replace(/bodybody/g, sections.join("\n")),
     );
   },

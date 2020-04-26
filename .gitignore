@@ -10,4 +10,4 @@ coverage
 build
 src/3p/*
 !src/3p/*.ts
-index.html
+public
