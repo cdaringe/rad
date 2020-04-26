@@ -9,8 +9,9 @@ const test: Task = `deno test -A`;
 const site: Task = {
   target: "./index.html",
   prereqs: ["assets/site/**/*.{html,md}"],
-  onMake: async ({ fs }, { getPrereqFilenames }) => {
+  onMake: async ({ fs, logger }, { getPrereqFilenames }) => {
     await fs.mkdirp("public");
+    logger.info("collecting prereq filenames");
     const filenames = await getPrereqFilenames();
     const { html, md } = filenames.reduce(({ html, md }, filename) => ({
       html: filename.match(/html$/) ? [filename, ...html] : html,
@@ -25,13 +26,16 @@ const site: Task = {
     const mdContentsP = ["./readme.md", ...md].map(async (f) =>
       marked(await fs.readFile(f))
     );
+    logger.info(`reading site inputs`);
     const [index, ...sections] = await Promise.all(
       [fs.readFile(html[0]), ...mdContentsP],
     );
+    logger.info(`writing index.html`);
     await fs.writeFile(
       "./public/index.html",
       index.replace(/bodybody/g, sections.join("\n")),
     );
+    logger.info(`fin`);
   },
 };
 
