@@ -3,6 +3,8 @@
 **/*.rs.bk
 Cargo.lock
 node_modules
+package.json
+package-lock.json
 coverage
 .nyc_output
 **/*.log
