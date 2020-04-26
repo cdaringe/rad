@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>rad - general purpose, typed build tools</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism-okaidia.min.css" rel="stylesheet" />
+<style>
+/**
+ * override okaidia bogus operator
+ */
+.token.operator {
+ background-color: transparent !important;
+}
+html, body {
+  height: 100%;
+  margin: 0;
+}
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:800);
+.baby-rad {
+  transition: all 5s;
+}
+svg text {
+  fill: white;
+  stroke-width: 1;
+  stroke: beige;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: #303030;
+  color: white;
+}
+div.content {
+  margin: auto;
+  max-width: 800px;
+  padding: 1em;
+}
+svg {
+  background: #303030;
+  font: 5em/1 Open Sans, Impact;
+  text-transform: uppercase;
+  margin: 0;
+  width: 100%;
+  height: 300px;
+}
+#big_baby {
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<svg id=radness viewBox="0 0 800 300">
+  <symbol id="repeatme">
+    <text text-anchor="middle" x="0" y="0" dx='1em' dy="1em">RAD</text>
+  </symbol>
+  <g id="repeats" />
+  <use class="text" xlink:href="#big_baby" />
+  <symbol id="big_baby">
+    <text text-anchor="middle" x="85%" y="80%" dy=".35em">RAD</text>
+  </symbol>
+</svg>
+<div class='content'>
+  <h1 id="rad-💯">rad 💯</h1>
+<p>a general purpose build tool.</p>
+<h2 id="usage">usage</h2>
+<p><code>$ rad &lt;task-name&gt; [--help]</code></p>
+<pre><code class="language-ts">// rad.ts - your buildfile
+const format = `prettier --write`
+const test = `deno test`
+const build = {
+  dependsOn: [format],
+  fn({ sh }) =&gt; sh(&#39;tsc&#39;)
+}
+export const tasks = {
+  build,
+  format,
+  test
+}</code></pre>
+<h2 id="install">install</h2>
+<p>there are a few formal ways to use <code>rad</code>:</p>
+<table>
+<thead>
+<tr>
+<th>usage</th>
+<th>method</th>
+<th>steps</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>cli</td>
+<td><code>deno</code></td>
+<td><code>deno install rad https://github.com/cdaringe/rad/blob/master/src/bin.ts</code></td>
+</tr>
+<tr>
+<td>docker</td>
+<td><code>docker</code></td>
+<td><code>docker pull cdaringe/rad</code> <sup>1</sup></td>
+</tr>
+<tr>
+<td>library</td>
+<td><code>deno</code></td>
+<td><code>import * as rad from https://github.com/cdaringe/rad/blob/master/src/mod.ts</code></td>
+</tr>
+</tbody></table>
+<p><sup>1</sup>For docker users, consider making a nice shell alias</p>
+<pre><code class="language-sh"># shell profile, e.g. .bash_profile
+function rad() {
+  docker run --rm -v $PWD:/rad cdaringe/rad &quot;$@&quot;;
+}</code></pre>
+<h2 id="what-is-it">what is it</h2>
+<ul>
+<li>bottom-up, <code>make</code>-style build targets<ul>
+<li>fast builds, skip redundant tasks when inputs haven&#39;t changed!</li>
+</ul>
+</li>
+<li>pipeline style builds<ul>
+<li>easy to understand, declarative build steps</li>
+</ul>
+</li>
+<li>highly portable. build automation for <em>any</em> language or project, in many environments</li>
+<li>generic package management</li>
+<li>great UX is priority 1 (after priorities 0.33 works, 0.66 correct, &amp; 0.99 fast-enough :))</li>
+</ul>
+<h2 id="why">why</h2>
+<p>no build tools in <del>2018</del> <del>2019</del> 2020 have a complete feature set that the average polyglot programmer needs without coercing it or piling on extraneous complexity.</p>
+<p>see <a href="./why-not.md">why not just use <my-favorite-build-tool></a></p>
+<h2 id="features">features</h2>
+<ul>
+<li>stop using <code>make</code> and <code>bash</code>.  use a modern syntax and a real scripting language<ul>
+<li><code>&lt;ref to why bash is not fit for general purpose scripting&gt;</code></li>
+</ul>
+</li>
+<li>no DSL. your <strong>build is code</strong>--tasks are POJOs with a verified interface</li>
+<li>debuggable. :bug: halt the runtime, inspect your data, tasks, or even <em>rad</em> itself</li>
+<li>beautiful.</li>
+<li>take it anywhere.<ul>
+<li>osx, linux, windows!<ul>
+<li>help us support other architectures</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no dependencies.<ul>
+<li>e.g. you don&#39;t need bash, or java, this lib, that lib, etc.  we bundle everything we need,
+courtesy of <code>deno bundle</code>!</li>
+</ul>
+</li>
+</ul>
+
+<h1 id="why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</h1>
+<p>your build tool is probably great. keep using it if you love it.
+the intent here it not to dump on anyone or any tool, but articulate feature gaps.</p>
+<table>
+<thead>
+<tr>
+<th>tool</th>
+<th>DSL-less</th>
+<th>static types</th>
+<th>standalone</th>
+<th>polyglot</th>
+<th>incremental</th>
+<th>debuggable</th>
+<th>beautiful</th>
+<th>dependency manager</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bazel</td>
+<td></td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>gradle</td>
+<td></td>
+<td>✓ (kinda)</td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>gulp/grunt</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>make</td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>rad</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>ant, scons, ninja, etc were omitted. haven&#39;t used &#39;em!</p>
+
+<h1 id="rad">rad</h1>
+<p>so this is a site huh?</p>
+
+</div>
+<script>
+  function paintBabies () {
+    let max_rads = 50
+    const [w, h] = [ 800, 300 ]
+    const center = [w/2, h/2]
+    var group = document.getElementById("repeats")
+    const xforms = []
+    const getTranslateProposal = () => [(Math.random() * w *.85), (h * Math.random())]
+    const distance = ([a,b], [x, y]) => Math.sqrt(
+      Math.pow(a - x, 2) + Math.pow(b - y, 2)
+    )
+    const walk = ([a,b], [stepX, stepY] = [10, 30]) => [
+      a + ((Math.random()) + stepX) * (Math.random() > 0.5 ? 1 : -1),
+      b + ((1 + Math.random()) + stepY) * (Math.random() > 0.5 ? 1 : -1),
+    ]
+    let i = max_rads
+    while (i) {
+      let translate = getTranslateProposal()
+      while (distance(translate, [700, 280]) < 190) translate = walk(translate)
+      xforms.push({
+        translate,
+        rotate: [360 * Math.random()],
+      })
+      --i
+    }
+    const getTransformString = ({ translate, rotate }) => `translate(${translate.join(' ')}) rotate(${rotate.join(' ')}) scale(0.5)`
+    if (group.innerHTML) {
+      var babies = Array.from(group.children)
+      xforms.forEach((xform, i) => { babies[i].setAttribute('transform', getTransformString(xform)) })
+    } else {
+     group.innerHTML= xforms.map((xform, i) => `
+      <use id='baby_${i}' class='text baby-rad' xlink:href="#repeatme"
+        transform="${getTransformString(xform)}"
+      />
+    `).join('')
+    }
+  }
+  paintBabies()
+  setTimeout(() => {
+    window.requestAnimationFrame(paintBabies)
+  }, 500) // gimme one eager animation ;)
+  setInterval(paintBabies, 60000)
+  document.getElementById('big_baby').addEventListener('click', paintBabies)
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>
