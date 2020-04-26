@@ -33,10 +33,14 @@ there are a few formal ways to use `rad`:
 
 
 <sup>1</sup>For docker users, consider making a nice shell alias
+
 ```sh
 # shell profile, e.g. .bash_profile
-function rad() { docker run --rm -v $PWD:/rad cdaringe/rad "$@" }
+function rad() {
+  docker run --rm -v $PWD:/rad cdaringe/rad "$@";
+}
 ```
+
 ## what is it
 
 - bottom-up, `make`-style build targets
