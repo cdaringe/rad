@@ -6,12 +6,14 @@ import { last } from "./util/last.ts";
 import { createLogger, Logger } from "./logger.ts";
 import { execute } from "./Task.ts";
 import { Task } from "./Radness.ts";
+import { asTree } from "./TaskGraph.ts";
 
 const flags = {
   alias: {
     "help": ["h"],
     "radfile": ["r"],
     "log-level": ["l"],
+    "print-graph": ["p"],
     "init": [],
     "list": [],
   },
@@ -28,16 +30,19 @@ rad: a general-purpose, typed & portable build tool.
      $ rad <task-name> [flags]
 
    Options
-    --init  create a new rad file template in current working directory
-    --radfile, -r  path/to/rad.ts
     --help, -h  this very help menu
+    --init  create a new rad file template in current working directory
     --log-level, -l log level (debug,info,warning,error,critical)
+    --print-graph  print task graph(s). use task-name arg to print a singular graph
+    --radfile, -r  path/to/rad.ts
     --tasks  list tasks
 
    Examples
      $ rad
-     $ rad -r /path/to/rad.ts
-     $ rad -l info test
+     $ rad --help
+     $ rad --radfile /path/to/rad.ts
+     $ rad --log-level info test
+     $ rad check --print-graph
 `;
 
 export function assertFlags(userFlags: { [key: string]: any }) {
@@ -94,10 +99,13 @@ export async function suchRad(args: Args): Promise<RadExecResult> {
     radFilename: args.radfile || args.r,
     logger,
   });
-
   var tree = rad.createTaskGraph(radness, { logger });
   if (args.list) {
     console.log(`${Object.keys(tree.graph).sort().join("\n")}`);
+    return {};
+  }
+  if (args["print-graph"] || args.p) {
+    console.log(asTree({ logger, graph: tree, taskName }));
     return {};
   }
   if (!taskName) throw new errors.RadError(`no task name provided`);

@@ -8,7 +8,38 @@ import {
 import * as errors from "./errors.ts";
 import { Radness } from "./Radness.ts";
 import { WithLogger } from "./logger.ts";
+import { asTree as treeifyAsTree } from "./3p/treeify.js";
+
 export type TaskGraph = ReturnType<typeof fromTasks>;
+
+type TreeifyNode = { [key: string]: TreeifyNode } | null;
+
+export const addTreeNode = (task: RadTask) => {
+  if (!task.dependsOn) return null;
+  const subTree: TreeifyNode = {};
+  for (const dep of task.dependsOn) subTree[dep.name] = addTreeNode(dep);
+  return subTree;
+};
+export const graphToTreeifyGraph = ({ graph: { graph }, taskName, logger }: {
+  graph: TaskGraph;
+  taskName?: string;
+} & WithLogger) => {
+  const taskNames = taskName ? [taskName] : Object.keys(graph);
+  const tree: Required<TreeifyNode> = {};
+  for (const name of taskNames) {
+    const task = graph[name];
+    if (!task) throw new errors.RadError(`unable to find task ${name}`);
+    tree[name] = addTreeNode(task);
+  }
+  return tree;
+};
+
+export const asTree = ({ graph, logger, taskName }: {
+  graph: TaskGraph;
+  taskName?: string;
+}
+  & WithLogger) =>
+  treeifyAsTree(graphToTreeifyGraph({ graph, logger, taskName }));
 
 export function fromTasks(userTasks: Radness["tasks"], { logger }: WithLogger) {
   const userTaskNames = Object.keys(userTasks);
