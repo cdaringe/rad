@@ -39,12 +39,11 @@ const site: Task = {
   },
 };
 
+const check: Task = { dependsOn: [format, test] };
+
 export const tasks: Radness["tasks"] = {
   ...{ f: format, format },
   ...{ t: test, test },
   ...{ s: site, site },
-  check: {
-    dependsOn: [format, test],
-    fn: () => {},
-  },
+  ...{ c: check, check },
 };

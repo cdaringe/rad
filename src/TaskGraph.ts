@@ -5,7 +5,6 @@ import {
   Task,
   asFuncarooni,
 } from "./Task.ts";
-// var TaskMake = require('./TaskMake')
 import * as errors from "./errors.ts";
 import { Radness } from "./Radness.ts";
 import { WithLogger } from "./logger.ts";
@@ -46,10 +45,8 @@ export function fromTasks(userTasks: Radness["tasks"], { logger }: WithLogger) {
       },
     );
   });
-  // const roots: Task[] = tasks.filter(task => !task.dependsOn)
   return {
     graph,
-    // roots,
     tasks,
   };
 }
