@@ -39,7 +39,10 @@ Deno.test({
       await suchRad({ _: ["missing-task"], r: radFilename });
     }, RadError, "no task");
     await assertThrowsAsync(async () => {
-      await suchRad({ _: ["docs"], r: radFilename, potoates: true });
+      await suchRad({ _: ["docs"], r: radFilename, potoates: {} });
+    }, RadError, "expected string");
+    await assertThrowsAsync(async () => {
+      await suchRad({ _: ["docs"], r: radFilename, potoates: "veggie" });
     }, RadError, "invalid CLI");
     const res = await suchRad({ _: ["docs"], r: radFilename });
     assertEquals(res!.taskName, "docs");

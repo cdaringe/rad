@@ -13,6 +13,7 @@ const flags = {
     "radfile": ["r"],
     "log-level": ["l"],
     "init": [],
+    "list": [],
   },
   boolean: [
     "help",
@@ -31,6 +32,7 @@ rad: a general-purpose, typed & portable build tool.
     --radfile, -r  path/to/rad.ts
     --help, -h  this very help menu
     --log-level, -l log level (debug,info,warning,error,critical)
+    --tasks  list tasks
 
    Examples
      $ rad
@@ -42,7 +44,24 @@ export function assertFlags(userFlags: { [key: string]: any }) {
   const aliases = Object.values(flags.alias).flatMap((i) => i);
   const fullFlags = Object.keys(flags.alias);
   const permitted = [...aliases, ...fullFlags];
-  const present = new Set(Object.keys(userFlags));
+  const flagNames = Object.keys(userFlags);
+  const present = new Set(flagNames);
+  const nonStringyFlags = flagNames.reduce((acc, flagName) => {
+    const typename = typeof userFlags[flagName];
+    return [
+      ...acc,
+      ...((typename === "string" || typename === "boolean")
+        ? []
+        : [[flagName, typename]]),
+    ];
+  }, [] as string[][]);
+  if (nonStringyFlags.length) {
+    throw new errors.RadError(
+      `expected string or boolean values for flag: ${JSON.stringify(
+        nonStringyFlags,
+      )}`,
+    );
+  }
   permitted.forEach((key) => present.delete(key));
   if (present.size) {
     throw new errors.RadError(
@@ -77,6 +96,10 @@ export async function suchRad(args: Args): Promise<RadExecResult> {
   });
 
   var tree = rad.createTaskGraph(radness, { logger });
+  if (args.list) {
+    console.log(`${Object.keys(tree.graph).sort().join("\n")}`);
+    return {};
+  }
   if (!taskName) throw new errors.RadError(`no task name provided`);
   const task = tree.graph[taskName];
   if (!task) throw new errors.RadError(`no task "${taskName}" found`);

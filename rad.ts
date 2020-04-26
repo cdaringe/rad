@@ -43,6 +43,7 @@ const check: Task = { dependsOn: [format, test] };
 
 export const tasks: Radness["tasks"] = {
   ...{ f: format, format },
+  banana: `echo yum`,
   ...{ t: test, test },
   ...{ s: site, site },
   ...{ c: check, check },
