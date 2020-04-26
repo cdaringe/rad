@@ -9,9 +9,10 @@ export type WithLogger = { logger: DenoLogger };
 export type Logger = DenoLogger;
 
 export async function createLogger(level: LevelName = "WARNING") {
+  const nextLevel = level.toUpperCase() as LevelName;
   await log.setup({
     handlers: {
-      console: new log.handlers.ConsoleHandler(level, {
+      console: new log.handlers.ConsoleHandler(nextLevel, {
         formatter: (info) => {
           return `${blue("[rad]")} ${format(
             info.datetime,
@@ -25,7 +26,7 @@ export async function createLogger(level: LevelName = "WARNING") {
     },
     loggers: {
       rad: {
-        level,
+        level: nextLevel,
         handlers: ["console"],
       },
     },

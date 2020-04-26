@@ -10,7 +10,7 @@ const site: Task = {
   target: "./index.html",
   prereqs: ["assets/site/**/*.{html,md}"],
   onMake: async ({ fs }, { getPrereqFilenames }) => {
-    await fs.mkdirp('public')
+    await fs.mkdirp("public");
     const filenames = await getPrereqFilenames();
     const { html, md } = filenames.reduce(({ html, md }, filename) => ({
       html: filename.match(/html$/) ? [filename, ...html] : html,
