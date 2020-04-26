@@ -7,9 +7,7 @@ import { createFsUtil } from "../src/util/fs.ts";
 Deno.test({
   name: "fixtures",
   fn: async () => {
-    var { dirname } = await fixtures.createTestFolderContext(
-      { fsU: createFsUtil(fixtures.withTestLogger) },
-    );
+    var { dirname } = await fixtures.createTestFolderContext();
     await fixtures.copyContents(fixtures.basicDirname, dirname);
     var radness = await rad.init(
       {

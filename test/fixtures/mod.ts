@@ -1,7 +1,7 @@
 import { copy } from "https://deno.land/std/fs/mod.ts";
 import * as path from "https://deno.land/std/node/path.ts";
 import { Radness } from "../../src/Radness.ts";
-import { WithFsU } from "../../src/util/fs.ts";
+import { createFsUtil } from "../../src/util/fs.ts";
 import { createLogger } from "../../src/logger.ts";
 
 const __dirname = path.dirname(import.meta.url).replace("file://", "");
@@ -9,6 +9,8 @@ const __dirname = path.dirname(import.meta.url).replace("file://", "");
 export type Context = {
   dirname: string;
 };
+
+const getTestLogger = () => createLogger("CRITICAL");
 
 const mod = {
   basicDirname: path.resolve(__dirname, "basic"),
@@ -28,13 +30,13 @@ const mod = {
       );
     }
   },
-  async createTestFolderContext({ fsU }: WithFsU) {
+  async createTestFolderContext() {
     var dirname = path.join(
       await Deno.makeTempDir(),
       `rad-${Math.random().toString().substr(3, 5)}`,
     );
-    await fsU.mkdirp(dirname);
-    return { dirname };
+    await createFsUtil({ logger: await getTestLogger() }).mkdirp(dirname);
+    return { dirname, radFilename: path.join(dirname, "rad.ts") };
   },
   async destroyTestFolderContext(context: Context) {
     return Deno.remove(context.dirname);
@@ -45,8 +47,8 @@ const mod = {
     var radness: Radness = await import(radFilename);
     return { radFilename, radness };
   },
-  getTestLogger: () => createLogger("CRITICAL"),
-  withTestLogger: { logger: await createLogger("CRITICAL") },
+  getTestLogger,
+  withTestLogger: { logger: await getTestLogger() },
 };
 
 export default mod;

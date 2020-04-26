@@ -1,22 +1,17 @@
-// import { UserTasks } from "../../../src/Task.ts"
-// export const tasks: UserTasks = {
-export const tasks: any = {
+import { Radness } from "https://raw.githubusercontent.com/cdaringe/rad/master/src/Radness.ts";
+
+export const tasks: Radness["tasks"] = {
   docs: {
-    fn: async function makeDocs(opts: any) {
-      const input = "./doc.md";
-      const output = "./build/dummy.md";
-      var { Deno, fs, path } = opts;
-      var content = (await Deno.readFile("./doc.md")).toString();
-      content += `\nCreated on ${new Date().toISOString()}`;
-      await fs.mkdirp(path.dirname(output));
-      await fs.writeFile(output, content);
+    fn: async function makeDocs({ logger, path, fs }) {
+      // const __dirname = import.meta.url.replace('file://', '')
+      // const input = path.join(__dirname, "./doc.md");
+      // const output = path.join(__dirname, "./build/dummy.md");
+      // logger.info(`reading ${input}`)
+      // var content = (await fs.readFile(input)).toString();
+      // content += `\nCreated on ${new Date().toISOString()}`;
+      // logger.info(`writing ${output}`)
+      // await fs.mkdirp(path.dirname(output));
+      // await fs.writeFile(output, content);
     },
   },
-  // bundle: {
-  //   input: './build/dummy.md',
-  //   output: './build/bundle.zip',
-  //   dependsOn: ['docs'],
-  //   cmd: opts => `zip build/${opts.task.output} build/${opts.dependsOn.docs.output}`
-  // }
-  // }
 };

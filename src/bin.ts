@@ -3,8 +3,9 @@ import * as errors from "./errors.ts";
 import * as rad from "./mod.ts";
 import { parse, Args } from "https://deno.land/std/flags/mod.ts";
 import { last } from "./util/last.ts";
-import { createLogger } from "./logger.ts";
+import { createLogger, Logger } from "./logger.ts";
 import { execute } from "./Task.ts";
+import { Task } from "./Radness.ts";
 
 const flags = {
   alias: {
@@ -50,15 +51,26 @@ export function assertFlags(userFlags: { [key: string]: any }) {
   }
 }
 
-async function suchRad(args: Args) {
+export type RadExecResult = {
+  task?: Task;
+  taskName?: string;
+  result?: any;
+  logger?: Logger;
+};
+
+export async function suchRad(args: Args): Promise<RadExecResult> {
   if (args.help || args.h) {
-    return console.info(helpText);
+    console.info(helpText);
+    return {};
   }
   const { _, ...flags } = args;
   assertFlags(flags);
   const logger = await createLogger(args["log-level"] || args.l);
-  var taskName = last(args._);
-  if (args.init) return rad.createRadfile(Deno.cwd());
+  if (args.init) {
+    await rad.createRadfile(Deno.cwd());
+    return {};
+  }
+  var taskName = last(args._) as string;
   var radness = await rad.init({
     radFilename: args.radfile || args.r,
     logger,
@@ -69,7 +81,13 @@ async function suchRad(args: Args) {
   const task = tree.graph[taskName];
   if (!task) throw new errors.RadError(`no task "${taskName}" found`);
   logger.info(`executing task: "${taskName}"`);
-  await execute(task, { logger });
+  const result = await execute(task, { logger });
+  return {
+    task,
+    taskName,
+    result,
+    logger,
+  };
 }
 
 if (import.meta.main) suchRad(parsed).catch(errors.onFail);
