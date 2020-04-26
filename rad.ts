@@ -3,8 +3,8 @@ import "https://cdn.jsdelivr.net/npm/marked/marked.min.js";
 import { basename } from "https://deno.land/std/path/posix.ts";
 
 const marked = (window as any).marked;
+
 const format: Task = { fn: ({ sh }) => sh(`deno fmt`) };
-const genTypes: Task = `deno types > deno.d.ts`;
 const test: Task = `deno test -A`;
 const site: Task = {
   target: "./index.html",
@@ -23,10 +23,10 @@ const site: Task = {
             : 0,
       ),
     }), { html: [] as string[], md: [] as string[] });
+    logger.info(`reading site inputs`);
     const mdContentsP = ["./readme.md", ...md].map(async (f) =>
       marked(await fs.readFile(f))
     );
-    logger.info(`reading site inputs`);
     const [index, ...sections] = await Promise.all(
       [fs.readFile(html[0]), ...mdContentsP],
     );
@@ -40,10 +40,9 @@ const site: Task = {
 };
 
 export const tasks: Radness["tasks"] = {
-  ...{ genTypes, g: genTypes },
   ...{ f: format, format },
   ...{ t: test, test },
-  site,
+  ...{ s: site, site },
   check: {
     dependsOn: [format, test],
     fn: () => {},
