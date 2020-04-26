@@ -6,16 +6,17 @@ import { last } from "./util/last.ts";
 import { createLogger } from "./logger.ts";
 import { execute } from "./Task.ts";
 
-const parsed = parse(Deno.args, {
+const flags = {
   alias: {
     "help": ["h"],
     "radfile": ["r"],
-    "logLevel": ["l"],
+    "log-level": ["l"],
   },
   boolean: [
     "help",
   ],
-});
+};
+const parsed = parse(Deno.args);
 
 const helpText = `
 rad: a general-purpose, typed & portable build tool.
@@ -28,20 +29,34 @@ rad: a general-purpose, typed & portable build tool.
      --radfile, -r  path/to/rad.ts
      --init, create  a default rad.ts
      --help, -h  this very help menu
-     --log-level, -l log leve (debug,info,warning,error,critical)
+     --log-level, -l log level (debug,info,warning,error,critical)
 
    Examples
      $ rad
      $ rad -r /path/to/rad.ts
-
 `;
+
+export function assertFlags(userFlags: { [key: string]: any }) {
+  const aliases = Object.values(flags.alias).flatMap((i) => i);
+  const fullFlags = Object.keys(flags.alias);
+  const permitted = [...aliases, ...fullFlags];
+  const present = new Set(Object.keys(userFlags));
+  permitted.forEach((key) => present.delete(key));
+  if (present.size) {
+    throw new errors.RadError(
+      `invalid CLI args detected: ${Array.from(present).join(", ")}`,
+    );
+  }
+}
 
 async function suchRad(args: Args) {
   if (args.help || args.h) {
     return console.info(helpText);
   }
+  const { _, ...flags } = args;
+  assertFlags(flags);
   const logger = await createLogger(args.logLevel);
-  var requestedTaskName = last(args._);
+  var taskName = last(args._);
   if (args.init) return rad.createRadfile(Deno.cwd());
   var radness = await rad.init({
     radFilename: args.radfile,
@@ -49,11 +64,10 @@ async function suchRad(args: Args) {
   });
 
   var tree = rad.createTaskGraph(radness, { logger });
-  if (!requestedTaskName) logger.info('no task requested, trying "build"');
-  const taskName = requestedTaskName || "build";
+  if (!taskName) throw new errors.RadError(`no task name provided`);
   const task = tree.graph[taskName];
-  logger.info(`executing task: "${taskName}"`);
   if (!task) throw new errors.RadError(`no task "${taskName}" found`);
+  logger.info(`executing task: "${taskName}"`);
   await execute(task, { logger });
 }
 

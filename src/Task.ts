@@ -79,15 +79,24 @@ export type Makearooni = Dependarooni & {
   onMake: TaskFn<{
     /**
      * prereqs that have been modified since the target has been modified.
-     * all prereqs are hit if the target is missing, phony, or older than
+     * all prereqs are passed if the target is missing, phony, or older than
      * all prereqs.
+     */
+    changedPrereqs: AsyncIterable<WalkEntry>;
+    /**
+     * all prereqs, regardless of if they are older than the target
      */
     prereqs: AsyncIterable<WalkEntry>;
     /**
      * a sugar function that collects all items in the `prereqs` iterator,
      * and maps into the filenames for prereq (vs the full file data)
      */
-    getPrereqs: () => Promise<string[]>;
+    getPrereqFilenames: () => Promise<string[]>;
+    /**
+     * a sugar function that collects changed items in the `prereqs` iterator,
+     * and maps into the filenames for prereq (vs the full file data)
+     */
+    getChangedPrereqFilenames: () => Promise<string[]>;
   }>;
 };
 // make task
@@ -97,42 +106,51 @@ export type Makearooni = Dependarooni & {
  * dependsOn?: [otherThing]
  */
 
-export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni =
-  (task) => {
-    const { target, onMake, prereqs = [], cwd = ".", ...rest } = task;
-    const funcer: Funcarooni = {
-      fn: async function makeTaskFn(toolkit) {
-        const targetWalkEntry: WalkEntry = await glob(cwd, target).next().then((
-          {
-            value,
-          },
-        ) => value);
-        const targetModified = targetWalkEntry?.info?.modified || -1;
-        const prereqsToMake = async function* prereqsToMake() {
-          for (const prereq of prereqs) {
-            for await (const walkEntry of glob(cwd, prereq)) {
-              const { created, modified } = walkEntry.info;
-              const isPrereqChanged =
-                (modified || created || 0) >= targetModified;
-              if (isPrereqChanged) yield walkEntry;
-            }
+export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
+  task,
+) => {
+  const { target, onMake, prereqs = [], cwd = ".", ...rest } = task;
+  const funcer: Funcarooni = {
+    fn: async function makeTaskFn(toolkit) {
+      const targetWalkEntry: WalkEntry = await glob(cwd, target).next().then(
+        (res) => res.value,
+      );
+      const targetModified = targetWalkEntry?.info?.modified || -1;
+      const getPrereqs = async function* getMakePrereqs(
+        filter: (predicate: WalkEntry) => boolean,
+      ): AsyncIterable<WalkEntry> {
+        for (const prereq of prereqs) {
+          for await (const walkEntry of glob(cwd, prereq)) {
+            if (filter(walkEntry)) yield walkEntry;
           }
-        }();
-        return onMake(
-          toolkit,
-          {
-            prereqs: prereqsToMake,
-            getPrereqs: () =>
-              iter.toArray(prereqsToMake).then((reqs) =>
-                reqs.map((req) => req.filename)
-              ),
-          },
-        );
-      },
-      ...rest,
-    };
-    return funcer;
+        }
+      };
+      const changedPrereqs = () =>
+        getPrereqs((walkEntry) => {
+          const { created, modified } = walkEntry.info;
+          const isPrereqChanged = (modified || created || 0) >= targetModified;
+          return isPrereqChanged;
+        });
+      return onMake(
+        toolkit,
+        {
+          prereqs: getPrereqs((i) => !!i),
+          changedPrereqs: changedPrereqs(),
+          getPrereqFilenames: () =>
+            iter.toArray(getPrereqs((i) => !!i)).then((reqs) =>
+              reqs.map((req) => req.filename)
+            ),
+          getChangedPrereqFilenames: () =>
+            iter.toArray(changedPrereqs()).then((reqs) =>
+              reqs.map((req) => req.filename)
+            ),
+        },
+      );
+    },
+    ...rest,
   };
+  return funcer;
+};
 
 export const asFuncarooni = (
   task: Task,

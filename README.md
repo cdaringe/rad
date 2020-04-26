@@ -1,15 +1,12 @@
-# rad :100:
+# rad 💯
 
-the best general purpose build tool that money won't buy.
-
-
-**WARNING**: ALPHA SOFTWARE, ACTIVE IN DEVELOPMENT.  THIS README IS WRITTEN TO OUR TARGET STATE, NOT OUR CURRENT STATE
+a general purpose build tool.
 
 ## usage
 
 `$ rad <task-name> [--help]`
 
-```js
+```ts
 // rad.ts - your buildfile
 const format = `prettier --write`
 const test = `deno test src/test.ts`

@@ -40,10 +40,8 @@ Deno.test({
       target: targetFilename,
       prereqs: [inputFilename],
       cwd: testDir,
-      onMake: async (toolkit, { prereqs }) => {
-        const prereqFilenames = await toArray(prereqs).then((infos) =>
-          infos.map((info) => info.filename)
-        );
+      onMake: async (toolkit, { getChangedPrereqFilenames }) => {
+        const prereqFilenames = await getChangedPrereqFilenames();
         if (onMakeCallCount > 0) {
           // second pass
           assertEquals(prereqFilenames.length, 0, "no file on second pass");
