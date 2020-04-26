@@ -11,6 +11,7 @@ const flags = {
     "help": ["h"],
     "radfile": ["r"],
     "log-level": ["l"],
+    "init": []
   },
   boolean: [
     "help",
@@ -23,7 +24,7 @@ rad: a general-purpose, typed & portable build tool.
 
    Usage
      $ rad <task-name>
-     $ rad init  # create a new rad file template in current working directory
+     $ rad --init  # create a new rad file template in current working directory
 
    Options
      --radfile, -r  path/to/rad.ts
