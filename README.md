@@ -9,7 +9,7 @@ a general purpose build tool.
 ```ts
 // rad.ts - your buildfile
 const format = `prettier --write`
-const test = `deno test src/test.ts`
+const test = `deno test`
 const build = {
   dependsOn: [format],
   fn({ sh }) => sh('tsc')
@@ -23,8 +23,20 @@ export const tasks = {
 
 ## install
 
-see our `releases` section
+there are a few formal ways to use `rad`:
 
+| usage | method | steps |
+| -- | -- | -- |
+| cli | `deno` | `deno install rad https://github.com/cdaringe/rad/blob/master/src/bin.ts` |
+| docker | `docker` | `docker pull cdaringe/rad` <sup>1</sup>|
+| library | `deno` | `import * as rad from https://github.com/cdaringe/rad/blob/master/src/mod.ts` |
+
+
+<sup>1</sup>For docker users, consider making a nice shell alias
+```sh
+# shell profile, e.g. .bash_profile
+function rad() { docker run --rm -v $PWD:/rad cdaringe/rad "$@" }
+```
 ## what is it
 
 - bottom-up, `make`-style build targets

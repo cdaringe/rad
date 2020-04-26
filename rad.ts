@@ -5,7 +5,7 @@ import { basename } from "https://deno.land/std/path/posix.ts";
 const marked = (window as any).marked;
 const format: Task = { fn: ({ sh }) => sh(`deno fmt`) };
 const genTypes: Task = `deno types > deno.d.ts`;
-const test: Task = `deno test -A`
+const test: Task = `deno test -A`;
 const site: Task = {
   target: "./index.html",
   prereqs: ["assets/site/**/*.{html,md}"],

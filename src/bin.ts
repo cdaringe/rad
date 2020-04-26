@@ -11,7 +11,7 @@ const flags = {
     "help": ["h"],
     "radfile": ["r"],
     "log-level": ["l"],
-    "init": []
+    "init": [],
   },
   boolean: [
     "help",
@@ -23,18 +23,18 @@ const helpText = `
 rad: a general-purpose, typed & portable build tool.
 
    Usage
-     $ rad <task-name>
-     $ rad --init  # create a new rad file template in current working directory
+     $ rad <task-name> [flags]
 
    Options
-     --radfile, -r  path/to/rad.ts
-     --init, create  a default rad.ts
-     --help, -h  this very help menu
-     --log-level, -l log level (debug,info,warning,error,critical)
+    --init  create a new rad file template in current working directory
+    --radfile, -r  path/to/rad.ts
+    --help, -h  this very help menu
+    --log-level, -l log level (debug,info,warning,error,critical)
 
    Examples
      $ rad
      $ rad -r /path/to/rad.ts
+     $ rad -l info test
 `;
 
 export function assertFlags(userFlags: { [key: string]: any }) {
