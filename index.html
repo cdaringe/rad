@@ -12,11 +12,21 @@
 .token.operator {
  background-color: transparent !important;
 }
+
+/* page */
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:800);
 html, body {
   height: 100%;
   margin: 0;
+  width: 100vw;
 }
-@import url(https://fonts.googleapis.com/css?family=Open+Sans:800);
+a, a:visited {color:#2196f3;} /* Visited link    */
+table {
+  display: block;
+  overflow-x: scroll;
+}
+
+/* hero */
 .baby-rad {
   transition: all 5s;
 }
@@ -26,6 +36,7 @@ svg text {
   stroke: beige;
 }
 
+/* content */
 body {
   font-family: sans-serif;
   background-color: #303030;
@@ -63,10 +74,21 @@ svg {
 <div class='content'>
   <h1 id="rad-💯">rad 💯</h1>
 <p>a general purpose build tool.</p>
-<p>statically typed, programmable, transparent, batteries included. shell, function based, and make-style task support.</p>
+<p>statically typed, batteries included. command tasks, function tasks, and make-style tasks support.</p>
+<p><img src="https://github.com/cdaringe/rad/workflows/master/badge.svg" alt="master"></p>
+<p>jump to:</p>
+<ol>
+<li><a href="https://cdaringe.github.io/rad/">documentation site</a></li>
+<li><a href="#usage">usage</a></li>
+<li><a href="#install">install</a></li>
+<li><a href="#what-is-it">what</a></li>
+<li><a href="#what-is-it">why</a></li>
+<li><a href="#why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></li>
+<li><a href="https://cdaringe.github.io/rad/#manual">manual</a></li>
+</ol>
 <h2 id="usage">usage</h2>
 <p><code>$ rad &lt;task-name&gt; [--help]</code></p>
-<pre><code class="language-ts">// rad.ts - your buildfile
+<pre><code class="language-ts">// rad.ts
 import { Tasks } from &quot;https://raw.githubusercontent.com/cdaringe/rad/master/src/mod.ts&quot;;
 
 // command tasks
@@ -83,13 +105,10 @@ const compile = {
 const transpile = {
   target: &quot;phony&quot;,
   prereqs: [&quot;p1&quot;, &quot;p2&quot;],
-  async onMake({ logger }, { prereqs, getChangedPrereqFilenames }) {
-    const babel = await import(&quot;https://my.cdn/babel/7.js&quot;)
-    for await (const req of prereqs) {
+  async onMake({ logger }, { changedPrereqs /*, prereqs */}) {
+    for await (const req of changedPrereqs) {
       logger.info(`req: ${req.filename} ${JSON.stringify(req.info)}`);
     }
-    const changed = await getChangedPrereqFilenames();
-    logger.info(`changed: ${changed} (${changed.length})`);
   },
 }
 
@@ -99,7 +118,9 @@ export const tasks: Tasks = {
   test
 }</code></pre>
 <h2 id="install">install</h2>
-<p>there are a few formal ways to use <code>rad</code>:</p>
+<p>there are a few formal ways to use <code>rad</code>. regardless of the route you choose,
+know that all strategies support using pinned versions, adherent to semver.
+see the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p>
 <table>
 <thead>
 <tr>
@@ -135,44 +156,36 @@ function rad() {
   docker run --rm -v $PWD:/rad cdaringe/rad &quot;$@&quot;;
 }</code></pre>
 <h2 id="what-is-it">what is it</h2>
+<p>a build tool! it competes with make, npm-scripts, bazel, gradle, ant, gulp, or any of the
+other many tools out there!</p>
+<p><code>rad</code> offers:</p>
 <ul>
-<li>bottom-up, <code>make</code>-style build targets<ul>
-<li>fast builds, skip redundant tasks when inputs haven&#39;t changed!</li>
-</ul>
-</li>
-<li>pipeline style builds<ul>
+<li>simple, programmable task interfaces</li>
 <li>easy to understand, declarative build steps</li>
+<li>type-checked tasks</li>
+<li>productive toolkit API for nuanced tasks that benefit from progamming. see <a href="#toolkit">toolkit</a><!-- @todo write toolkit docs--></li>
+<li>bottom-up, <code>make</code>-style build targets<ul>
+<li>fast builds, skip redundant work when inputs haven&#39;t changed</li>
 </ul>
 </li>
-<li>highly portable. build automation for <em>any</em> language or project, in many environments</li>
-<li>generic package management</li>
-<li>great UX is priority 1 (after priorities 0.33 works, 0.66 correct, &amp; 0.99 fast-enough :))</li>
+<li>cli mode, or library mode</li>
+<li>portable. build automation for <em>any</em> language or project, in many environments (*limited to <em>Deno</em> target architectures, for the time being. long term, we may package this in <code>Rust</code>)</li>
+<li>great UX</li>
+<li>no quirky DSLs (<code>make</code>, <code>gradle</code>, and friends 😢). <strong>your build is code</strong>--tasks are typescript &amp; are indeed type-checked!</li>
+<li>debuggable. 🐛 inspect your data, tasks, or even <em>rad</em> itself</li>
+<li>simplicity of <code>make</code>, without the DSL, coupling to <code>sh</code>, and C/C++ biases</li>
+<li>use a real scripting language--<strong>not</strong> <code>bash/sh</code>! shell languages are great for running other programs, not for plumbing data</li>
 </ul>
 <h2 id="why">why</h2>
-<p>no build tools in <del>2018</del> <del>2019</del> 2020 have a complete feature set that the average polyglot programmer needs without coercing it or piling on extraneous complexity.</p>
-<p>see <a href="./why-not.md">why not just use <my-favorite-build-tool></a></p>
-<h2 id="features">features</h2>
-<ul>
-<li>stop using <code>make</code> and <code>bash</code>.  use a modern syntax and a real scripting language<ul>
-<li><code>&lt;ref to why bash is not fit for general purpose scripting&gt;</code></li>
-</ul>
-</li>
-<li>no DSL. your <strong>build is code</strong>--tasks are POJOs with a verified interface</li>
-<li>debuggable. :bug: halt the runtime, inspect your data, tasks, or even <em>rad</em> itself</li>
-<li>beautiful.</li>
-<li>take it anywhere.<ul>
-<li>osx, linux, windows!<ul>
-<li>help us support other architectures</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no dependencies.<ul>
-<li>e.g. you don&#39;t need bash, or java, this lib, that lib, etc.  we bundle everything we need,
-courtesy of <code>deno bundle</code>!</li>
-</ul>
-</li>
-</ul>
+<p>🙄, <em>another build tool?</em>.</p>
+<p>definitely. no other build tools in <del>2018</del> <del>2019</del> 2020 have a sufficiently
+balanced enough feature set that the average polyglot programmer needs without
+ coercing it or piling on extraneous complexity.</p>
+<p>see <a href="#why-not-my-favorite-build-tool">why not just use <my-favorite-build-tool></a></p>
+
+<h2 id="toolkit">toolkit</h2>
+<p><a href="https://github.com/cdaringe/rad/blob/">https://github.com/cdaringe/rad/blob/</a>
+f27c5d5f7cd8c40b1cb94b1f659c1b3768c7dc00/src/Task.ts#L33-L42</p>
 
 <h1 id="why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</h1>
 <p>your build tool is probably great. keep using it if you love it.
@@ -205,7 +218,7 @@ the intent here it not to dump on anyone or any tool, but articulate feature gap
 <tr>
 <td>gradle</td>
 <td></td>
-<td>✓ (kinda)</td>
+<td></td>
 <td></td>
 <td></td>
 <td>✓</td>
@@ -236,10 +249,21 @@ the intent here it not to dump on anyone or any tool, but articulate feature gap
 <td></td>
 </tr>
 <tr>
+<td>npm-scripts</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
 <td>rad</td>
 <td>✓</td>
 <td>✓</td>
-<td>✓</td>
+<td></td>
 <td>✓</td>
 <td>✓</td>
 <td>✓</td>
@@ -248,9 +272,28 @@ the intent here it not to dump on anyone or any tool, but articulate feature gap
 </tr>
 </tbody></table>
 <p>ant, scons, ninja, etc were omitted. haven&#39;t used &#39;em!</p>
+<p>here are some genuine, not-trying-be-rude-opinions.</p>
+<p>bazel is complex. maybe you need that complexity. 🤷🏻‍♀️
+gradle is full of magic and is often hard to reason about <em>where</em> behavior comes from and is applied.
+gulp/grunt have no make-style tasks, are generally node only, comparatively slow, &amp; stringly typed in various places.
+make is great, but a lame DSL and is coupled to a bad scripting language
+npm-scripts are simple, but suffer releated drawbacks to gulp/grunt.</p>
+<p>loose typing, unneeded/obsolete DSLs, lack of great static analysis, and <em>other</em> gaps
+leave room for improvement in this space.</p>
 
 <h1 id="rad">rad</h1>
 <p>so this is a site huh?</p>
+
+<h2 id="manual">manual</h2>
+<p>your guide to <code>rad</code>!</p>
+<h3 id="understanding-rad">understanding rad</h3>
+<ul>
+<li><code>rad</code> is written in typescript and runs on <a href="https://deno.land/">deno</a></li>
+<li>you write tasks, then ask <code>rad</code> to run them</li>
+<li><code>rad</code> reads your radfile (i.e. <code>rad.ts</code>), compiles &amp; type checks it, then runs it through its task graph executor</li>
+</ul>
+<p>🤯</p>
+<h3 id="setting-up-a-radfile-radts">setting up a radfile, rad.ts</h3>
 
 </div>
 <script>
