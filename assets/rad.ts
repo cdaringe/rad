@@ -1,18 +1,37 @@
-export const tasks = {
-  yarn: {
-    input: "package.json",
-    output: "node_modules",
-    cmd: "yarn",
+import { Task } from "https://raw.githubusercontent.com/cdaringe/rad/master/src/mod.ts";
+
+const meet: Task = `echo "hi friend."`;
+
+/**
+ * example rad tasks
+ */
+export const tasks: Tasks = {
+  /**
+   * make-style tasks!
+   */
+  install: {
+    target: "node_modules",
+    prereqs: ["package.json"],
+    onMake: ({ sh }) => sh(`npm install && touch node_modules`),
   },
-  build: {
-    input: "node_modules",
-    output: "bundle.zip",
-    dependsOn: ["yarn"],
-    cmd: (opts) =>
-      `
-      zip ${opts.task.output} \\
-        src \\
-        ${opts.upstream.yarn.task.output}
-    `,
+  /**
+   * command style tasks
+   */
+  build: `tsc`,
+  format: `deno fmt`,
+  meet,
+  /**
+   * function style tasks
+   */
+  greet: {
+    dependsOn: [meet],
+    fn: async (toolkit) => {
+      const { fs, path, logger, Deno, sh, task } = toolkit;
+      fs.mkdirp && fs.readFile && await fs.writeFile("/tmp/hello", "world!");
+      path.resolve && path.relative && path.isAbsolute; // etc
+      logger.error("crikey!");
+      Deno.cwd() && Deno.pid;
+      await sh(`caw, caw!, ${task.name}`);
+    },
   },
 };

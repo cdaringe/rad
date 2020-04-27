@@ -2,14 +2,26 @@
 
 a general purpose build tool.
 
-statically typed, programmable, transparent, batteries included. shell, function based, and make-style task support.
+statically typed, batteries included. command tasks, function tasks, and make-style tasks support.
+
+![master](https://github.com/cdaringe/rad/workflows/master/badge.svg)
+
+jump to:
+
+1. [documentation site](https://cdaringe.github.io/rad/)
+1. [usage](#usage)
+1. [install](#install)
+1. [what](#what-is-it)
+1. [why](#what-is-it)
+1. [why not `<my-favorite-build-tool>`?](#why-not-my-favorite-build-tool)
+1. [manual](https://cdaringe.github.io/rad/#manual)
 
 ## usage
 
 `$ rad <task-name> [--help]`
 
 ```ts
-// rad.ts - your buildfile
+// rad.ts
 import { Tasks } from "https://raw.githubusercontent.com/cdaringe/rad/master/src/mod.ts";
 
 // command tasks
@@ -26,13 +38,10 @@ const compile = {
 const transpile = {
   target: "phony",
   prereqs: ["p1", "p2"],
-  async onMake({ logger }, { prereqs, getChangedPrereqFilenames }) {
-    const babel = await import("https://my.cdn/babel/7.js")
-    for await (const req of prereqs) {
+  async onMake({ logger }, { changedPrereqs /*, prereqs */}) {
+    for await (const req of changedPrereqs) {
       logger.info(`req: ${req.filename} ${JSON.stringify(req.info)}`);
     }
-    const changed = await getChangedPrereqFilenames();
-    logger.info(`changed: ${changed} (${changed.length})`);
   },
 }
 
@@ -45,7 +54,9 @@ export const tasks: Tasks = {
 
 ## install
 
-there are a few formal ways to use `rad`:
+there are a few formal ways to use `rad`. regardless of the route you choose,
+know that all strategies support using pinned versions, adherent to semver.
+see the [releases page](https://github.com/cdaringe/rad/releases).
 
 | usage | install-method | install-steps |
 | -- | -- | -- |
@@ -66,30 +77,32 @@ function rad() {
 
 ## what is it
 
+a build tool! it competes with make, npm-scripts, bazel, gradle, ant, gulp, or any of the
+other many tools out there!
+
+`rad` offers:
+
+- simple, programmable task interfaces
+- easy to understand, declarative build steps
+- type-checked tasks
+- productive toolkit API for nuanced tasks that benefit from progamming. see [toolkit](#toolkit)<!-- @todo write toolkit docs-->
 - bottom-up, `make`-style build targets
-  - fast builds, skip redundant tasks when inputs haven't changed!
-- pipeline style builds
-  - easy to understand, declarative build steps
-- highly portable. build automation for _any_ language or project, in many environments
-- generic package management
-- great UX is priority 1 (after priorities 0.33 works, 0.66 correct, & 0.99 fast-enough :))
+  - fast builds, skip redundant work when inputs haven't changed
+- cli mode, or library mode
+- portable. build automation for _any_ language or project, in many environments (*limited to _Deno_ target architectures, for the time being. long term, we may package this in `Rust`)
+- great UX
+- no quirky DSLs (`make`, `gradle`, and friends 😢). **your build is code**--tasks are typescript & are indeed type-checked!
+- debuggable. 🐛 inspect your data, tasks, or even _rad_ itself
+- simplicity of `make`, without the DSL, coupling to `sh`, and C/C++ biases
+- use a real scripting language--**not** `bash/sh`! shell languages are great for running other programs, not for plumbing data
 
 ## why
 
-no build tools in ~2018~ ~2019~ 2020 have a complete feature set that the average polyglot programmer needs without coercing it or piling on extraneous complexity.
+🙄, _another build tool?_.
 
-see [why not just use <my-favorite-build-tool>](./why-not.md)
+definitely. no other build tools in ~2018~ ~2019~ 2020 have a sufficiently
+balanced enough feature set that the average polyglot programmer needs without
+ coercing it or piling on extraneous complexity.
 
-## features
+see [why not just use <my-favorite-build-tool>](#why-not-my-favorite-build-tool)
 
-- stop using `make` and `bash`.  use a modern syntax and a real scripting language
-  - `<ref to why bash is not fit for general purpose scripting>`
-- no DSL. your **build is code**--tasks are POJOs with a verified interface
-- debuggable. :bug: halt the runtime, inspect your data, tasks, or even _rad_ itself
-- beautiful.
-- take it anywhere.
-  - osx, linux, windows!
-    - help us support other architectures
-- no dependencies.
-  - e.g. you don't need bash, or java, this lib, that lib, etc.  we bundle everything we need,
-courtesy of `deno bundle`!
