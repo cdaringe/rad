@@ -1,4 +1,7 @@
-import { Task } from "https://raw.githubusercontent.com/cdaringe/rad/master/src/mod.ts";
+import {
+  Task,
+  Tasks,
+} from "https://raw.githubusercontent.com/cdaringe/rad/master/src/mod.ts";
 
 const meet: Task = `echo "hi friend."`;
 
@@ -31,7 +34,7 @@ export const tasks: Tasks = {
       path.resolve && path.relative && path.isAbsolute; // etc
       logger.error("crikey!");
       Deno.cwd() && Deno.pid;
-      await sh(`caw, caw!, ${task.name}`);
+      await sh(`echo "caw, caw!, ${task.name}"`);
     },
   },
 };

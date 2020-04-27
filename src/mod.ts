@@ -41,12 +41,10 @@ export async function init(opts: InitOptions) {
 }
 
 export function createRadfile(targetDirname: string, { logger }: WithLogger) {
-
-  const src = path.resolve(import.meta.url.replace('file://', ''), "../assets/rad.ts")
-  logger.info(`copy radfile from ${src}`)
-  return Deno.copyFile(src,
-    path.resolve(targetDirname, "rad.ts"),
-  );
+  const dirname = path.dirname(import.meta.url.replace("file://", ""));
+  const src = path.resolve(dirname, "../assets/rad.ts");
+  logger.info(`copy radfile from ${src} (dirname: ${dirname})`);
+  return Deno.copyFile(src, path.resolve(targetDirname, "rad.ts"));
 }
 
 export function createTaskGraph(radness: Radness, { logger }: WithLogger) {
@@ -59,4 +57,4 @@ export function createTaskGraph(radness: Radness, { logger }: WithLogger) {
 }
 
 export type Tasks = Radness["tasks"];
-export { Task }
+export { Task };
