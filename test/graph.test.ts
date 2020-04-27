@@ -3,7 +3,6 @@ import { Radness } from "../src/Radness.ts";
 import { run, fromTasks, asTree } from "../src/TaskGraph.ts";
 import { Task } from "../src/Task.ts";
 import fixtures from "./fixtures/mod.ts";
-import { writeFileStr } from "https://deno.land/std/fs/write_file_str.ts";
 
 const basicRadness: Radness = {
   tasks: {
@@ -104,13 +103,16 @@ const expectedPrintGraphTree = `
 │  └─ d
 ├─ c
 └─ d
-`
+`;
 
 Deno.test({
-  name: 'print-graph',
+  name: "print-graph",
   async fn() {
-    const graph = fromTasks(basicRadnessWithDependencies.tasks, fixtures.withTestLogger)
-    const tree = asTree({ graph, ...fixtures.withTestLogger })
+    const graph = fromTasks(
+      basicRadnessWithDependencies.tasks,
+      fixtures.withTestLogger,
+    );
+    const tree = asTree({ graph, ...fixtures.withTestLogger });
     assertEquals(tree.trim(), expectedPrintGraphTree.trim(), "tree prints ok");
-  }
-})
+  },
+});

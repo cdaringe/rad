@@ -1,9 +1,9 @@
 import * as path from "https://deno.land/std/node/path.ts";
 import * as errors from "./errors.ts";
 import { Radness, from } from "./Radness.ts";
-// var TaskMake = require('./TaskMake')
 import * as taskGraph from "./TaskGraph.ts";
 import { Logger, WithLogger } from "./logger.ts";
+
 var DEFAULT_RADFILENAME = path.resolve("rad.ts");
 
 export async function getRadFilename({ radFilename, logger }: InitOptions) {
@@ -54,3 +54,6 @@ export function createTaskGraph(radness: Radness, { logger }: WithLogger) {
   const graph = taskGraph.fromTasks(radness.tasks, { logger });
   return graph;
 }
+
+export { Radness } from "./Radness.ts";
+export type Tasks = Radness["tasks"];

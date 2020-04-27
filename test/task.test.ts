@@ -39,9 +39,12 @@ Deno.test({
       target: targetFilename,
       prereqs: [inputFilename],
       cwd: testDir,
-      onMake: async (toolkit, { getPrereqFilenames, getChangedPrereqFilenames }) => {
-        const all = await getPrereqFilenames()
-        assertEquals(all.length, 1)
+      onMake: async (
+        toolkit,
+        { getPrereqFilenames, getChangedPrereqFilenames },
+      ) => {
+        const all = await getPrereqFilenames();
+        assertEquals(all.length, 1);
         const changed = await getChangedPrereqFilenames();
         if (onMakeCallCount > 0) {
           // second pass

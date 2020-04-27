@@ -1,6 +1,6 @@
-import { Radness } from "https://raw.githubusercontent.com/cdaringe/rad/master/src/Radness.ts";
+import { Tasks } from "https://raw.githubusercontent.com/cdaringe/rad/master/src/mod.ts";
 
-export const tasks: Radness["tasks"] = {
+export const tasks: Tasks = {
   docs: {
     fn: async function makeDocs({ logger, path, fs }) {
       // const __dirname = import.meta.url.replace('file://', '')

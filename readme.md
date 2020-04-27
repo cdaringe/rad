@@ -2,20 +2,42 @@
 
 a general purpose build tool.
 
+statically typed, programmable, transparent, batteries included. shell, function based, and make-style task support.
+
 ## usage
 
 `$ rad <task-name> [--help]`
 
 ```ts
 // rad.ts - your buildfile
+import { Tasks } from "https://raw.githubusercontent.com/cdaringe/rad/master/src/mod.ts";
+
+// command tasks
 const format = `prettier --write`
 const test = `deno test`
-const build = {
+
+// function tasks
+const compile = {
   dependsOn: [format],
-  fn({ sh }) => sh('tsc')
+  fn({ sh, ...toolkit }) => sh('tsc')
 }
-export const tasks = {
-  build,
+
+// make-style tasks
+const transpile = {
+  target: "phony",
+  prereqs: ["p1", "p2"],
+  async onMake({ logger }, { prereqs, getChangedPrereqFilenames }) {
+    const babel = await import("https://my.cdn/babel/7.js")
+    for await (const req of prereqs) {
+      logger.info(`req: ${req.filename} ${JSON.stringify(req.info)}`);
+    }
+    const changed = await getChangedPrereqFilenames();
+    logger.info(`changed: ${changed} (${changed.length})`);
+  },
+}
+
+export const tasks: Tasks = {
+  compile,
   format,
   test
 }
@@ -25,10 +47,11 @@ export const tasks = {
 
 there are a few formal ways to use `rad`:
 
-| usage | method | steps |
+| usage | install-method | install-steps |
 | -- | -- | -- |
 | cli | `deno` | `deno install rad https://github.com/cdaringe/rad/blob/master/src/bin.ts` |
-| docker | `docker` | `docker pull cdaringe/rad` <sup>1</sup>|
+| cli | `docker` | `docker pull cdaringe/rad` <sup>1</sup>|
+| cli | `curl+sh` | `curl <todo>.sh | sh` |
 | library | `deno` | `import * as rad from https://github.com/cdaringe/rad/blob/master/src/mod.ts` |
 
 

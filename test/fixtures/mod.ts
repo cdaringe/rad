@@ -1,6 +1,6 @@
 import { copy } from "https://deno.land/std/fs/mod.ts";
 import * as path from "https://deno.land/std/node/path.ts";
-import { Radness } from "../../src/Radness.ts";
+import { Radness } from "https://raw.githubusercontent.com/cdaringe/rad/master/src/mod.ts";
 import { createFsUtil } from "../../src/util/fs.ts";
 import { createLogger } from "../../src/logger.ts";
 
