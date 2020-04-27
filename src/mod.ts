@@ -57,4 +57,4 @@ export function createTaskGraph(radness: Radness, { logger }: WithLogger) {
 }
 
 export type Tasks = Radness["tasks"];
-export { Task };
+export { Task, Radness };
