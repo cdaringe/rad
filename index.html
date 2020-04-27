@@ -63,17 +63,38 @@ svg {
 <div class='content'>
   <h1 id="rad-💯">rad 💯</h1>
 <p>a general purpose build tool.</p>
+<p>statically typed, programmable, transparent, batteries included. shell, function based, and make-style task support.</p>
 <h2 id="usage">usage</h2>
 <p><code>$ rad &lt;task-name&gt; [--help]</code></p>
 <pre><code class="language-ts">// rad.ts - your buildfile
+import { Tasks } from &quot;https://raw.githubusercontent.com/cdaringe/rad/master/src/mod.ts&quot;;
+
+// command tasks
 const format = `prettier --write`
 const test = `deno test`
-const build = {
+
+// function tasks
+const compile = {
   dependsOn: [format],
-  fn({ sh }) =&gt; sh(&#39;tsc&#39;)
+  fn({ sh, ...toolkit }) =&gt; sh(&#39;tsc&#39;)
 }
-export const tasks = {
-  build,
+
+// make-style tasks
+const transpile = {
+  target: &quot;phony&quot;,
+  prereqs: [&quot;p1&quot;, &quot;p2&quot;],
+  async onMake({ logger }, { prereqs, getChangedPrereqFilenames }) {
+    const babel = await import(&quot;https://my.cdn/babel/7.js&quot;)
+    for await (const req of prereqs) {
+      logger.info(`req: ${req.filename} ${JSON.stringify(req.info)}`);
+    }
+    const changed = await getChangedPrereqFilenames();
+    logger.info(`changed: ${changed} (${changed.length})`);
+  },
+}
+
+export const tasks: Tasks = {
+  compile,
   format,
   test
 }</code></pre>
@@ -83,8 +104,8 @@ export const tasks = {
 <thead>
 <tr>
 <th>usage</th>
-<th>method</th>
-<th>steps</th>
+<th>install-method</th>
+<th>install-steps</th>
 </tr>
 </thead>
 <tbody><tr>
@@ -93,9 +114,14 @@ export const tasks = {
 <td><code>deno install rad https://github.com/cdaringe/rad/blob/master/src/bin.ts</code></td>
 </tr>
 <tr>
-<td>docker</td>
+<td>cli</td>
 <td><code>docker</code></td>
 <td><code>docker pull cdaringe/rad</code> <sup>1</sup></td>
+</tr>
+<tr>
+<td>cli</td>
+<td><code>curl+sh</code></td>
+<td>`curl <todo>.sh</td>
 </tr>
 <tr>
 <td>library</td>
