@@ -5,7 +5,6 @@ import { parse, Args } from "https://deno.land/std/flags/mod.ts";
 import { last } from "./util/last.ts";
 import { createLogger, Logger } from "./logger.ts";
 import { execute } from "./Task.ts";
-import { Task } from "./Radness.ts";
 import { asTree } from "./TaskGraph.ts";
 
 const flags = {
@@ -76,7 +75,7 @@ export function assertFlags(userFlags: { [key: string]: any }) {
 }
 
 export type RadExecResult = {
-  task?: Task;
+  task?: rad.Task;
   taskName?: string;
   result?: any;
   logger?: Logger;
@@ -91,7 +90,7 @@ export async function suchRad(args: Args): Promise<RadExecResult> {
   assertFlags(flags);
   const logger = await createLogger(args["log-level"] || args.l);
   if (args.init) {
-    await rad.createRadfile(Deno.cwd());
+    await rad.createRadfile(Deno.cwd(), { logger });
     return {};
   }
   var taskName = last(args._) as string;

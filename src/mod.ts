@@ -1,8 +1,9 @@
 import * as path from "https://deno.land/std/node/path.ts";
 import * as errors from "./errors.ts";
-import { Radness, from } from "./Radness.ts";
 import * as taskGraph from "./TaskGraph.ts";
 import { Logger, WithLogger } from "./logger.ts";
+import { Task } from "./Task.ts";
+import { Radness, from } from "./Radness.ts";
 
 var DEFAULT_RADFILENAME = path.resolve("rad.ts");
 
@@ -39,9 +40,11 @@ export async function init(opts: InitOptions) {
   return import(radFilename).then((mod) => from(mod));
 }
 
-export function createRadfile(targetDirname: string) {
-  return Deno.copyFile(
-    path.resolve(import.meta.url, "../assets/rad.ts"),
+export function createRadfile(targetDirname: string, { logger }: WithLogger) {
+
+  const src = path.resolve(import.meta.url.replace('file://', ''), "../assets/rad.ts")
+  logger.info(`copy radfile from ${src}`)
+  return Deno.copyFile(src,
     path.resolve(targetDirname, "rad.ts"),
   );
 }
@@ -55,6 +58,5 @@ export function createTaskGraph(radness: Radness, { logger }: WithLogger) {
   return graph;
 }
 
-export { Radness } from "./Radness.ts";
 export type Tasks = Radness["tasks"];
-export { Task } from "./Task.ts";
+export { Task }

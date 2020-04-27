@@ -1,4 +1,4 @@
-import { Radness, Task } from "./src/Radness.ts";
+import { Task, Tasks } from "./src/mod.ts";
 import "https://cdn.jsdelivr.net/npm/marked/marked.min.js";
 import { basename } from "https://deno.land/std/path/posix.ts";
 
@@ -41,7 +41,7 @@ const site: Task = {
 
 const check: Task = { dependsOn: [format, test] };
 
-export const tasks: Radness["tasks"] = {
+export const tasks: Tasks = {
   ...{ f: format, format },
   ...{ t: test, test },
   ...{ s: site, site },
