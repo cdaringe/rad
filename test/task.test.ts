@@ -6,9 +6,8 @@ import {
   asFuncarooni,
 } from "../src/Task.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
-import { toArray } from "../src/util/iterable.ts";
 import fixtures from "./fixtures/mod.ts";
-
+import { writeFileStr } from "https://deno.land/std/fs/write_file_str.ts";
 const logster = { logger: await fixtures.getTestLogger() };
 
 Deno.test({
@@ -40,15 +39,17 @@ Deno.test({
       target: targetFilename,
       prereqs: [inputFilename],
       cwd: testDir,
-      onMake: async (toolkit, { getChangedPrereqFilenames }) => {
-        const prereqFilenames = await getChangedPrereqFilenames();
+      onMake: async (toolkit, { getPrereqFilenames, getChangedPrereqFilenames }) => {
+        const all = await getPrereqFilenames()
+        assertEquals(all.length, 1)
+        const changed = await getChangedPrereqFilenames();
         if (onMakeCallCount > 0) {
           // second pass
-          assertEquals(prereqFilenames.length, 0, "no file on second pass");
+          assertEquals(changed.length, 0, "no file on second pass");
         } else {
           // first pass
-          assertEquals(prereqFilenames[0], inputFilename, "prereq shows up");
-          assertEquals(prereqFilenames.length, 1);
+          assertEquals(changed[0], inputFilename, "prereq shows up");
+          assertEquals(changed.length, 1);
         }
         ++onMakeCallCount;
       },
@@ -63,10 +64,7 @@ Deno.test({
     assertEquals(onMakeCallCount, 1);
     // modified time has ~1s resolution. wait at least 1s
     await new Promise((res) => setTimeout(res, 1000));
-    await Deno.writeFile(
-      targetFilename,
-      Uint8Array.from("test_change".split("").map((c) => c.charCodeAt(0))),
-    );
+    await writeFileStr(targetFilename, "test_change");
     await execute(getTask(), logster);
     assertEquals(onMakeCallCount, 2);
   },
