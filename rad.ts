@@ -10,6 +10,7 @@ const site: Task = {
   target: "./public/index.html",
   prereqs: ["assets/site/**/*.{html,md}"],
   onMake: async ({ task, fs, logger }, { getPrereqFilenames }) => {
+    const pruneNoSite = (str: string) => str.replace(/.*NOSITE.*$/im, "");
     await fs.mkdirp("public");
     logger.info("collecting prereq filenames");
     const filenames = await getPrereqFilenames();
@@ -26,7 +27,7 @@ const site: Task = {
     }), { html: [] as string[], md: [] as string[] });
     logger.info(`reading site inputs`);
     const mdContentsP = ["./readme.md", ...md].map(async (f) =>
-      marked(await fs.readFile(f))
+      marked(pruneNoSite(await fs.readFile(f)))
     );
     const [index, ...sections] = await Promise.all(
       [fs.readFile(html[0]), ...mdContentsP],

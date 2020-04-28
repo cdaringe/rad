@@ -11,13 +11,12 @@ statically typed, batteries included. command tasks, function tasks, and make-st
 
 jump to:
 
-1. [documentation site](https://cdaringe.github.io/rad/)
+1. [documentation site](https://cdaringe.github.io/rad/) <!--NOSITE-->
 1. [usage](#usage)
 1. [install](#install)
 1. [what](#what-is-it)
-1. [why](#what-is-it)
-1. [why not `<my-favorite-build-tool>`?](#why-not-my-favorite-build-tool)
-1. [manual](https://cdaringe.github.io/rad/#manual)
+2. [why not `<my-favorite-build-tool>`?](https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool)
+3. [manual](https://cdaringe.github.io/rad/#manual)
 
 ## usage
 
@@ -92,20 +91,11 @@ other many tools out there!
 - bottom-up, `make`-style build targets
   - fast builds, skip redundant work when inputs haven't changed
 - cli mode, or library mode
-- portable. build automation for _any_ language or project, in many environments (*limited to _Deno_ target architectures, for the time being. long term, we may package this in `Rust`)
+- portability. build automation for _any_ language or project, in many environments (*limited to _Deno_ target architectures, for the time being. long term, we may package this in `Rust`)
 - great UX
 - no quirky DSLs (`make`, `gradle`, and friends 😢). **your build is code**--tasks are typescript & are indeed type-checked!
-- debuggable. 🐛 inspect your data, tasks, or even _rad_ itself
-- simplicity of `make`, without the DSL, coupling to `sh`, and C/C++ biases
-- use a real scripting language--**not** `bash/sh`! shell languages are great for running other programs, not for plumbing data
+- debuggability. 🐛 inspect your data, tasks, or even _rad_ itself
+- a real scripting language--**not** `bash/sh`! shell languages are great for running other programs, not for plumbing data
 
-## why
-
-🙄, _another build tool?_.
-
-definitely. no other build tools in ~2018~ ~2019~ 2020 have a sufficiently
-balanced enough feature set that the average polyglot programmer needs without
- coercing it or piling on extraneous complexity.
-
-see [why not just use <my-favorite-build-tool>](#why-not-my-favorite-build-tool)
+see [why not `<my-favorite-build-tool>`?](https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool)
 
