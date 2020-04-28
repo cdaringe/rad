@@ -1,4 +1,4 @@
-import { Tasks } from "https://raw.githubusercontent.com/cdaringe/rad/master/src/mod.ts";
+import { Tasks } from "https://raw.githubusercontent.com/cdaringe/rad/next/src/mod.ts";
 
 export const tasks: Tasks = {
   makeDemo: {
