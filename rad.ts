@@ -7,12 +7,13 @@ const marked = (window as any).marked;
 const format: Task = { fn: ({ sh }) => sh(`deno fmt`) };
 const test: Task = `deno test -A`;
 const site: Task = {
-  target: "./index.html",
+  target: "./public/index.html",
   prereqs: ["assets/site/**/*.{html,md}"],
-  onMake: async ({ fs, logger }, { getPrereqFilenames }) => {
+  onMake: async ({ task, fs, logger }, { getPrereqFilenames }) => {
     await fs.mkdirp("public");
     logger.info("collecting prereq filenames");
     const filenames = await getPrereqFilenames();
+    logger.info(JSON.stringify(filenames));
     const { html, md } = filenames.reduce(({ html, md }, filename) => ({
       html: filename.match(/html$/) ? [filename, ...html] : html,
       md: (filename.match(/md$/) ? [filename, ...md] : md).sort(
@@ -32,7 +33,7 @@ const site: Task = {
     );
     logger.info(`writing index.html`);
     await fs.writeFile(
-      "./public/index.html",
+      "public/index.html",
       index.replace(/bodybody/g, sections.join("\n")),
     );
     logger.info(`fin`);

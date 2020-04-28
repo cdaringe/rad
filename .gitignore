@@ -18,3 +18,9 @@ m1
 t1
 p1
 p2
+
+# examples
+## c
+hello
+## node
+!examples/node/package.json
