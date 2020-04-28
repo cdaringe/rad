@@ -4,7 +4,10 @@ a general purpose build tool.
 
 statically typed, batteries included. command tasks, function tasks, and make-style tasks support.
 
-![master](https://github.com/cdaringe/rad/workflows/master/badge.svg)
+| branch | status-badge |
+| ------ | ------------ |
+| master | ![master](https://github.com/cdaringe/rad/workflows/master/badge.svg) |
+| next   | ![next](https://github.com/cdaringe/rad/workflows/next/badge.svg) |
 
 jump to:
 
