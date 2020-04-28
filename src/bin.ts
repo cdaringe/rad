@@ -1,11 +1,12 @@
 #!/usr/bin/env deno
 import * as errors from "./errors.ts";
 import * as rad from "./mod.ts";
-import { parse, Args } from "https://deno.land/std/flags/mod.ts";
 import { last } from "./util/last.ts";
 import { createLogger, Logger } from "./logger.ts";
 import { execute } from "./Task.ts";
 import { asTree } from "./TaskGraph.ts";
+import { flags as flagsMod } from "./3p/std.ts";
+
 
 const flags = {
   alias: {
@@ -20,7 +21,7 @@ const flags = {
     "help",
   ],
 };
-const parsed = parse(Deno.args);
+const parsed = flagsMod.parse(Deno.args);
 
 const helpText = `
 rad: a general-purpose, typed & portable build tool.
@@ -81,7 +82,7 @@ export type RadExecResult = {
   logger?: Logger;
 };
 
-export async function suchRad(args: Args): Promise<RadExecResult> {
+export async function suchRad(args: flagsMod.Args): Promise<RadExecResult> {
   if (args.help || args.h) {
     console.info(helpText);
     return {};

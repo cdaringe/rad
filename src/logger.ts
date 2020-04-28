@@ -1,20 +1,16 @@
-import * as log from "https://deno.land/std/log/mod.ts";
-import { Logger as DenoLogger } from "https://deno.land/std/log/logger.ts";
-import { blue } from "https://deno.land/std/fmt/colors.ts";
-import { LevelName } from "https://deno.land/std/log/levels.ts";
-const format = await import("https://deno.land/x/date_fns/format/index.js")
-  .then((mod) => mod.default);
+import { colors, log, logger, logLevels } from './3p/std.ts'
+import { format } from './3p/date-fns.ts'
 
-export type WithLogger = { logger: DenoLogger };
-export type Logger = DenoLogger;
+export type Logger = logger.Logger;
+export type WithLogger = { logger: Logger };
 
-export async function createLogger(level: LevelName = "WARNING") {
-  const nextLevel = level.toUpperCase() as LevelName;
+export async function createLogger(level: logLevels.LevelName = "WARNING") {
+  const nextLevel = level.toUpperCase() as logLevels.LevelName;
   await log.setup({
     handlers: {
       console: new log.handlers.ConsoleHandler(nextLevel, {
-        formatter: (info) => {
-          return `${blue("[rad]")} ${format(
+        formatter: (info: logger.LogRecord) => {
+          return `${colors.blue("[rad]")} ${format(
             info.datetime,
             "HH:mm:ss",
             undefined,

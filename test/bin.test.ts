@@ -1,8 +1,7 @@
-import {
-  assertThrows,
+import { testing } from '../src/3p/std.test.ts'
+const {  assertThrows,
   assertEquals,
-  assertThrowsAsync,
-} from "https://deno.land/std/testing/asserts.ts";
+  assertThrowsAsync } = testing.asserts
 import { assertFlags, suchRad } from "../src/bin.ts";
 import { RadError } from "../src/errors.ts";
 import fixtures from "./fixtures/mod.ts";

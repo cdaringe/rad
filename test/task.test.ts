@@ -5,9 +5,12 @@ import {
   Makearooni,
   asFuncarooni,
 } from "../src/Task.ts";
-import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import fixtures from "./fixtures/mod.ts";
-import { writeFileStr } from "https://deno.land/std/fs/write_file_str.ts";
+import { testing } from '../src/3p/std.test.ts'
+import { fs } from '../src/3p/std.ts'
+const { writeFileStr } =fs
+const { assertEquals } = testing
+
 const logster = { logger: await fixtures.getTestLogger() };
 
 Deno.test({

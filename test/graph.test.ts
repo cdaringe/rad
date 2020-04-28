@@ -1,8 +1,10 @@
-import { assertEquals, assert } from "https://deno.land/std/testing/asserts.ts";
 import { Radness } from "../src/Radness.ts";
 import { run, fromTasks, asTree } from "../src/TaskGraph.ts";
 import { Task } from "../src/Task.ts";
 import fixtures from "./fixtures/mod.ts";
+import { testing } from '../src/3p/std.test.ts'
+
+const { assert, assertEquals } = testing
 
 const basicRadness: Radness = {
   tasks: {
@@ -83,10 +85,10 @@ Deno.test({
     Object.values(graph.graph).map((task) => {
       assert(task.name, "task present w/ name");
       assert(task.report?.message, "task has message on completion");
-      const timingValues = Object.values(task.report?.timing);
+      const timingValues = Object.values(task?.report?.timing!);
       assert(timingValues.length, "has timing values");
       assert(
-        timingValues.map((timingValue) => typeof timingValue === "number"),
+        timingValues.map((timingValue: number) => typeof timingValue === "number"),
         "timings all values",
       );
     });

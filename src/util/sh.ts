@@ -1,4 +1,5 @@
-import { Logger } from "https://deno.land/std/log/logger.ts";
+import { Logger } from "../logger.ts";
+
 export async function sh(
   cmd: string,
   opts?: { encoding?: "utf-8"; ignoreExitCode?: boolean; logger: Logger },

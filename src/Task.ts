@@ -9,16 +9,17 @@
  *
  * RadTask, internal task representation
  */
-import * as path from "https://deno.land/std/node/path.ts";
 import * as errors from "./errors.ts";
-import * as fs from "./util/fs.ts";
+import * as fsU from "./util/fs.ts";
 import { sh } from "./util/sh.ts";
 import { timer } from "./util/timer.ts";
 import { glob } from "./util/glob.ts";
 import * as iter from "./util/iterable.ts";
-import { WalkEntry } from "https://deno.land/std/fs/walk.ts";
 import { Logger, WithLogger } from "./logger.ts";
-import { italic, bold, green, red } from "https://deno.land/std/fmt/colors.ts";
+import { path, fs, colors } from "./3p/std.ts";
+
+type WalkEntry = fs.WalkEntry
+const { italic, bold, green, red } = colors;
 const noop = (a: any, b: any) => {};
 
 export enum TASK_STATES {
@@ -36,7 +37,7 @@ export type Toolkit = {
    * {@link https://doc.deno.land/https/github.com/denoland/deno/releases/latest/download/lib.deno.d.ts deno-api}
    */
   Deno: typeof Deno;
-  fs: fs.FsUtil;
+  fs: fsU.FsUtil;
   sh: typeof sh;
   dependentResults: any[]; // @todo add _sweet_ generics to unpack dependent result types
   logger: Logger;
@@ -117,7 +118,7 @@ export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
   const funcer: Funcarooni = {
     fn: async function makeTaskFn(toolkit) {
       const targetWalkEntry: WalkEntry = await glob(cwd, target).next().then(
-        (res) => res.value,
+        (res: IteratorReturnResult<WalkEntry>) => res.value,
       );
       const targetModified = targetWalkEntry?.info?.modified || -1;
       const getPrereqs = async function* getMakePrereqs(
@@ -235,7 +236,7 @@ export async function execute(task: RadTask, { logger }: WithLogger) {
         task.fn({
           Deno,
           dependentResults,
-          fs: fs.createFsUtil({ logger }),
+          fs: fsU.createFsUtil({ logger }),
           logger,
           iter,
           path,
