@@ -1,7 +1,7 @@
 import { Task, Tasks } from "./src/mod.ts";
 import "https://cdn.jsdelivr.net/npm/marked/marked.min.js";
-import { path } from './src/3p/std.ts'
-const { basename } = path.posix
+import { path } from "./src/3p/std.ts";
+const { basename } = path.posix;
 const marked = (window as any).marked;
 
 const format: Task = { fn: ({ sh }) => sh(`deno fmt`) };

@@ -1,4 +1,4 @@
-import { path, fs } from '../3p/std.ts'
+import { path, fs } from "../3p/std.ts";
 
 export const glob = (root: string, pattern: string) =>
   fs.walk(root, {

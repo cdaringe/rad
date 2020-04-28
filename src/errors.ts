@@ -1,4 +1,4 @@
-import { take } from './3p/lodash.ts'
+import { take } from "./3p/lodash.ts";
 
 export class RadError extends Error {
   public static message?: string;

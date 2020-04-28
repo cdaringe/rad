@@ -7,7 +7,6 @@ import { execute } from "./Task.ts";
 import { asTree } from "./TaskGraph.ts";
 import { flags as flagsMod } from "./3p/std.ts";
 
-
 const flags = {
   alias: {
     "help": ["h"],

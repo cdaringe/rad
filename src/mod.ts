@@ -3,7 +3,7 @@ import * as taskGraph from "./TaskGraph.ts";
 import { Logger, WithLogger } from "./logger.ts";
 import { Task } from "./Task.ts";
 import { Radness, from } from "./Radness.ts";
-import { path } from './3p/std.ts'
+import { path } from "./3p/std.ts";
 
 var DEFAULT_RADFILENAME = path.resolve("rad.ts");
 

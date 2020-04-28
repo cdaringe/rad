@@ -2,7 +2,7 @@ import { Radness } from "https://raw.githubusercontent.com/cdaringe/rad/next/src
 import { createFsUtil } from "../../src/util/fs.ts";
 import { createLogger } from "../../src/logger.ts";
 import { path, fs } from "../../src/3p/std.ts";
-const { copy } = fs
+const { copy } = fs;
 
 const __dirname = path.dirname(import.meta.url).replace("file://", "");
 

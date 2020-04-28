@@ -2,9 +2,9 @@ import { Radness } from "../src/Radness.ts";
 import { run, fromTasks, asTree } from "../src/TaskGraph.ts";
 import { Task } from "../src/Task.ts";
 import fixtures from "./fixtures/mod.ts";
-import { testing } from '../src/3p/std.test.ts'
+import { testing } from "../src/3p/std.test.ts";
 
-const { assert, assertEquals } = testing
+const { assert, assertEquals } = testing;
 
 const basicRadness: Radness = {
   tasks: {
@@ -88,7 +88,9 @@ Deno.test({
       const timingValues = Object.values(task?.report?.timing!);
       assert(timingValues.length, "has timing values");
       assert(
-        timingValues.map((timingValue: number) => typeof timingValue === "number"),
+        timingValues.map((timingValue: number) =>
+          typeof timingValue === "number"
+        ),
         "timings all values",
       );
     });

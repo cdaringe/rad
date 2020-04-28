@@ -1,11 +1,9 @@
-import { testing } from '../src/3p/std.test.ts'
-const {  assertThrows,
-  assertEquals,
-  assertThrowsAsync } = testing.asserts
+import { testing } from "../src/3p/std.test.ts";
+
 import { assertFlags, suchRad } from "../src/bin.ts";
 import { RadError } from "../src/errors.ts";
 import fixtures from "./fixtures/mod.ts";
-
+const { assertThrows, assertEquals, assertThrowsAsync } = testing;
 Deno.test({
   name: "cli flags accept/reject",
   fn: () => {

@@ -18,7 +18,7 @@ import * as iter from "./util/iterable.ts";
 import { Logger, WithLogger } from "./logger.ts";
 import { path, fs, colors } from "./3p/std.ts";
 
-type WalkEntry = fs.WalkEntry
+type WalkEntry = fs.WalkEntry;
 const { italic, bold, green, red } = colors;
 const noop = (a: any, b: any) => {};
 
@@ -111,51 +111,51 @@ export type Makearooni = Dependarooni & {
  * dependsOn?: [otherThing]
  */
 
-export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
-  task,
-) => {
-  const { target, onMake, prereqs = [], cwd = ".", ...rest } = task;
-  const funcer: Funcarooni = {
-    fn: async function makeTaskFn(toolkit) {
-      const targetWalkEntry: WalkEntry = await glob(cwd, target).next().then(
-        (res: IteratorReturnResult<WalkEntry>) => res.value,
-      );
-      const targetModified = targetWalkEntry?.info?.modified || -1;
-      const getPrereqs = async function* getMakePrereqs(
-        filter: (predicate: WalkEntry) => boolean,
-      ): AsyncIterable<WalkEntry> {
-        for (const prereq of prereqs) {
-          for await (const walkEntry of glob(cwd, prereq)) {
-            if (filter(walkEntry)) yield walkEntry;
+export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni =
+  (task) => {
+    const { target, onMake, prereqs = [], cwd = ".", ...rest } = task;
+    const funcer: Funcarooni = {
+      fn: async function makeTaskFn(toolkit) {
+        const targetWalkEntry: WalkEntry = await glob(cwd, target).next().then(
+          (res: IteratorReturnResult<WalkEntry>) => res.value,
+        );
+        const targetModified = targetWalkEntry?.info?.modified || -1;
+        const getPrereqs = async function* getMakePrereqs(
+          filter: (predicate: WalkEntry) => boolean,
+        ): AsyncIterable<WalkEntry> {
+          for (const prereq of prereqs) {
+            for await (const walkEntry of glob(cwd, prereq)) {
+              if (filter(walkEntry)) yield walkEntry;
+            }
           }
-        }
-      };
-      const changedPrereqs = () =>
-        getPrereqs((walkEntry) => {
-          const { created, modified } = walkEntry.info;
-          const isPrereqChanged = (modified || created || 0) >= targetModified;
-          return isPrereqChanged;
-        });
-      return onMake(
-        toolkit,
-        {
-          prereqs: getPrereqs((i) => !!i),
-          changedPrereqs: changedPrereqs(),
-          getPrereqFilenames: () =>
-            iter.toArray(getPrereqs((i) => !!i)).then((reqs) =>
-              reqs.map((req) => req.filename)
-            ),
-          getChangedPrereqFilenames: () =>
-            iter.toArray(changedPrereqs()).then((reqs) =>
-              reqs.map((req) => req.filename)
-            ),
-        },
-      );
-    },
-    ...rest,
+        };
+        const changedPrereqs = () =>
+          getPrereqs((walkEntry) => {
+            const { created, modified } = walkEntry.info;
+            const isPrereqChanged =
+              (modified || created || 0) >= targetModified;
+            return isPrereqChanged;
+          });
+        return onMake(
+          toolkit,
+          {
+            prereqs: getPrereqs((i) => !!i),
+            changedPrereqs: changedPrereqs(),
+            getPrereqFilenames: () =>
+              iter.toArray(getPrereqs((i) => !!i)).then((reqs) =>
+                reqs.map((req) => req.filename)
+              ),
+            getChangedPrereqFilenames: () =>
+              iter.toArray(changedPrereqs()).then((reqs) =>
+                reqs.map((req) => req.filename)
+              ),
+          },
+        );
+      },
+      ...rest,
+    };
+    return funcer;
   };
-  return funcer;
-};
 
 export const asFuncarooni = (
   task: Task,

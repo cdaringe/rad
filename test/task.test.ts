@@ -6,10 +6,10 @@ import {
   asFuncarooni,
 } from "../src/Task.ts";
 import fixtures from "./fixtures/mod.ts";
-import { testing } from '../src/3p/std.test.ts'
-import { fs } from '../src/3p/std.ts'
-const { writeFileStr } =fs
-const { assertEquals } = testing
+import { testing } from "../src/3p/std.test.ts";
+import { fs } from "../src/3p/std.ts";
+const { writeFileStr } = fs;
+const { assertEquals } = testing;
 
 const logster = { logger: await fixtures.getTestLogger() };
 
