@@ -23,7 +23,7 @@ next up, creating a radfile!
 
 #### setting up rad.ts
 
-to create a new radfile (`rad.ts`), the CLI can intialize a generic one via:
+to create a new radfile (`rad.ts`), run the following command:
 
 `$ rad -l info --init`
 
@@ -41,9 +41,9 @@ export const tasks: Tasks = {
 }
 ```
 
-the above file has exactly two tasks, of names `meet` and `greet`! simple!
+the above file has exactly two tasks--`meet` and `greet`! simple!
 
-running `rad` will look in the working directory by default for your radfile.
+`rad` will look in the working directory for your radfile by default.
 if you so choose, you are welcome place it elsewhere, and tell rad where to find it using the
 `-r/--radfile` flag. next up, let's define those tasks.
 
@@ -51,8 +51,6 @@ if you so choose, you are welcome place it elsewhere, and tell rad where to find
 
 tasks can take a couple of different forms. generally, you can simply refer to
 the `Task` type in your radfile and get cracking. let's write a few _tasks_ of each type.
-
-<small>[task type definition](https://github.com/cdaringe/rad/search?q=Funcarooni+file%3ATask.ts&unscoped_q=Funcarooni+file%3ATask.ts), roughly.</small>
 
 #### command tasks
 
@@ -74,28 +72,31 @@ e.g. `bash -c 'echo "hello, world!"'`.
 
 #### function tasks
 
-the most capable of all tasks. all other task types internally get
-transformed into a function task. what makes the function task the most capable
-is that you can finely control everything that occurs during the task run
-inside of the `fn` key-value pair. `fn` brings one argument--[`toolkit`](#toolkit)--that
-offers a nice suite of batteries for your convenience.
+function tasks are the most capable of all tasks. all other task types internally get
+transformed into a function task. to use function tasks, create a POJO with a
+`fn` key and function value. `fn` brings one argument--[`toolkit`](#toolkit)--that
+offers a nice suite of batteries for your convenience. ⚡️
 
 ```ts
 // rad.ts
-import { Task, Tasks } from 'url/to/rad/mod.ts'
+import { Task, Tasks } from 'url/to/rad/mod.ts';
 
 const build: Task = {
   fn: async toolkit => {
     const { logger, sh } = toolkit;
     await sh(`clang hello.c -o hello`);
     logger.info(`compile ok, asserting executable`);
-    await sh(`./hello`);
+    await sh(`./hello`); // stdout: Hello, world!
     logger.info("binary ok");
   },
 };
 
 export const tasks: Tasks = { build };
 ```
+
+this is a _pretty_ basic function task. when you get to the [`toolkit`](#toolkit)
+section, you will see the other _interesting_ utilities provided to do great
+things with!
 
 #### make tasks
 
@@ -118,8 +119,8 @@ for this website. here's a simplified version:
 import { Task, Tasks } from 'url/to/rad/mod.ts'
 
 const site: Task = {
-  target: "./public/index.html",
-  prereqs: ["assets/site/**/*.{md}"],
+  target: "public/index.html",
+  prereqs: ["assets/site/**/*.{md}"], // globs only
   onMake: async (
     /* toolkit api -- see #toolkit */
     { fs, logger },
@@ -136,8 +137,9 @@ const site: Task = {
     logger.info("collecting prereq filenames");
     const filenames = await getPrereqFilenames();
     const html = await Promise.all(filenames.map(
-      filename => fs.readFile(filename),
-      content => marked(content)
+      filename => fs.readFile(filename).then(
+        markdown => marked(markdown)
+      )
     )).then(htmlSnippets => htmlSnippets.join('\n'));
     await fs.writeFile("./public/index.html", html);
   },
@@ -152,7 +154,7 @@ check out the type definitions for more!
 
 ### task depedencies
 
-all task types _except commands_ accept an optional `dependsOn` array.
+all task types, except command style tasks, accept an optional `dependsOn` array.
 `dependsOn` is an array of task references. task references must be
 **actual task references**--string based task lookups are not supported, intentionally.
 
@@ -228,7 +230,7 @@ well that's not _super_ helpful! let's study each these keys, one-by-one:
 | `fs`               | a few sugar methods, `{ readFile, writeFile, mkdirp }` that work on strings, vs buffers, and assume utf8 for shorthand                                                                                  |
 | `sh`               | execute a shell command. see the command task section above!                                                                                                                                            |
 | `dependentResults` | results of `dependsOn` tasks. currently these are untyped. getting type inference here is tricky. PRs welcome!                                                                                          |
-| `logger`           | the `rad` logger! a standard `Deno` logger with the commonplace log-level methdods (e.g. `.info(...)`, `.debug(...)`, etc). see [the source](https://github.com/cdaringe/rad/blob/master/src/logger.ts) |
+| `logger`           | the `rad` logger! a standard `Deno` logger with the commonplace log-level methods (e.g. `.info(...)`, `.debug(...)`, etc). see [the source](https://github.com/cdaringe/rad/blob/master/src/logger.ts) |
 | `path`             | a direct reference to [deno node path](https://deno.land/std/node/path.ts). this API is likely to change if Deno implements a full, proper path module                                                  |
 | `task`             | a reference to the internal `RadTask`                                                                                                                                                                   |
 | `iter`             | `AsyncIterable` utility functions                                                                                                                                                                       |
