@@ -24,6 +24,8 @@ a, a:visited {color:#2196f3;} /* Visited link    */
 table {
   display: block;
   overflow-x: scroll;
+  border: 0.1px dashed #ffffff1a;
+  padding: 8px;
 }
 td {
   border: 0.1px dashed #ffffff1a;
@@ -311,7 +313,7 @@ please see the <a href="#install">install</a> section for specifics.</p>
 down the road.</p>
 <p>next up, creating a radfile!</p>
 <h4 id="setting-up-radts">setting up rad.ts</h4>
-<p>to create a new radfile (<code>rad.ts</code>), the CLI can intialize a generic one via:</p>
+<p>to create a new radfile (<code>rad.ts</code>), run the following command:</p>
 <p><code>$ rad -l info --init</code></p>
 <p>rad.ts should have <em>two</em> key traits:</p>
 <ul>
@@ -323,14 +325,13 @@ down the road.</p>
   meet: /* omitted task */,
   greet: /* omitted task */
 }</code></pre>
-<p>the above file has exactly two tasks, of names <code>meet</code> and <code>greet</code>! simple!</p>
-<p>running <code>rad</code> will look in the working directory by default for your radfile.
+<p>the above file has exactly two tasks--<code>meet</code> and <code>greet</code>! simple!</p>
+<p><code>rad</code> will look in the working directory for your radfile by default.
 if you so choose, you are welcome place it elsewhere, and tell rad where to find it using the
 <code>-r/--radfile</code> flag. next up, let&#39;s define those tasks.</p>
 <h3 id="tasks">tasks</h3>
 <p>tasks can take a couple of different forms. generally, you can simply refer to
 the <code>Task</code> type in your radfile and get cracking. let&#39;s write a few <em>tasks</em> of each type.</p>
-<p><small><a href="https://github.com/cdaringe/rad/search?q=Funcarooni+file%3ATask.ts&amp;unscoped_q=Funcarooni+file%3ATask.ts">task type definition</a>, roughly.</small></p>
 <h4 id="command-tasks">command tasks</h4>
 <p>command tasks are the simplest tasks. they are shell commands for rad to execute:</p>
 <pre><code class="language-ts">// rad.ts
@@ -344,25 +345,27 @@ export const tasks: Tasks = { compile, greet }</code></pre>
 will get executed by <code>rad</code> in a child process, a la <code>&lt;your-shell&gt; -c &#39;&lt;your-cmd&gt;&#39;</code>,
 e.g. <code>bash -c &#39;echo &quot;hello, world!&quot;&#39;</code>.</p>
 <h4 id="function-tasks">function tasks</h4>
-<p>the most capable of all tasks. all other task types internally get
-transformed into a function task. what makes the function task the most capable
-is that you can finely control everything that occurs during the task run
-inside of the <code>fn</code> key-value pair. <code>fn</code> brings one argument--<a href="#toolkit"><code>toolkit</code></a>--that
-offers a nice suite of batteries for your convenience.</p>
+<p>function tasks are the most capable of all tasks. all other task types internally get
+transformed into a function task. to use function tasks, create a POJO with a
+<code>fn</code> key and function value. <code>fn</code> brings one argument--<a href="#toolkit"><code>toolkit</code></a>--that
+offers a nice suite of batteries for your convenience. ⚡️</p>
 <pre><code class="language-ts">// rad.ts
-import { Task, Tasks } from &#39;url/to/rad/mod.ts&#39;
+import { Task, Tasks } from &#39;url/to/rad/mod.ts&#39;;
 
 const build: Task = {
   fn: async toolkit =&gt; {
     const { logger, sh } = toolkit;
     await sh(`clang hello.c -o hello`);
     logger.info(`compile ok, asserting executable`);
-    await sh(`./hello`);
+    await sh(`./hello`); // stdout: Hello, world!
     logger.info(&quot;binary ok&quot;);
   },
 };
 
 export const tasks: Tasks = { build };</code></pre>
+<p>this is a <em>pretty</em> basic function task. when you get to the <a href="#toolkit"><code>toolkit</code></a>
+section, you will see the other <em>interesting</em> utilities provided to do great
+things with!</p>
 <h4 id="make-tasks">make tasks</h4>
 <p>make tasks are in honor of <a href="https://www.gnu.org/software/make/">gnu make</a>. our
 make task is not nearly feature complete with a proper make task--but it does have one essential
@@ -380,8 +383,8 @@ for this website. here&#39;s a simplified version:</p>
 import { Task, Tasks } from &#39;url/to/rad/mod.ts&#39;
 
 const site: Task = {
-  target: &quot;./public/index.html&quot;,
-  prereqs: [&quot;assets/site/**/*.{md}&quot;],
+  target: &quot;public/index.html&quot;,
+  prereqs: [&quot;assets/site/**/*.{md}&quot;], // globs only
   onMake: async (
     /* toolkit api -- see #toolkit */
     { fs, logger },
@@ -398,8 +401,9 @@ const site: Task = {
     logger.info(&quot;collecting prereq filenames&quot;);
     const filenames = await getPrereqFilenames();
     const html = await Promise.all(filenames.map(
-      filename =&gt; fs.readFile(filename),
-      content =&gt; marked(content)
+      filename =&gt; fs.readFile(filename).then(
+        markdown =&gt; marked(markdown)
+      )
     )).then(htmlSnippets =&gt; htmlSnippets.join(&#39;\n&#39;));
     await fs.writeFile(&quot;./public/index.html&quot;, html);
   },
@@ -409,7 +413,7 @@ the <code>AsyncIterator</code> implementations referenced above so as to not eat
 all of your memory 😀.</p>
 <p>check out the type definitions for more!</p>
 <h3 id="task-depedencies">task depedencies</h3>
-<p>all task types <em>except commands</em> accept an optional <code>dependsOn</code> array.
+<p>all task types, except command style tasks, accept an optional <code>dependsOn</code> array.
 <code>dependsOn</code> is an array of task references. task references must be
 <strong>actual task references</strong>--string based task lookups are not supported, intentionally.</p>
 <pre><code class="language-ts">// rad.ts
@@ -489,7 +493,7 @@ You can see <code>dependsOn</code> at work by using <code>--print-graph</code>:<
 </tr>
 <tr>
 <td><code>logger</code></td>
-<td>the <code>rad</code> logger! a standard <code>Deno</code> logger with the commonplace log-level methdods (e.g. <code>.info(...)</code>, <code>.debug(...)</code>, etc). see <a href="https://github.com/cdaringe/rad/blob/master/src/logger.ts">the source</a></td>
+<td>the <code>rad</code> logger! a standard <code>Deno</code> logger with the commonplace log-level methods (e.g. <code>.info(...)</code>, <code>.debug(...)</code>, etc). see <a href="https://github.com/cdaringe/rad/blob/master/src/logger.ts">the source</a></td>
 </tr>
 <tr>
 <td><code>path</code></td>
