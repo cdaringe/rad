@@ -75,15 +75,28 @@ svg {
   <h1 id="rad-💯">rad 💯</h1>
 <p>a general purpose build tool.</p>
 <p>statically typed, batteries included. command tasks, function tasks, and make-style tasks support.</p>
-<p><img src="https://github.com/cdaringe/rad/workflows/master/badge.svg" alt="master"></p>
+<table>
+<thead>
+<tr>
+<th>branch</th>
+<th>status-badge</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>master</td>
+<td><img src="https://github.com/cdaringe/rad/workflows/master/badge.svg" alt="master"></td>
+</tr>
+<tr>
+<td>next</td>
+<td><img src="https://github.com/cdaringe/rad/workflows/next/badge.svg" alt="next"></td>
+</tr>
+</tbody></table>
 <p>jump to:</p>
 <ol>
-<li><a href="https://cdaringe.github.io/rad/">documentation site</a></li>
 <li><a href="#usage">usage</a></li>
 <li><a href="#install">install</a></li>
 <li><a href="#what-is-it">what</a></li>
-<li><a href="#what-is-it">why</a></li>
-<li><a href="#why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></li>
+<li><a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></li>
 <li><a href="https://cdaringe.github.io/rad/#manual">manual</a></li>
 </ol>
 <h2 id="usage">usage</h2>
@@ -169,19 +182,13 @@ other many tools out there!</p>
 </ul>
 </li>
 <li>cli mode, or library mode</li>
-<li>portable. build automation for <em>any</em> language or project, in many environments (*limited to <em>Deno</em> target architectures, for the time being. long term, we may package this in <code>Rust</code>)</li>
+<li>portability. build automation for <em>any</em> language or project, in many environments (*limited to <em>Deno</em> target architectures, for the time being. long term, we may package this in <code>Rust</code>)</li>
 <li>great UX</li>
 <li>no quirky DSLs (<code>make</code>, <code>gradle</code>, and friends 😢). <strong>your build is code</strong>--tasks are typescript &amp; are indeed type-checked!</li>
-<li>debuggable. 🐛 inspect your data, tasks, or even <em>rad</em> itself</li>
-<li>simplicity of <code>make</code>, without the DSL, coupling to <code>sh</code>, and C/C++ biases</li>
-<li>use a real scripting language--<strong>not</strong> <code>bash/sh</code>! shell languages are great for running other programs, not for plumbing data</li>
+<li>debuggability. 🐛 inspect your data, tasks, or even <em>rad</em> itself</li>
+<li>a real scripting language--<strong>not</strong> <code>bash/sh</code>! shell languages are great for running other programs, not for plumbing data</li>
 </ul>
-<h2 id="why">why</h2>
-<p>🙄, <em>another build tool?</em>.</p>
-<p>definitely. no other build tools in <del>2018</del> <del>2019</del> 2020 have a sufficiently
-balanced enough feature set that the average polyglot programmer needs without
- coercing it or piling on extraneous complexity.</p>
-<p>see <a href="#why-not-my-favorite-build-tool">why not just use <my-favorite-build-tool></a></p>
+<p>see <a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></p>
 
 <h2 id="toolkit">toolkit</h2>
 <p><a href="https://github.com/cdaringe/rad/blob/">https://github.com/cdaringe/rad/blob/</a>
@@ -273,16 +280,15 @@ the intent here it not to dump on anyone or any tool, but articulate feature gap
 </tbody></table>
 <p>ant, scons, ninja, etc were omitted. haven&#39;t used &#39;em!</p>
 <p>here are some genuine, not-trying-be-rude-opinions.</p>
-<p>bazel is complex. maybe you need that complexity. 🤷🏻‍♀️
-gradle is full of magic and is often hard to reason about <em>where</em> behavior comes from and is applied.
-gulp/grunt have no make-style tasks, are generally node only, comparatively slow, &amp; stringly typed in various places.
-make is great, but a lame DSL and is coupled to a bad scripting language
-npm-scripts are simple, but suffer releated drawbacks to gulp/grunt.</p>
+<ul>
+<li>bazel is complex. maybe you need that complexity. 🤷🏻‍♀️</li>
+<li>gradle is full of magic and is often hard to reason about <em>where</em> behavior comes from.</li>
+<li>gulp/grunt have no make-style tasks, are generally node only, comparatively slow, &amp; stringly typed in various places.</li>
+<li>make is great, but has a lame DSL and is coupled to a poor scripting language</li>
+<li>npm-scripts are simple, but suffer releated drawbacks to gulp/grunt.</li>
+</ul>
 <p>loose typing, unneeded/obsolete DSLs, lack of great static analysis, and <em>other</em> gaps
 leave room for improvement in this space.</p>
-
-<h1 id="rad">rad</h1>
-<p>so this is a site huh?</p>
 
 <h2 id="manual">manual</h2>
 <p>your guide to <code>rad</code>!</p>
