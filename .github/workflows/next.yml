@@ -1,0 +1,49 @@
+# @info
+# master & pull_request jobs cannot de-dupe their workflow configuration :(
+# https://github.community/t5/GitHub-Actions/Start-a-workflow-from-another-workflow/td-p/37586
+name: next
+on:
+  push:
+    branches:
+      - next
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.com/JamesIves/github-pages-deploy-action#getting-started-airplane
+      - name: checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      # https://github.com/denolib/setup-deno
+      - uses: denolib/setup-deno@master
+        with:
+          deno-version: 0.x
+      - name: test
+        run: ./rad test
+      - name: site
+        run: ./rad -l debug site
+      - name: deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+
+      # release
+      - name: setup-node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm init -y \
+            && \
+          npm install -D \
+            "@semantic-release/commit-analyzer" \
+            "@semantic-release/release-notes-generator" \
+            "@semantic-release/github" \
+            && \
+          npx semantic-release --dry-release
