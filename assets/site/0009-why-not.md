@@ -10,7 +10,7 @@ the intent here it not to dump on anyone or any tool, but articulate feature gap
 | gulp/grunt | ✓        |              |            |          |             | ✓          | ✓         |                    |
 | make       |          |              | ✓          | ✓        | ✓           |            |           |                    |
 | npm-scripts| ✓        |              |            |          |              |           |            | ✓                  |
-| rad        | ✓        | ✓            |           | ✓        | ✓           | ✓          | ✓         |                    |
+| rad        | ✓        | ✓            |           | ✓        | ✓           | (soon!)          | ✓         |                    |
 
 ant, scons, ninja, etc were omitted. haven't used 'em!
 

@@ -67,13 +67,14 @@ svg {
 </style>
 </head>
 <body>
-<svg id=radness viewBox="0 0 800 300">
+<svg id="radness" viewBox="0 0 800 300">
   <symbol id="repeatme">
     <text text-anchor="middle" x="0" y="0" dx='1em' dy="1em">RAD</text>
   </symbol>
   <g id="repeats" />
   <use class="text" xlink:href="#big_baby" />
-  <symbol id="big_baby">
+  <text id="big_baby" text-anchor="middle" x="85%" y="80%" dy=".35em">RAD</text>
+  <symbol id="big_babys_baby">
     <text text-anchor="middle" x="85%" y="80%" dy=".35em">RAD</text>
   </symbol>
 </svg>
@@ -81,48 +82,116 @@ svg {
   bodybody
 </div>
 <script>
-  function paintBabies () {
-    let max_rads = 50
-    const [w, h] = [ 800, 300 ]
-    const center = [w/2, h/2]
-    var group = document.getElementById("repeats")
-    const xforms = []
-    const getTranslateProposal = () => [(Math.random() * w *.85), (h * Math.random())]
-    const distance = ([a,b], [x, y]) => Math.sqrt(
-      Math.pow(a - x, 2) + Math.pow(b - y, 2)
-    )
-    const walk = ([a,b], [stepX, stepY] = [10, 30]) => [
-      a + ((Math.random()) + stepX) * (Math.random() > 0.5 ? 1 : -1),
-      b + ((1 + Math.random()) + stepY) * (Math.random() > 0.5 ? 1 : -1),
-    ]
-    let i = max_rads
-    while (i) {
-      let translate = getTranslateProposal()
-      while (distance(translate, [700, 280]) < 190) translate = walk(translate)
+function transformChaos ({
+  w,
+  h,
+  count
+}) {
+  const xforms = []
+  const getTranslateProposal = () => [(Math.random() * w *.85), (h * Math.random())]
+  const distance = ([a,b], [x, y]) => Math.sqrt(
+    Math.pow(a - x, 2) + Math.pow(b - y, 2)
+  )
+  const scootchAway = ([a,b], [stepX, stepY] = [10, 30]) => [
+    a + ((Math.random()) + stepX) * (Math.random() > 0.5 ? 1 : -1),
+    b + ((1 + Math.random()) + stepY) * (Math.random() > 0.5 ? 1 : -1),
+  ]
+  let i = count
+  while (i) {
+    let translate = getTranslateProposal()
+    while (distance(translate, [700, 280]) < 190) translate = scootchAway(translate)
+    xforms.push({
+      translate,
+      rotate: [360 * Math.random()],
+      scale: 0.5
+    })
+    --i
+  }
+  return xforms
+}
+
+function transformOrder ({
+  w,
+  h,
+  count
+}) {
+  const times = count => '_'.repeat(count).split('')
+  const xforms = []
+  const numRows = 3
+  const numCols = 17
+  const ySep = h / (numRows + 1)
+  const xSep = w / (numCols + 1)
+  times(numRows).forEach((_, iy) => {
+    times(numCols).forEach((_, ix) => {
       xforms.push({
-        translate,
-        rotate: [360 * Math.random()],
+        translate: [ix * xSep, iy * ySep - 35],
+        rotate: [70],
+        scale: 0.5
       })
-      --i
-    }
-    const getTransformString = ({ translate, rotate }) => `translate(${translate.join(' ')}) rotate(${rotate.join(' ')}) scale(0.5)`
-    if (group.innerHTML) {
-      var babies = Array.from(group.children)
-      xforms.forEach((xform, i) => { babies[i].setAttribute('transform', getTransformString(xform)) })
-    } else {
-     group.innerHTML= xforms.map((xform, i) => `
-      <use id='baby_${i}' class='text baby-rad' xlink:href="#repeatme"
-        transform="${getTransformString(xform)}"
-      />
-    `).join('')
+    })
+  })
+  return xforms
+}
+
+let lastTransforms = []
+
+function paintBabies (transform) {
+  let count = 51
+  const [w, h] = [ 800, 300 ]
+  const center = [w/2, h/2]
+  var group = document.getElementById("repeats")
+  var nodes = Array.from(group.children)
+  const getTransformString = ({ translate, rotate, scale }) => `translate(${translate.join(' ')}) rotate(${rotate.join(' ')}) scale(${scale})`
+  const xforms = transform({ nodes, count, w, h })
+  // update existing nodes
+  if (group.innerHTML) {
+    xforms.forEach((xform, i) => { nodes[i].setAttribute('transform', getTransformString(xform)) })
+  } else {
+    // create initial nodes
+    group.innerHTML= xforms.map((xform, i) => `
+    <use id='baby_${i}' class='text baby-rad' xlink:href="#repeatme"
+      transform="${getTransformString(xform)}"
+    />
+  `).join('')
+  }
+}
+let transforms = [transformOrder, transformChaos]
+// initial paint
+paintBabies(transformChaos)
+// funsies initial animation
+const chaosTimer = setTimeout(() => window.requestAnimationFrame(() => paintBabies(transformOrder)), 500)
+
+function whileNotExecuting(cb) {
+  let isExecuting = false
+  return async evt => {
+    isExecuting = true
+    try {
+      /**
+       * update default transforms with remote transforms
+       */
+      if (transforms.length === 1) transforms = await import(window.location.port == '3333'
+          ? "http://localhost:3333/transforms.js"
+          : "https://raw.githubusercontent.com/cdaringe/rad/next/assets/site/transforms").then(r => {
+        return transforms.concat(r.transforms)
+      })
+      await Promise.resolve(cb())
+    } finally {
+      isExecuting = false
     }
   }
-  paintBabies()
-  setTimeout(() => {
-    window.requestAnimationFrame(paintBabies)
-  }, 500) // gimme one eager animation ;)
-  setInterval(paintBabies, 60000)
-  document.getElementById('big_baby').addEventListener('click', paintBabies)
+}
+
+let transformIndex = 0
+const onClick = whileNotExecuting(() => {
+  clearTimeout(chaosTimer)
+  ++transformIndex
+  if (!transforms[transformIndex]) {
+    transformIndex = 0
+  }
+  paintBabies(transforms[transformIndex])
+})
+document.getElementById('radness').addEventListener('click', onClick)
+
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/autoloader/prism-autoloader.min.js"></script>

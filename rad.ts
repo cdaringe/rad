@@ -29,8 +29,8 @@ const site: Task = {
     const mdContentsP = ["./readme.md", ...md].map(async (f) =>
       marked(pruneNoSite(await fs.readFile(f)))
     );
-    const [index, ...sections] = await Promise.all(
-      [fs.readFile(html[0]), ...mdContentsP],
+    const [index, _transform, ...sections] = await Promise.all(
+      [fs.readFile(html[0]), Deno.copyFile("assets/site/transforms.js", "public/transforms.js"), ...mdContentsP],
     );
     logger.info(`writing index.html`);
     await fs.writeFile(

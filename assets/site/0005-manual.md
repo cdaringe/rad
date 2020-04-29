@@ -194,7 +194,7 @@ export const tasks: Tasks = {
 sweet! now, our `ci` task should depend on lint & test tasks, of which lint
 You can see `dependsOn` at work by using `--print-graph`:
 
-```sh
+```bash
 $ rad ci --print-graph
 └─ ci
    ├─ lint

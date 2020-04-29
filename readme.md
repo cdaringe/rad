@@ -70,7 +70,7 @@ see the [releases page](https://github.com/cdaringe/rad/releases).
 
 <sup>1</sup>For docker users, consider making a nice shell alias
 
-```sh
+```bash
 # shell profile, e.g. .bash_profile
 function rad() {
   docker run --rm -v $PWD:/rad cdaringe/rad "$@";
