@@ -6,10 +6,11 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism-okaidia.min.css" rel="stylesheet" />
 <style>
+/* prefixed by https://autoprefixer.github.io (PostCSS: v7.0.26, autoprefixer: v9.7.3) */
 /**
  * override okaidia bogus operator
  */
-.token.operator {
+ .token.operator {
  background-color: transparent !important;
 }
 
@@ -34,6 +35,8 @@ td {
 
 /* hero */
 .baby-rad {
+  -webkit-transition: all 5s;
+  -o-transition: all 5s;
   transition: all 5s;
 }
 svg text {
@@ -67,16 +70,13 @@ svg {
 </style>
 </head>
 <body>
-<svg id="radness" viewBox="0 0 800 300">
+<svg id="radness" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <symbol id="repeatme">
     <text text-anchor="middle" x="0" y="0" dx='1em' dy="1em">RAD</text>
   </symbol>
   <g id="repeats" />
   <use class="text" xlink:href="#big_baby" />
   <text id="big_baby" text-anchor="middle" x="85%" y="80%" dy=".35em">RAD</text>
-  <symbol id="big_babys_baby">
-    <text text-anchor="middle" x="85%" y="80%" dy=".35em">RAD</text>
-  </symbol>
 </svg>
 <div class='content'>
   bodybody
