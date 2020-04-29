@@ -2,7 +2,7 @@
 
 a general purpose build tool.
 
-statically typed, batteries included. command tasks, function tasks, and make-style tasks support.
+statically typed, batteries included. command tasks, function tasks, and make-style tasks supported.
 
 | branch | status-badge |
 | ------ | ------------ |
