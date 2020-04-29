@@ -23,12 +23,7 @@ jobs:
       - name: test
         run: ./rad test
       - name: site
-        run: ./rad -l debug site
-      - name: deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+        run: ./rad -l info site
 
       # release
       - name: setup-node
