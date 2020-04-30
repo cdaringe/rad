@@ -7,7 +7,7 @@
     }],
     ["@semantic-release/github", {
       "assets": [
-        {"path": "assets/install.*", "label": "pinned install"}
+        {"path": "assets/install.sh", "label": "install.sh"}
       ]
     }]
   ]
