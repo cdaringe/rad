@@ -109,7 +109,7 @@ svg {
 <h2 id="usage">usage</h2>
 <p><code>$ rad &lt;task-name&gt; [--help]</code></p>
 <pre><code class="language-ts">// rad.ts
-import { Tasks } from &quot;https://raw.githubusercontent.com/cdaringe/rad/master/src/mod.ts&quot;;
+import { Tasks } from &quot;https://deno.land/x/rad/src/mod.ts&quot;;
 
 // command tasks
 const format = `prettier --write`
@@ -161,8 +161,8 @@ see the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p
 </tr>
 <tr>
 <td>cli</td>
-<td><code>curl+sh</code></td>
-<td>`curl <todo>.sh</td>
+<td><code>curl</code></td>
+<td><ul><li>versioned: `curl -fsSL <a href="https://github.com/cdaringe/rad/releases/download/v1.2.0/install.sh">https://github.com/cdaringe/rad/releases/download/v1.2.0/install.sh</a></td>
 </tr>
 <tr>
 <td>library</td>
@@ -196,10 +196,6 @@ other many tools out there!</p>
 <li>a real scripting language--<strong>not</strong> <code>bash/sh</code>! shell languages are great for running other programs, not for plumbing data</li>
 </ul>
 <p>see <a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></p>
-
-<h2 id="toolkit">toolkit</h2>
-<p><a href="https://github.com/cdaringe/rad/blob/">https://github.com/cdaringe/rad/blob/</a>
-f27c5d5f7cd8c40b1cb94b1f659c1b3768c7dc00/src/Task.ts#L33-L42</p>
 
 <h1 id="why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</h1>
 <p>your build tool is probably great. keep using it if you love it.
