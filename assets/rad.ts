@@ -1,7 +1,7 @@
 import {
   Task,
   Tasks,
-} from "https://raw.githubusercontent.com/cdaringe/rad/master/src/mod.ts";
+} from "https://deno.land/x/rad/src/mod.ts";
 
 const meet: Task = `echo "hi friend."`;
 

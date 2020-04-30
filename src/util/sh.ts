@@ -5,7 +5,7 @@ export async function sh(
   opts?: { encoding?: "utf-8"; ignoreExitCode?: boolean; logger: Logger },
 ) {
   const { logger } = opts || {};
-  const shell = Deno.env().SHELL || "sh";
+  const shell = Deno.env.get("SHELL") || "sh";
   logger?.debug([shell, "-c", cmd].join(" "));
   const proc = Deno.run({
     cmd: ["sh", "-c", cmd],

@@ -1,8 +1,7 @@
-import { Radness } from "https://raw.githubusercontent.com/cdaringe/rad/next/src/mod.ts";
+import { Radness } from "../../src/mod.ts";
 import { createFsUtil } from "../../src/util/fs.ts";
 import { createLogger } from "../../src/logger.ts";
 import { path, fs } from "../../src/3p/std.ts";
-const { copy } = fs;
 
 const __dirname = path.dirname(import.meta.url).replace("file://", "");
 
@@ -19,14 +18,14 @@ const mod = {
   basicMakeTreeDirname: path.resolve(__dirname, "basic.make.tree"),
   deepMakeTreeDirname: path.resolve(__dirname, "deep.tree.dependent"),
   async copyContents(src: string, dest: string) {
-    var files = await Deno.readdir(src);
+    var files = await Deno.readDir(src);
     for await (const fileinfo of files) {
       const filename = fileinfo.name;
       if (!filename || filename === "." || filename === "..") continue;
-      await copy(
-        path.join(src, filename),
+      const oldContent = await fs.readFileStr(path.join(src, filename));
+      await fs.writeFileStr(
         path.join(dest, filename),
-        { overwrite: true },
+        oldContent.replace("../../..", Deno.cwd()),
       );
     }
   },

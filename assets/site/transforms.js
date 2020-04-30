@@ -1,3 +1,1 @@
-
-
-export const transforms = []
+export const transforms = [];

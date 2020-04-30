@@ -39,10 +39,12 @@ export function onFail(err: any) {
   let reason = err?.reason?.message || "";
   if (err instanceof SyntaxError) {
     emoji = RadInvalidRadFile.emoji!;
-    toLog = `${emoji} syntax error detected\n\n${take(
-      (err.stack || "").split("\n"),
-      3,
-    ).join("\n")}`;
+    toLog = `${emoji} syntax error detected\n\n${
+      take(
+        (err.stack || "").split("\n"),
+        3,
+      ).join("\n")
+    }`;
   } else if (err instanceof RadError) {
     toLog = `${emoji} ${msg}` + (reason ? `\n${reason}` : "");
   } else {

@@ -24,7 +24,7 @@ jump to:
 
 ```ts
 // rad.ts
-import { Tasks } from "https://raw.githubusercontent.com/cdaringe/rad/master/src/mod.ts";
+import { Tasks } from "https://deno.land/x/rad/src/mod.ts";
 
 // command tasks
 const format = `prettier --write`

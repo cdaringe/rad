@@ -43,7 +43,7 @@ Deno.test({
       prereqs: [inputFilename],
       cwd: testDir,
       onMake: async (
-        toolkit,
+        _toolkit,
         { getPrereqFilenames, getChangedPrereqFilenames },
       ) => {
         const all = await getPrereqFilenames();

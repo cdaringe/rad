@@ -61,9 +61,11 @@ export function assertFlags(userFlags: { [key: string]: any }) {
   }, [] as string[][]);
   if (nonStringyFlags.length) {
     throw new errors.RadError(
-      `expected string or boolean values for flag: ${JSON.stringify(
-        nonStringyFlags,
-      )}`,
+      `expected string or boolean values for flag: ${
+        JSON.stringify(
+          nonStringyFlags,
+        )
+      }`,
     );
   }
   permitted.forEach((key) => present.delete(key));

@@ -1,4 +1,4 @@
-import { Tasks } from "https://raw.githubusercontent.com/cdaringe/rad/next/src/mod.ts";
+import { Tasks } from "../../../src/mod.ts";
 
 export const tasks: Tasks = {
   makeDemo: {
@@ -6,7 +6,7 @@ export const tasks: Tasks = {
     prereqs: ["p1", "p2"],
     async onMake({ logger }, { prereqs, getChangedPrereqFilenames }) {
       for await (const req of prereqs) {
-        logger.info(`req: ${req.filename} ${JSON.stringify(req.info)}`);
+        logger.info(`req: ${req.path}}`);
       }
       const changed = await getChangedPrereqFilenames();
       logger.info(`changed: ${changed} (${changed.length})`);

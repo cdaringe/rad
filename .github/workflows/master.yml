@@ -19,7 +19,7 @@ jobs:
       # https://github.com/denolib/setup-deno
       - uses: denolib/setup-deno@master
         with:
-          deno-version: 0.x
+          deno-version: 0.42
       - name: test
         run: ./rad test
       - name: site
@@ -45,5 +45,6 @@ jobs:
             "@semantic-release/commit-analyzer" \
             "@semantic-release/release-notes-generator" \
             "@semantic-release/github" \
+            "@semantic-release/exec" \
             && \
           npx semantic-release

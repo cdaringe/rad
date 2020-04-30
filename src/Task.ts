@@ -16,7 +16,7 @@ import { timer } from "./util/timer.ts";
 import { glob } from "./util/glob.ts";
 import * as iter from "./util/iterable.ts";
 import { Logger, WithLogger } from "./logger.ts";
-import { path, fs, colors } from "./3p/std.ts";
+import { path, fs, colors, logger } from "./3p/std.ts";
 
 type WalkEntry = fs.WalkEntry;
 const { italic, bold, green, red } = colors;
@@ -66,9 +66,11 @@ export type Dependarooni = {
 export type Funcarooni = Dependarooni & {
   fn: TaskFn;
 };
-export type Commandarooni = string | (Dependarooni & {
-  cmd: string;
-});
+export type Commandarooni =
+  | string
+  | (Dependarooni & {
+    cmd: string;
+  });
 
 /**
  * a make task needs prereqs
@@ -118,36 +120,44 @@ export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
   const funcer: Funcarooni = {
     fn: async function makeTaskFn(toolkit) {
       const targetWalkEntry: WalkEntry = await glob(cwd, target).next().then(
-        (res: IteratorReturnResult<WalkEntry>) => res.value,
+        (res: any) => res.value,
       );
-      const targetModified = targetWalkEntry?.info?.modified || -1;
+      const targetModified = targetWalkEntry
+        ? await Deno.stat(targetWalkEntry.path).then(
+          ({ mtime }) => Number(mtime) || -1,
+        )
+        : -1;
       const getPrereqs = async function* getMakePrereqs(
-        filter: (predicate: WalkEntry) => boolean,
+        filter: (predicate: WalkEntry) => Promise<boolean>,
       ): AsyncIterable<WalkEntry> {
         for (const prereq of prereqs) {
           for await (const walkEntry of glob(cwd, prereq)) {
-            if (filter(walkEntry)) yield walkEntry;
+            if (await filter(walkEntry)) yield walkEntry;
           }
         }
       };
       const changedPrereqs = () =>
-        getPrereqs((walkEntry) => {
-          const { created, modified } = walkEntry.info;
-          const isPrereqChanged = (modified || created || 0) >= targetModified;
+        getPrereqs(async (walkEntry) => {
+          const {
+            birthtime: created = Date.now(),
+            mtime: modified = Date.now(),
+          } = await Deno.stat(walkEntry.path);
+          const isPrereqChanged =
+            (Number(modified) || Number(created) || 0) >= targetModified;
           return isPrereqChanged;
         });
       return onMake(
         toolkit,
         {
-          prereqs: getPrereqs((i) => !!i),
+          prereqs: getPrereqs(async (i) => !!i),
           changedPrereqs: changedPrereqs(),
           getPrereqFilenames: () =>
-            iter.toArray(getPrereqs((i) => !!i)).then((reqs) =>
-              reqs.map((req) => req.filename)
+            iter.toArray(getPrereqs(async (i) => !!i)).then((reqs) =>
+              reqs.map((req) => req.path)
             ),
           getChangedPrereqFilenames: () =>
             iter.toArray(changedPrereqs()).then((reqs) =>
-              reqs.map((req) => req.filename)
+              reqs.map((req) => req.path)
             ),
         },
       );
@@ -268,12 +278,16 @@ export async function execute(task: RadTask, { logger }: WithLogger) {
       };
       const { message, timing: { active, total } } = task.report!;
       logger.info(
-        `${bold(task.name)} ${italic(
-          "end",
-        )} : ${message} : active ${active} ms (${((active / total) * 100)
-          .toFixed(
-            0,
-          )}%): total ${total} ms `,
+        `${bold(task.name)} ${
+          italic(
+            "end",
+          )
+        } : ${message} : active ${active} ms (${
+          ((active / total) * 100)
+            .toFixed(
+              0,
+            )
+        }%): total ${total} ms `,
       );
     }
   }();

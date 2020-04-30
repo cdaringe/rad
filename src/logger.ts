@@ -10,13 +10,15 @@ export async function createLogger(level: logLevels.LevelName = "WARNING") {
     handlers: {
       console: new log.handlers.ConsoleHandler(nextLevel, {
         formatter: (info: logger.LogRecord) => {
-          return `${colors.blue("[rad]")} ${format(
-            info.datetime,
-            "HH:mm:ss",
-            undefined,
-          )} ${info.levelName.length === 4 ? " " : ""}(${info
-            .levelName
-            .toLowerCase()}) ${info.msg}`;
+          return `${colors.blue("[rad]")} ${
+            format(
+              info.datetime,
+              "HH:mm:ss",
+              undefined,
+            )
+          } ${
+            info.levelName.length === 4 ? " " : ""
+          }(${info.levelName.toLowerCase()}) ${info.msg}`;
         },
       }),
     },

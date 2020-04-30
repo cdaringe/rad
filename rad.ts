@@ -7,7 +7,7 @@ const marked = (window as any).marked;
 const format: Task = { fn: ({ sh }) => sh(`deno fmt`) };
 const test: Task = `deno test -A`;
 const site: Task = {
-  target: "./public/index.html",
+  target: "public/index.html",
   prereqs: ["assets/site/**/*.{html,md}"],
   onMake: async ({ task, fs, logger }, { getPrereqFilenames }) => {
     const pruneNoSite = (str: string) => str.replace(/.*NOSITE.*$/im, "");
@@ -20,7 +20,7 @@ const site: Task = {
       md: (filename.match(/md$/) ? [filename, ...md] : md).sort(
         (a, b) =>
           parseInt(basename(a.substr(0, 4))) >
-          parseInt(basename(b.substr(0, 4)))
+            parseInt(basename(b.substr(0, 4)))
             ? 1
             : 0,
       ),
@@ -30,7 +30,11 @@ const site: Task = {
       marked(pruneNoSite(await fs.readFile(f)))
     );
     const [index, _transform, ...sections] = await Promise.all(
-      [fs.readFile(html[0]), Deno.copyFile("assets/site/transforms.js", "public/transforms.js"), ...mdContentsP],
+      [
+        fs.readFile(html[0]),
+        Deno.copyFile("assets/site/transforms.js", "public/transforms.js"),
+        ...mdContentsP,
+      ],
     );
     logger.info(`writing index.html`);
     await fs.writeFile(
@@ -42,10 +46,27 @@ const site: Task = {
 };
 
 const check: Task = { dependsOn: [format, test] };
-
+const patchInstallVersion: Task = {
+  fn: async ({ Deno, fs, logger }) => {
+    const nextVersion = Deno.env.get("NEXT_VERSION");
+    if (!nextVersion) throw new Error("NEXT_VERSION not found");
+    const installScriptRelativeFilename = "assets/install.sh";
+    const oldContent = await fs.readFile(installScriptRelativeFilename);
+    const nextContent = oldContent.replace(
+      /__RAD_VERSION__=.*/g,
+      `__RAD_VERSION__=${nextVersion}`,
+    );
+    if (oldContent === nextContent) {
+      throw new Error("failed to update install version");
+    }
+    logger.info(nextContent);
+    await fs.writeFile(installScriptRelativeFilename, nextContent);
+  },
+};
 export const tasks: Tasks = {
   ...{ f: format, format },
   ...{ t: test, test },
   ...{ s: site, site },
   ...{ c: check, check },
+  patchInstallVersion,
 };
