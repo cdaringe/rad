@@ -732,7 +732,7 @@ System.register("index", ["transforms/chaos", "transforms/order"], function (exp
   `).join("");
         }
     }
-    function whileNotExecuting(cb) {
+    function whileNotInstallingTransforms(cb) {
         let isExecuting = false;
         return async () => {
             isExecuting = true;
@@ -770,7 +770,7 @@ System.register("index", ["transforms/chaos", "transforms/order"], function (exp
             // funsies initial animation
             chaosTimer = setTimeout(() => window.requestAnimationFrame(() => paintBabies(order_ts_1.order)), 500);
             transformIndex = 0;
-            onClick = window.onClick = whileNotExecuting(() => {
+            onClick = window.onClick = whileNotInstallingTransforms(() => {
                 clearTimeout(chaosTimer);
                 ++transformIndex;
                 if (!transforms[transformIndex]) {
