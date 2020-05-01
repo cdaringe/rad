@@ -1,1 +1,1 @@
-deno -A src/bin.ts "$@"
+deno run --unstable -A src/bin.ts "$@"

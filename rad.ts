@@ -6,6 +6,24 @@ const marked = (window as any).marked;
 
 const format: Task = { fn: ({ sh }) => sh(`deno fmt`) };
 const test: Task = `deno test -A`;
+const check: Task = { dependsOn: [format, test] };
+const patchInstallVersion: Task = {
+  fn: async ({ Deno, fs, logger }) => {
+    const nextVersion = Deno.env.get("NEXT_VERSION");
+    if (!nextVersion) throw new Error("NEXT_VERSION not found");
+    const installScriptRelativeFilename = "assets/install.sh";
+    const oldContent = await fs.readFile(installScriptRelativeFilename);
+    const nextContent = oldContent.replace(
+      /__RAD_VERSION__=.*/g,
+      `__RAD_VERSION__=${nextVersion}`,
+    );
+    if (oldContent === nextContent) {
+      throw new Error("failed to update install version");
+    }
+    logger.info(nextContent);
+    await fs.writeFile(installScriptRelativeFilename, nextContent);
+  },
+};
 const site: Task = {
   target: "public/index.html",
   prereqs: ["assets/site/**/*.{html,md}"],
@@ -29,38 +47,24 @@ const site: Task = {
     const mdContentsP = ["./readme.md", ...md].map(async (f) =>
       marked(pruneNoSite(await fs.readFile(f)))
     );
-    const [index, _transform, ...sections] = await Promise.all(
+    const [index, indexJs, _transform, ...sections] = await Promise.all(
       [
         fs.readFile(html[0]),
-        Deno.copyFile("assets/site/transforms.js", "public/transforms.js"),
+        Deno.bundle("assets/site/index.ts").then((res) => res[1]),
+        Deno.bundle("assets/site/transforms.ts").then((res) =>
+          fs.writeFile("public/transforms.js", res[1])
+        ),
         ...mdContentsP,
       ],
     );
     logger.info(`writing index.html`);
     await fs.writeFile(
       "public/index.html",
-      index.replace(/bodybody/g, sections.join("\n")),
+      index
+        .replace(/jsjsjs/g, indexJs)
+        .replace(/bodybody/g, sections.join("\n")),
     );
     logger.info(`fin`);
-  },
-};
-
-const check: Task = { dependsOn: [format, test] };
-const patchInstallVersion: Task = {
-  fn: async ({ Deno, fs, logger }) => {
-    const nextVersion = Deno.env.get("NEXT_VERSION");
-    if (!nextVersion) throw new Error("NEXT_VERSION not found");
-    const installScriptRelativeFilename = "assets/install.sh";
-    const oldContent = await fs.readFile(installScriptRelativeFilename);
-    const nextContent = oldContent.replace(
-      /__RAD_VERSION__=.*/g,
-      `__RAD_VERSION__=${nextVersion}`,
-    );
-    if (oldContent === nextContent) {
-      throw new Error("failed to update install version");
-    }
-    logger.info(nextContent);
-    await fs.writeFile(installScriptRelativeFilename, nextContent);
   },
 };
 export const tasks: Tasks = {
