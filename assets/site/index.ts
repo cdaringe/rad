@@ -41,7 +41,7 @@ const chaosTimer = setTimeout(
   500,
 );
 
-function whileNotExecuting(cb: () => any) {
+function whileNotInstallingTransforms(cb: () => any) {
   let isExecuting = false;
   return async () => {
     isExecuting = true;
@@ -66,7 +66,7 @@ function whileNotExecuting(cb: () => any) {
 }
 
 let transformIndex = 0;
-const onClick = window.onClick = whileNotExecuting(() => {
+const onClick = window.onClick = whileNotInstallingTransforms(() => {
   clearTimeout(chaosTimer);
   ++transformIndex;
   if (!transforms[transformIndex]) {
