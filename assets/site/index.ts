@@ -66,7 +66,7 @@ function whileNotExecuting(cb: () => any) {
 }
 
 let transformIndex = 0;
-const onClick = whileNotExecuting(() => {
+const onClick = window.onClick = whileNotExecuting(() => {
   clearTimeout(chaosTimer);
   ++transformIndex;
   if (!transforms[transformIndex]) {
