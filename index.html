@@ -770,7 +770,7 @@ System.register("index", ["transforms/chaos", "transforms/order"], function (exp
             // funsies initial animation
             chaosTimer = setTimeout(() => window.requestAnimationFrame(() => paintBabies(order_ts_1.order)), 500);
             transformIndex = 0;
-            onClick = whileNotExecuting(() => {
+            onClick = window.onClick = whileNotExecuting(() => {
                 clearTimeout(chaosTimer);
                 ++transformIndex;
                 if (!transforms[transformIndex]) {
