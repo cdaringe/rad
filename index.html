@@ -741,11 +741,12 @@ System.register("index", ["transforms/chaos", "transforms/order"], function (exp
                  * update default transforms with remote transforms
                  */
                 if (transforms.length === 2) {
-                    transforms = await context_4.import(window.location.port == "3333"
+                    const tUrl = window.location.port == "3333"
                         ? "http://localhost:3333/transforms.js"
-                        : "https://raw.githubusercontent.com/cdaringe/rad/next/assets/site/transforms").then((r) => {
-                        return transforms.concat(r.transforms);
-                    });
+                        : (window.location.href.match(/github/)
+                            ? `https://cdaringe.github.io/rad/transforms.js`
+                            : `${window.location.origin}/transforms.js`);
+                    transforms = await context_4.import(tUrl).then((r) => transforms.concat(r.transforms));
                 }
                 await Promise.resolve(cb());
             }
