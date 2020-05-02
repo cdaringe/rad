@@ -3,8 +3,8 @@ import {
   Transform,
   RadSvgTransform,
 } from "./common.ts";
-import { chaos } from './transforms/chaos.ts'
-import { order } from './transforms/order.ts'
+import { chaos } from "./transforms/chaos.ts";
+import { order } from "./transforms/order.ts";
 
 function paintBabies(transform: Transform) {
   let count = 51;
@@ -50,13 +50,16 @@ function whileNotInstallingTransforms(cb: () => any) {
        * update default transforms with remote transforms
        */
       if (transforms.length === 2) {
-        transforms = await import(
-          window.location.port == "3333"
-            ? "http://localhost:3333/transforms.js"
-            : "https://raw.githubusercontent.com/cdaringe/rad/next/assets/site/transforms"
-        ).then((r) => {
-          return transforms.concat(r.transforms);
-        });
+        const tUrl = window.location.port == "3333"
+          ? "http://localhost:3333/transforms.js"
+          : (
+            window.location.href.match(/github/)
+              ? `https://cdaringe.github.io/rad/transforms.js`
+              : `${window.location.origin}/transforms.js`
+          );
+        transforms = await import(tUrl).then((r) =>
+          transforms.concat(r.transforms)
+        );
       }
       await Promise.resolve(cb());
     } finally {
