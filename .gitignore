@@ -12,6 +12,7 @@ coverage
 build
 src/3p/*
 !src/3p/*.ts
+!.rad
 public
 # make task tester files
 m1
