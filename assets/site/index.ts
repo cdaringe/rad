@@ -32,7 +32,7 @@ function paintBabies(transform: Transform) {
     ).join("");
   }
 }
-let transforms = [order, chaos];
+let transforms = [chaos, order];
 // initial paint
 paintBabies(chaos);
 // funsies initial animation
@@ -68,12 +68,13 @@ function whileNotInstallingTransforms(cb: () => any) {
   };
 }
 
-let transformIndex = 0;
+let transformIndex = 1; // start at 1 to not revisit eager pageload xforms
 const onClick = window.onClick = whileNotInstallingTransforms(() => {
   clearTimeout(chaosTimer);
   ++transformIndex;
   if (!transforms[transformIndex]) {
     transformIndex = 0;
+    document.getElementById('add_more_transforms')!.style.display = ''
   }
   paintBabies(transforms[transformIndex]);
 });
