@@ -6,7 +6,7 @@ const install: Task = {
   prereqs: ["package.json"],
   onMake: async ({ sh }, { getChangedPrereqFilenames }) => {
     const changed = await getChangedPrereqFilenames();
-    if (changed.length) await sh(`npm ci --verbose`);
+    if (changed.length) await sh(`npm install --verbose`);
   },
 };
 const lint: Task = {

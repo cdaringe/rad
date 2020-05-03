@@ -28,6 +28,7 @@ export const task: Task = {
     const mdContentsP = ["./readme.md", ...md].map(async (f) =>
       marked(pruneNoSite(await fs.readFile(f)))
     );
+    if (!html[0]) throw new Error(`html index not found`);
     const [index, indexJs, _transform, ...sections] = await Promise.all(
       [
         fs.readFile(html[0]),

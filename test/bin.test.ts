@@ -1,11 +1,11 @@
-import { testing } from "../src/3p/std.test.ts";
+import { asserts } from "../src/3p/std.test.ts";
 
 import { assertFlags, suchRad } from "../src/bin.ts";
 import { RadError } from "../src/errors.ts";
 import fixtures from "./fixtures/mod.ts";
-const { assertThrows, assertEquals, assertThrowsAsync } = testing;
+const { assertThrows, assertEquals, assertThrowsAsync } = asserts;
 Deno.test({
-  name: "cli flags accept/reject",
+  name: fixtures.asTestName("cli flags accept/reject", import.meta),
   fn: () => {
     assertThrows(() => assertFlags({ batman: true }));
     assertEquals(
@@ -25,7 +25,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "bin entry",
+  name: fixtures.asTestName("bin entry", import.meta),
   fn: async function testEntry() {
     var { dirname, radFilename } = await fixtures.createTestFolderContext();
     await fixtures.copyContents(fixtures.basicDirname, dirname);

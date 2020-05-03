@@ -6,19 +6,18 @@ import {
   asFuncarooni,
 } from "../src/Task.ts";
 import fixtures from "./fixtures/mod.ts";
-import { testing } from "../src/3p/std.test.ts";
 import { fs, path } from "../src/3p/std.ts";
 import * as rad from "../src/mod.ts";
 import { fromTasks } from "../src/TaskGraph.ts";
-import { assert } from "https://deno.land/std@v0.42.0/testing/asserts.ts";
+import { asserts } from "../src/3p/std.test.ts";
 const { writeFileStr } = fs;
 
-const { assertEquals } = testing;
+const { assert, assertEquals } = asserts;
 
 const logster = { logger: await fixtures.getTestLogger() };
 
 Deno.test({
-  name: "user task",
+  name: fixtures.asTestName("user task", import.meta),
   fn: async () => {
     const userTask: Task = {
       fn: () => 1,
@@ -32,7 +31,10 @@ Deno.test({
 });
 
 Deno.test({
-  name: "make - only runs task on file change",
+  name: fixtures.asTestName(
+    "make - only runs task on file change",
+    import.meta,
+  ),
   fn: async () => {
     const testDir = await Deno.makeTempDir({ prefix: "test_rad" });
     const targetFilename = await Deno.makeTempFile(
@@ -81,8 +83,10 @@ Deno.test({
 });
 
 Deno.test({
-  name:
+  name: fixtures.asTestName(
     "make - multiple output - paired input/output files - only runs task on file change",
+    import.meta,
+  ),
   fn: async () => {
     /**
      * this test exercises fixtures/make.multi.target functionality.

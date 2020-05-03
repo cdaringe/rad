@@ -13,6 +13,8 @@ const getTestLogger = () =>
   createLogger(Deno.env.get("TEST_LOG_LEVEL") ?? "CRITICAL");
 
 const mod = {
+  asTestName: (description: string, meta: { url: string }) =>
+    `[${path.basename(meta.url.replace("file://", ""))}] ${description}`,
   basicDirname: path.resolve(__dirname, "basic"),
   basicTreeDirname: path.resolve(__dirname, "basic.tree"),
   basicTreeDependentDirname: path.resolve(__dirname, "basic.tree.dependent"),

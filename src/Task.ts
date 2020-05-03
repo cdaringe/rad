@@ -144,7 +144,11 @@ export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
       ): AsyncIterable<WalkEntry> {
         for (const prereq of prereqs) {
           toolkit.logger.debug(`globbing at ${cwd} + ${prereq}`);
-          for await (const walkEntry of glob(cwd, prereq)) {
+          for await (
+            const walkEntry of glob(
+              { root: cwd, pattern: prereq, logger: toolkit.logger },
+            )
+          ) {
             toolkit.logger.debug(`entry found: ${walkEntry.name}`);
             if (await filter(walkEntry)) yield walkEntry;
           }
@@ -157,7 +161,9 @@ export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
             mtime: modified = Date.now(),
           } = await Deno.stat(walkEntry.path);
           const targetPath = "target" in task
-            ? await glob(cwd, task.target).next().then((
+            ? await glob(
+              { root: cwd, pattern: task.target, logger: toolkit.logger },
+            ).next().then((
               res: IteratorResult<fs.WalkEntry, any>,
             ) => res.done ? "" : res.value.path)
             : await Promise.resolve(

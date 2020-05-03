@@ -2,9 +2,9 @@ import { Radness } from "../src/Radness.ts";
 import { run, fromTasks, asTree } from "../src/TaskGraph.ts";
 import { Task } from "../src/Task.ts";
 import fixtures from "./fixtures/mod.ts";
-import { testing } from "../src/3p/std.test.ts";
+import { asserts } from "../src/3p/std.test.ts";
 
-const { assert, assertEquals } = testing;
+const { assert, assertEquals } = asserts;
 
 const basicRadness: Radness = {
   tasks: {
@@ -43,7 +43,7 @@ const basicRadnessWithDependencies: Radness = {
 };
 
 Deno.test({
-  name: "user tasks in Radness format",
+  name: fixtures.asTestName("user tasks in Radness format", import.meta),
   fn: async () => {
     const result = await run({
       name: "radness_format_test",
@@ -55,7 +55,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "tasks traverse `dependsOn` graphs",
+  name: fixtures.asTestName("tasks traverse `dependsOn` graphs", import.meta),
   fn: async () => {
     const result = await run({
       name: "a",
@@ -70,7 +70,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "tasks builds reports on traversal",
+  name: fixtures.asTestName("tasks builds reports on traversal", import.meta),
   fn: async () => {
     const graph = fromTasks(
       basicRadnessWithDependencies.tasks,
@@ -110,7 +110,7 @@ const expectedPrintGraphTree = `
 `;
 
 Deno.test({
-  name: "print-graph",
+  name: fixtures.asTestName("print-graph", import.meta),
   async fn() {
     const graph = fromTasks(
       basicRadnessWithDependencies.tasks,

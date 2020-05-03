@@ -1,11 +1,11 @@
 import * as rad from "../src/mod.ts";
 import fixtures from "./fixtures/mod.ts";
-import { testing } from "../src/3p/std.test.ts";
+import { asserts } from "../src/3p/std.test.ts";
 import { path } from "../src/3p/std.ts";
-const { assert } = testing;
+const { assert } = asserts;
 
 Deno.test({
-  name: "fixtures",
+  name: fixtures.asTestName("fixtures", import.meta),
   fn: async () => {
     var { dirname } = await fixtures.createTestFolderContext();
     await fixtures.copyContents(fixtures.basicDirname, dirname);
