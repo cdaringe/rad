@@ -20,11 +20,13 @@ html, body {
   height: 100%;
   margin: 0;
   width: 100vw;
+  overflow-x: hidden;
 }
+
 a, a:visited {color:#2196f3;} /* Visited link    */
 table {
   display: block;
-  overflow-x: scroll;
+  overflow-x: auto;
   border: 0.1px dashed #ffffff1a;
   padding: 8px;
 }
@@ -44,13 +46,16 @@ svg#radness text {
   stroke-width: 1;
   stroke: beige;
 }
-#click_hero {
-  display: block;
-  font-size: xx-small;
-  margin: auto;
+#hero_actions {
+  width: 100%;
   max-width: 800px;
   padding-right: 16px;
   text-align: right;
+  margin: auto;
+}
+#hero_actions * {
+  display: inline-block;
+  font-size: xx-small;
   cursor: pointer;
 }
 
@@ -99,7 +104,10 @@ svg#radness {
   <text id="big_baby" text-anchor="middle" x="85%" y="80%" dy=".35em">RAD</text>
 </svg>
 <!-- <a href=""><img width="60px" style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a> -->
-<a id='click_hero' onclick="onClick()">^click-me</a>
+<div id='hero_actions'>
+  <a id='add_more_transforms' style='display: none;' target="_blank" rel="noreferrer noopener" href="https://github.com/cdaringe/rad/blob/next/assets/site/supplemental-transforms.ts">add-more-animations!</a>
+  <a id='click_prompt' onclick="onClick()">^click-me</a>
+</div>
 <div class='content'>
   <h1 id="rad-💯">rad 💯</h1>
 <p>a general purpose build tool.</p>
@@ -108,20 +116,20 @@ svg#radness {
 <thead>
 <tr>
 <th>branch</th>
-<th>status-badge</th>
+<th>status</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>master</td>
-<td><img src="https://github.com/cdaringe/rad/workflows/master/badge.svg" alt="master"></td>
+<td><a href="https://github.com/cdaringe/rad/actions?query=workflow%3Amaster"><img src="https://github.com/cdaringe/rad/workflows/master/badge.svg" alt="master"></a></td>
 </tr>
 <tr>
 <td>next</td>
-<td><img src="https://github.com/cdaringe/rad/workflows/next/badge.svg" alt="next"></td>
+<td><a href="https://github.com/cdaringe/rad/actions?query=workflow%3Anext"><img src="https://github.com/cdaringe/rad/workflows/next/badge.svg?branch=next" alt="next"></a></td>
 </tr>
 </tbody></table>
 <p>jump to:</p>
-<ol>
+<ol start="2">
 <li><a href="#usage">usage</a></li>
 <li><a href="#install">install</a></li>
 <li><a href="#what-is-it">what</a></li>
@@ -430,7 +438,25 @@ const site: Task = {
 <p>if you have <strong>many</strong> prereqs, you should probably consider using
 the <code>AsyncIterator</code> implementations referenced above so as to not eat
 all of your memory 😀.</p>
-<p>check out the type definitions for more!</p>
+<p><code>gnu make</code> also have a <a href="https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html">pattern syntax</a>
+for when your task maps <em>N</em> prereqs to <em>M</em> targets. if you have <code>prereqs</code> and
+the targets can be considered functions of the prereq file, make style tasks
+can <em>remove <code>target</code>, and add <code>mapPrereqToTarget</code></em>.</p>
+<pre><code class="language-ts">export const tasks: Tasks = {
+  clean: `rm -rf &#39;build&#39;`,
+  build: {
+    prereqs: [&quot;src/*&quot;],
+    mapPrereqToTarget: ({ cwd /* string */, prereq /* string */, reroot }) =&gt;
+      reroot(&quot;src&quot;, &quot;build&quot;, &quot;coffee&quot;, &quot;js&quot;),
+    async onMake() { /* snip snip */ },
+  },
+};</code></pre>
+<p>this is certainly <em>more verbose</em> than <code>make</code>&#39;s syntax. but it has the benefit
+of being a clear, debuggable function 🤓! further, this api doesn&#39;t
+force you to have 1:1 mappings between inputs and outputs. if prereqs <code>a</code> and <code>b</code>
+mapped to <code>foo</code> and <code>c</code> mapped to <code>bar</code>--no problem, you can express that easily
+in <code>mapPrereqToTarget</code>!</p>
+<p>check out the type definitions for more.</p>
 <h3 id="task-depedencies">task depedencies</h3>
 <p>all task types, except command style tasks, accept an optional <code>dependsOn</code> array.
 <code>dependsOn</code> is an array of task references. task references must be
@@ -765,17 +791,18 @@ System.register("index", ["transforms/chaos", "transforms/order"], function (exp
             }
         ],
         execute: function () {
-            transforms = [order_ts_1.order, chaos_ts_1.chaos];
+            transforms = [chaos_ts_1.chaos, order_ts_1.order];
             // initial paint
             paintBabies(chaos_ts_1.chaos);
             // funsies initial animation
             chaosTimer = setTimeout(() => window.requestAnimationFrame(() => paintBabies(order_ts_1.order)), 500);
-            transformIndex = 0;
+            transformIndex = 1; // start at 1 to not revisit eager pageload xforms
             onClick = window.onClick = whileNotInstallingTransforms(() => {
                 clearTimeout(chaosTimer);
                 ++transformIndex;
                 if (!transforms[transformIndex]) {
                     transformIndex = 0;
+                    document.getElementById('add_more_transforms').style.display = '';
                 }
                 paintBabies(transforms[transformIndex]);
             });

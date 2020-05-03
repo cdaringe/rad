@@ -114,18 +114,72 @@ System.register("common", [], function (exports_1, context_1) {
         }
     };
 });
-System.register("transforms", [], function (exports_2, context_2) {
+System.register("transforms/0001-orbit", [], function (exports_2, context_2) {
     "use strict";
-    var transforms;
+    var TWO_PI, radToDeg, transform;
     var __moduleName = context_2 && context_2.id;
     return {
         setters: [],
         execute: function () {
+            TWO_PI = 2 * Math.PI;
+            radToDeg = (rad) => (rad / TWO_PI) * 360;
+            exports_2("transform", transform = ({ w, h, count, }) => {
+                const [cx, cy] = [w / 2, h / 2];
+                const xforms = [];
+                const outer_ring_r = .6 * cx;
+                const inner_ring_r = 2;
+                const ring_count = 5;
+                const ring_spacing_r = (outer_ring_r - inner_ring_r) / (ring_count - 1);
+                const times = (count) => "_".repeat(count).split("");
+                const ring_radii = times(ring_count).map((_, i) => inner_ring_r + i * ring_spacing_r);
+                let sum_circumferences = 0;
+                const ring_circumferences = ring_radii.map((_, i) => {
+                    const c = Math.PI * 2 * ring_radii[i];
+                    sum_circumferences += c;
+                    return c;
+                });
+                const count_by_ring_index = ring_circumferences.map((c, _) => Math.floor((count * c / sum_circumferences)));
+                const radians_intervals_by_ring_index = count_by_ring_index.map((num, _) => (2 * Math.PI) / num);
+                count_by_ring_index.forEach((num, ringId) => {
+                    const thetaChunk = radians_intervals_by_ring_index[ringId];
+                    const r = ring_radii[ringId];
+                    const randomRingThetaOffset = Math.random() * TWO_PI;
+                    times(num).forEach((_, j) => {
+                        const theta = j * thetaChunk + randomRingThetaOffset;
+                        const yOff = r * Math.sin(theta);
+                        const xOff = r * Math.cos(theta);
+                        xforms.push({
+                            translate: [cx + xOff, cy + yOff],
+                            rotate: [radToDeg(theta)],
+                            scale: 0.5,
+                        });
+                    });
+                });
+                return xforms;
+            });
+        }
+    };
+});
+System.register("supplemental-transforms", ["transforms/0001-orbit"], function (exports_3, context_3) {
+    "use strict";
+    var _0001_orbit_ts_1, transforms;
+    var __moduleName = context_3 && context_3.id;
+    return {
+        setters: [
+            function (_0001_orbit_ts_1_1) {
+                _0001_orbit_ts_1 = _0001_orbit_ts_1_1;
+            }
+        ],
+        execute: function () {
             // supplemental transforms
-            exports_2("transforms", transforms = []);
+            exports_3("transforms", transforms = [
+                /* back-to-back orbit is often randomly pretty sweet */
+                _0001_orbit_ts_1.transform,
+                _0001_orbit_ts_1.transform,
+            ]);
         }
     };
 });
 
-const __exp = __instantiate("transforms");
+const __exp = __instantiate("supplemental-transforms");
 export const transforms = __exp["transforms"];
