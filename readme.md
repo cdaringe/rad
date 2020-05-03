@@ -4,19 +4,19 @@ a general purpose build tool.
 
 statically typed, batteries included. command tasks, function tasks, and make-style tasks supported.
 
-| branch | status-badge |
+| branch | status |
 | ------ | ------------ |
-| master | ![master](https://github.com/cdaringe/rad/workflows/master/badge.svg) |
-| next   | ![next](https://github.com/cdaringe/rad/workflows/next/badge.svg) |
+| master | [![master](https://github.com/cdaringe/rad/workflows/master/badge.svg)](https://github.com/cdaringe/rad/actions?query=workflow%3Amaster) |
+| next   | [![next](https://github.com/cdaringe/rad/workflows/next/badge.svg?branch=next)](https://github.com/cdaringe/rad/actions?query=workflow%3Anext) |
 
 jump to:
 
 1. [documentation site](https://cdaringe.github.io/rad/) <!--NOSITE-->
-1. [usage](#usage)
-1. [install](#install)
-1. [what](#what-is-it)
-2. [why not `<my-favorite-build-tool>`?](https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool)
-3. [manual](https://cdaringe.github.io/rad/#manual)
+2. [usage](#usage)
+3. [install](#install)
+4. [what](#what-is-it)
+5. [why not `<my-favorite-build-tool>`?](https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool)
+6. [manual](https://cdaringe.github.io/rad/#manual)
 
 ## usage
 
