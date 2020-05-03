@@ -150,7 +150,30 @@ if you have **many** prereqs, you should probably consider using
 the `AsyncIterator` implementations referenced above so as to not eat
 all of your memory 😀.
 
-check out the type definitions for more!
+`gnu make` also have a [pattern syntax](https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html)
+for when your task maps *N* prereqs to *M* targets. if you have `prereqs` and
+the targets can be considered functions of the prereq file, make style tasks
+can _remove `target`, and add `mapPrereqToTarget`_.
+
+```ts
+export const tasks: Tasks = {
+  clean: `rm -rf 'build'`,
+  build: {
+    prereqs: ["src/*"],
+    mapPrereqToTarget: ({ cwd /* string */, prereq /* string */, reroot }) =>
+      reroot("src", "build", "coffee", "js"),
+    async onMake() { /* snip snip */ },
+  },
+};
+```
+
+this is certainly _more verbose_ than `make`'s syntax. but it has the benefit
+of being a clear, debuggable function 🤓! further, this api doesn't
+force you to have 1:1 mappings between inputs and outputs. if prereqs `a` and `b`
+mapped to `foo` and `c` mapped to `bar`--no problem, you can express that easily
+in `mapPrereqToTarget`!
+
+check out the type definitions for more.
 
 ### task depedencies
 
