@@ -9,7 +9,8 @@ export type Context = {
   dirname: string;
 };
 
-const getTestLogger = () => createLogger("CRITICAL");
+const getTestLogger = () =>
+  createLogger(Deno.env.get("TEST_LOG_LEVEL") ?? "CRITICAL");
 
 const mod = {
   basicDirname: path.resolve(__dirname, "basic"),
@@ -17,16 +18,23 @@ const mod = {
   basicTreeDependentDirname: path.resolve(__dirname, "basic.tree.dependent"),
   basicMakeTreeDirname: path.resolve(__dirname, "basic.make.tree"),
   deepMakeTreeDirname: path.resolve(__dirname, "deep.tree.dependent"),
+  makeMultiTarget: path.resolve(__dirname, "make.multi.target"),
   async copyContents(src: string, dest: string) {
     var files = await Deno.readDir(src);
     for await (const fileinfo of files) {
       const filename = fileinfo.name;
       if (!filename || filename === "." || filename === "..") continue;
-      const oldContent = await fs.readFileStr(path.join(src, filename));
-      await fs.writeFileStr(
-        path.join(dest, filename),
-        oldContent.replace("../../..", Deno.cwd()),
-      );
+      if (fileinfo.isDirectory) {
+        const targetDirname = path.join(dest, filename);
+        await Deno.mkdir(targetDirname);
+        await this.copyContents(path.join(src, filename), targetDirname);
+      } else {
+        const oldContent = await fs.readFileStr(path.join(src, filename));
+        await fs.writeFileStr(
+          path.join(dest, filename),
+          oldContent.replace("../../..", Deno.cwd()), // @todo remove dirty rotten hack for locating rad mod from test dirs
+        );
+      }
     }
   },
   async createTestFolderContext() {

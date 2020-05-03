@@ -16,11 +16,13 @@ import { timer } from "./util/timer.ts";
 import { glob } from "./util/glob.ts";
 import * as iter from "./util/iterable.ts";
 import { Logger, WithLogger } from "./logger.ts";
-import { path, fs, colors, logger } from "./3p/std.ts";
+import { path, fs, colors } from "./3p/std.ts";
+import { getReRoot } from "./util/reroot.ts";
 
 type WalkEntry = fs.WalkEntry;
 const { italic, bold, green, red } = colors;
 const noop = (a: any, b: any) => {};
+const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 export enum TASK_STATES {
   IDLE = "IDLE",
@@ -44,6 +46,7 @@ export type Toolkit = {
   path: typeof path;
   task: RadTask;
   iter: typeof iter;
+  sleep: typeof sleep;
 };
 export type TaskFn<A2 = undefined> = (
   toolkit: Toolkit,
@@ -75,63 +78,74 @@ export type Commandarooni =
 /**
  * a make task needs prereqs
  */
-export type Makearooni = Dependarooni & {
-  target: string;
-  cwd?: string;
-  /**
+export type Makearooni = Dependarooni
+  & ({
+    target: string;
+  } | {
+    mapPrereqToTarget: (
+      opts: {
+        prereq: string;
+        cwd: string;
+        reroot: (
+          oldRoot: string,
+          newRoot: string,
+          oldExt: string,
+          newExt: string,
+        ) => string;
+      },
+    ) => string;
+  })
+  & {
+    cwd?: string;
+    /**
    * globs, filenames, of input files that will be considered as inputs to
    * building the target
    */
-  prereqs: string[];
-  onMake: TaskFn<{
-    /**
+    prereqs: string[];
+    onMake: TaskFn<{
+      /**
      * prereqs that have been modified since the target has been modified.
      * all prereqs are passed if the target is missing, phony, or older than
      * all prereqs.
      */
-    changedPrereqs: AsyncIterable<WalkEntry>;
-    /**
+      changedPrereqs: AsyncIterable<WalkEntry>;
+      /**
      * all prereqs, regardless of if they are older than the target
      */
-    prereqs: AsyncIterable<WalkEntry>;
-    /**
+      prereqs: AsyncIterable<WalkEntry>;
+      /**
      * a sugar function that collects all items in the `prereqs` iterator,
      * and maps into the filenames for prereq (vs the full file data)
      */
-    getPrereqFilenames: () => Promise<string[]>;
-    /**
+      getPrereqFilenames: () => Promise<string[]>;
+      /**
      * a sugar function that collects changed items in the `prereqs` iterator,
      * and maps into the filenames for prereq (vs the full file data)
      */
-    getChangedPrereqFilenames: () => Promise<string[]>;
-  }>;
-};
-// make task
-/**
- * target: bundle.es5.js
- * files?: entry.esnext.js 'lib\**\*.js'
- * dependsOn?: [otherThing]
- */
+      getChangedPrereqFilenames: () => Promise<string[]>;
+    }>;
+  };
+
+const getModifiedTimeOrVeryOld = (filename: string) =>
+  filename
+    ? Deno.stat(filename).then(({ mtime }) => Number(mtime) || -1).catch(() =>
+      -1
+    )
+    : -1;
 
 export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
   task,
 ) => {
-  const { target, onMake, prereqs = [], cwd = ".", ...rest } = task;
+  const { onMake, prereqs = [], cwd = ".", ...rest } = task;
   const funcer: Funcarooni = {
     fn: async function makeTaskFn(toolkit) {
-      const targetWalkEntry: WalkEntry = await glob(cwd, target).next().then(
-        (res: any) => res.value,
-      );
-      const targetModified = targetWalkEntry
-        ? await Deno.stat(targetWalkEntry.path).then(
-          ({ mtime }) => Number(mtime) || -1,
-        )
-        : -1;
       const getPrereqs = async function* getMakePrereqs(
         filter: (predicate: WalkEntry) => Promise<boolean>,
       ): AsyncIterable<WalkEntry> {
         for (const prereq of prereqs) {
+          toolkit.logger.debug(`globbing at ${cwd} + ${prereq}`);
           for await (const walkEntry of glob(cwd, prereq)) {
+            toolkit.logger.debug(`entry found: ${walkEntry.name}`);
             if (await filter(walkEntry)) yield walkEntry;
           }
         }
@@ -142,8 +156,26 @@ export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
             birthtime: created = Date.now(),
             mtime: modified = Date.now(),
           } = await Deno.stat(walkEntry.path);
-          const isPrereqChanged =
-            (Number(modified) || Number(created) || 0) >= targetModified;
+          const targetPath = "target" in task
+            ? await glob(cwd, task.target).next().then((
+              res: IteratorResult<fs.WalkEntry, any>,
+            ) => res.done ? "" : res.value.path)
+            : await Promise.resolve(
+              task.mapPrereqToTarget(
+                {
+                  prereq: walkEntry.path,
+                  cwd,
+                  reroot: getReRoot(walkEntry.path),
+                },
+              ),
+            );
+          if ("mapPrereqToTarget" in task) {
+            toolkit.logger.debug( // @todo move to debug level
+              `mapPrereqToTarget: ${walkEntry.path} => ${targetPath}`,
+            );
+          }
+          const isPrereqChanged = (Number(modified) || Number(created) || 0) >=
+            await getModifiedTimeOrVeryOld(targetPath);
           return isPrereqChanged;
         });
       return onMake(
@@ -251,6 +283,7 @@ export async function execute(task: RadTask, { logger }: WithLogger) {
           iter,
           path,
           sh: (cmd, opts) => sh(cmd, { logger, ...opts }),
+          sleep,
           task,
         }, undefined),
       );
