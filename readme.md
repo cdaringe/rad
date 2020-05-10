@@ -62,7 +62,7 @@ see the [releases page](https://github.com/cdaringe/rad/releases).
 
 | usage | install-method | install-steps |
 | -- | -- | -- |
-| cli | `deno` | `deno install -A -n rad https://raw.githubusercontent.com/cdaringe/rad/master/src/bin.ts` |
+| cli | `deno` | `deno install -A -n rad https://raw.githubusercontent.com/cdaringe/rad/master/src/bin.ts`<br />`deno install -A -n rad https://raw.githubusercontent.com/cdaringe/rad/next/src/bin.ts` |
 | cli | `docker` | `docker pull cdaringe/rad` <sup>1</sup>|
 | cli | `curl` | <code>curl -fsSL https://github.com/cdaringe/rad/releases/download/v1.2.0/install.sh \| sh</code> (versioned)<br /><code>curl -fsSL https://raw.githubusercontent.com/cdaringe/rad/master/assets/install.sh \| sh</code> (latest) |
 | library | `deno` | `import * as rad from https://github.com/cdaringe/rad/blob/master/src/mod.ts` |

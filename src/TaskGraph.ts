@@ -34,11 +34,10 @@ export const graphToTreeifyGraph = ({ graph: { graph }, taskName, logger }: {
   return tree;
 };
 
-export const asTree = ({ graph, logger, taskName }:
-  & {
-    graph: TaskGraph;
-    taskName?: string;
-  }
+export const asTree = ({ graph, logger, taskName }: {
+  graph: TaskGraph;
+  taskName?: string;
+}
   & WithLogger) =>
   treeifyAsTree(graphToTreeifyGraph({ graph, logger, taskName }));
 

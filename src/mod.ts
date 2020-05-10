@@ -4,12 +4,14 @@ import { Logger, WithLogger } from "./logger.ts";
 import { Task } from "./Task.ts";
 import { Radness, from } from "./Radness.ts";
 import { path } from "./3p/std.ts";
+import { asUrlFile } from "./util/fs.ts";
 
 var DEFAULT_RADFILENAME = path.resolve("rad.ts");
 
 export async function getRadFilename({ radFilename, logger }: InitOptions) {
+  let nextRadfilename = radFilename;
   if (radFilename) {
-    radFilename = path.isAbsolute(radFilename)
+    nextRadfilename = path.isAbsolute(radFilename)
       ? radFilename
       : path.resolve(radFilename);
     if (!await Deno.lstat(radFilename).catch(() => false)) {
@@ -17,7 +19,8 @@ export async function getRadFilename({ radFilename, logger }: InitOptions) {
         `cannot read radfile "${radFilename}". does it exist?`,
       );
     }
-    return radFilename;
+    logger.debug(`radfile resolved from ${radFilename} to ${nextRadfilename}`);
+    return nextRadfilename;
   }
   var radFileExists = await Deno.lstat(DEFAULT_RADFILENAME).catch((err) => {
     logger.debug(err);
@@ -37,7 +40,7 @@ export type InitOptions = {
 };
 export async function init(opts: InitOptions) {
   var radFilename = await getRadFilename(opts);
-  return import(radFilename).then((mod) => from(mod));
+  return import(asUrlFile(radFilename)).then((mod) => from(mod));
 }
 
 export function createRadfile(targetDirname: string, { logger }: WithLogger) {

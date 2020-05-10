@@ -1,5 +1,9 @@
 import { WithLogger } from "../logger.ts";
 
+export const isUrlFile = (filename: string) => filename.startsWith("file://");
+export const asUrlFile = (filename: string) =>
+  isUrlFile(filename) ? filename : `file://${filename}`;
+
 export const createFsUtil = ({ logger }: WithLogger) => {
   async function readFile(filename: string, type?: string) {
     logger.debug(`read file: ${filename}`);
