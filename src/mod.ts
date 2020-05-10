@@ -4,7 +4,7 @@ import { Logger, WithLogger } from "./logger.ts";
 import { Task } from "./Task.ts";
 import { Radness, from } from "./Radness.ts";
 import { path } from "./3p/std.ts";
-import { asUrlFile } from "./util/fs.ts";
+import { asFileUrl } from "./util/fs.ts";
 
 var DEFAULT_RADFILENAME = path.resolve("rad.ts");
 
@@ -40,7 +40,7 @@ export type InitOptions = {
 };
 export async function init(opts: InitOptions) {
   var radFilename = await getRadFilename(opts);
-  return import(asUrlFile(radFilename)).then((mod) => from(mod));
+  return import(asFileUrl(radFilename)).then((mod) => from(mod));
 }
 
 export function createRadfile(targetDirname: string, { logger }: WithLogger) {
