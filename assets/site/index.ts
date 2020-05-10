@@ -74,7 +74,7 @@ const onClick = window.onClick = whileNotInstallingTransforms(() => {
   ++transformIndex;
   if (!transforms[transformIndex]) {
     transformIndex = 0;
-    document.getElementById('add_more_transforms')!.style.display = ''
+    document.getElementById("add_more_transforms")!.style.display = "";
   }
   paintBabies(transforms[transformIndex]);
 });

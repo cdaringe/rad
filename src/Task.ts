@@ -78,7 +78,8 @@ export type Commandarooni =
 /**
  * a make task needs prereqs
  */
-export type Makearooni = Dependarooni
+export type Makearooni =
+  & Dependarooni
   & ({
     target: string;
   } | {
