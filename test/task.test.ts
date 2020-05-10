@@ -140,19 +140,21 @@ Deno.test({
         fs.writeFile(o1, "o1"),
         fs.writeFile(o2, "o2"),
       ]);
-      await sleep(1000);
+      await sleep(1100);
       await fs.writeFile(i1, "i1-edit-1");
+      await sleep(1100);
     };
     await execute(getBuildTask(), fixtures.withTestLogger);
     assertEquals(callCount, 1);
 
     //
-    nextOnMake = async ({ fs }, { getChangedPrereqFilenames }) => {
+    nextOnMake = async ({ fs, sleep }, { getChangedPrereqFilenames }) => {
       const changed = await getChangedPrereqFilenames();
       assertEquals(changed.length, 1, "onChange has one changed");
       assertEquals(changed[0], i1, "input 1 (i1) is only changed file");
       await fs.writeFile(o1, "o1-edit-1");
       await Deno.remove(o2);
+      await sleep(1100);
     };
     await execute(getBuildTask(), fixtures.withTestLogger);
     assertEquals(callCount, 2);
