@@ -44,6 +44,7 @@ const chaosTimer = setTimeout(
 function whileNotInstallingTransforms(cb: () => any) {
   let isExecuting = false;
   return async () => {
+    if (isExecuting) return;
     isExecuting = true;
     try {
       /**
@@ -61,15 +62,15 @@ function whileNotInstallingTransforms(cb: () => any) {
           transforms.concat(r.transforms)
         );
       }
-      await Promise.resolve(cb());
     } finally {
       isExecuting = false;
+      await Promise.resolve(cb());
     }
   };
 }
 
 let transformIndex = 1; // start at 1 to not revisit eager pageload xforms
-const onClick = window.onClick = whileNotInstallingTransforms(() => {
+const onClick = window.onclick = whileNotInstallingTransforms(() => {
   clearTimeout(chaosTimer);
   ++transformIndex;
   if (!transforms[transformIndex]) {

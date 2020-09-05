@@ -30,7 +30,7 @@ export const tasks: Tasks = {
     dependsOn: [meet],
     fn: async (toolkit) => {
       const { fs, path, logger, Deno, sh, task } = toolkit;
-      fs.mkdirp && fs.readFile && await fs.writeFile("/tmp/hello", "world!");
+      fs.mkdirp && fs.readFile && await Deno.writeFile("/tmp/hello", "world!");
       path.resolve && path.relative && path.isAbsolute; // etc
       logger.error("crikey!");
       Deno.cwd() && Deno.pid;

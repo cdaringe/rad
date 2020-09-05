@@ -1,7 +1,7 @@
 import {
   Task,
   execute,
-  getParialFromUserTask,
+  getPartialFromUserTask,
   Makearooni,
   asFuncarooni,
 } from "../src/Task.ts";
@@ -9,10 +9,7 @@ import fixtures from "./fixtures/mod.ts";
 import { fs, path } from "../src/3p/std.ts";
 import * as rad from "../src/mod.ts";
 import { fromTasks } from "../src/TaskGraph.ts";
-import { asserts } from "../src/3p/std.test.ts";
-const { writeFileStr } = fs;
-
-const { assert, assertEquals } = asserts;
+import { assert, assertEquals } from "../src/3p/std.test.ts";
 
 const logster = { logger: await fixtures.getTestLogger() };
 
@@ -23,7 +20,7 @@ Deno.test({
       fn: () => 1,
     };
     const result = await execute(
-      getParialFromUserTask({ key: "user_task", value: userTask }, logster),
+      getPartialFromUserTask({ key: "user_task", value: userTask }, logster),
       logster,
     );
     assertEquals(result, 1, "task fn returns result");
@@ -35,7 +32,7 @@ Deno.test({
     "make - only runs task on file change",
     import.meta,
   ),
-  fn: async () => {
+  fn: async function testMakeOnlyRunTaskOnFileChange() {
     const testDir = await Deno.makeTempDir({ prefix: "test_rad" });
     const targetFilename = await Deno.makeTempFile(
       { dir: testDir, suffix: ".ts" },
@@ -50,9 +47,21 @@ Deno.test({
       cwd: testDir,
       onMake: async (
         _toolkit,
-        { getPrereqFilenames, getChangedPrereqFilenames },
+        {
+          changedPrereqs,
+          prereqs,
+          getPrereqFilenames,
+          getChangedPrereqFilenames,
+        },
       ) => {
         const all = await getPrereqFilenames();
+        // walk API has changed time-to-time, so frivolously assert on
+        // kv pairs so we detect when we transitively release a breaking change
+        for await (const preReq of prereqs) {
+          assert(preReq.name, "prereq has name");
+          assert(preReq.path, "prereq has path");
+          assert("isFile" in preReq, "preReq has isFile prop");
+        }
         assertEquals(all.length, 1);
         const changed = await getChangedPrereqFilenames();
         if (onMakeCallCount > 0) {
@@ -68,7 +77,7 @@ Deno.test({
     };
     const funcarooni = asFuncarooni(makearooni, logster);
     const getTask = () =>
-      getParialFromUserTask(
+      getPartialFromUserTask(
         { key: "user_make_task", value: { ...funcarooni } },
         logster,
       );
@@ -76,7 +85,7 @@ Deno.test({
     assertEquals(onMakeCallCount, 1);
     // modified time has ~1s resolution. wait at least 1s
     await new Promise((res) => setTimeout(res, 1000));
-    await writeFileStr(targetFilename, "test_change");
+    await Deno.writeTextFile(targetFilename, "test_change");
     await execute(getTask(), logster);
     assertEquals(onMakeCallCount, 2);
   },
@@ -137,11 +146,11 @@ Deno.test({
       assertEquals(changed.length, 2, "initial build has two inputs");
       // mock "build" outputs o1, o2, edit i1
       await Promise.all([
-        fs.writeFile(o1, "o1"),
-        fs.writeFile(o2, "o2"),
+        Deno.writeTextFile(o1, "o1"),
+        Deno.writeTextFile(o2, "o2"),
       ]);
       await sleep(1100);
-      await fs.writeFile(i1, "i1-edit-1");
+      await Deno.writeTextFile(i1, "i1-edit-1");
       await sleep(1100);
     };
     await execute(getBuildTask(), fixtures.withTestLogger);
@@ -152,7 +161,7 @@ Deno.test({
       const changed = await getChangedPrereqFilenames();
       assertEquals(changed.length, 1, "onChange has one changed");
       assertEquals(changed[0], i1, "input 1 (i1) is only changed file");
-      await fs.writeFile(o1, "o1-edit-1");
+      await Deno.writeTextFile(o1, "o1-edit-1");
       await Deno.remove(o2);
       await sleep(1100);
     };

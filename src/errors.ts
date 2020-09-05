@@ -1,5 +1,3 @@
-import { take } from "./3p/lodash.ts";
-
 export class RadError extends Error {
   public static message?: string;
   public static code?: string;
@@ -40,10 +38,7 @@ export function onFail(err: any) {
   if (err instanceof SyntaxError) {
     emoji = RadInvalidRadFile.emoji!;
     toLog = `${emoji} syntax error detected\n\n${
-      take(
-        (err.stack || "").split("\n"),
-        3,
-      ).join("\n")
+      (err.stack || "").split("\n").slice(0, 3).join("\n")
     }`;
   } else if (err instanceof RadError) {
     toLog = `${emoji} ${msg}` + (reason ? `\n${reason}` : "");

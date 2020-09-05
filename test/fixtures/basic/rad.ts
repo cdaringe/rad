@@ -11,7 +11,7 @@ export const tasks: Tasks = {
       // content += `\nCreated on ${new Date().toISOString()}`;
       // logger.info(`writing ${output}`)
       // await fs.mkdirp(path.dirname(output));
-      // await fs.writeFile(output, content);
+      // await Deno.writeFile(output, content);
     },
   },
 };

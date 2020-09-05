@@ -10,7 +10,7 @@ export type Context = {
 };
 
 const getTestLogger = () =>
-  createLogger(Deno.env.get("TEST_LOG_LEVEL") ?? "CRITICAL");
+  createLogger(Deno.env.get("TEST_LOG_LEVEL") as any ?? "CRITICAL");
 
 const mod = {
   asTestName: (description: string, meta: { url: string }) =>
@@ -31,8 +31,8 @@ const mod = {
         await Deno.mkdir(targetDirname);
         await this.copyContents(path.join(src, filename), targetDirname);
       } else {
-        const oldContent = await fs.readFileStr(path.join(src, filename));
-        await fs.writeFileStr(
+        const oldContent = await Deno.readTextFile(path.join(src, filename));
+        await Deno.writeTextFile(
           path.join(dest, filename),
           oldContent.replace("../../..", Deno.cwd()), // @todo remove dirty rotten hack for locating rad mod from test dirs
         );

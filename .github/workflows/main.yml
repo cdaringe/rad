@@ -1,11 +1,11 @@
 # @info
-# master & pull_request jobs cannot de-dupe their workflow configuration :(
+# main & pull_request jobs cannot de-dupe their workflow configuration :(
 # https://github.community/t5/GitHub-Actions/Start-a-workflow-from-another-workflow/td-p/37586
-name: master
+name: main
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
       # https://github.com/denolib/setup-deno
       - uses: denolib/setup-deno@master
         with:
-          deno-version: 0.42
+          deno-version: 1.3.3
       - name: test
         run: ./rad test
       - name: site

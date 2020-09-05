@@ -78,7 +78,8 @@ export type Commandarooni =
 /**
  * a make task needs prereqs
  */
-export type Makearooni = Dependarooni
+export type Makearooni =
+  & Dependarooni
   & ({
     target: string;
   } | {
@@ -243,9 +244,9 @@ export type RadTask<T = {}> = {
 };
 
 /**
- * creates a Task from a UserTask, without `dependsOn`
+ * creates a Task from a UserTask, without `dependsOn` field hydrated
  */
-export function getParialFromUserTask(
+export function getPartialFromUserTask(
   { key, value }: { key: string; value: any },
   { logger }: WithLogger,
 ): RadTask {

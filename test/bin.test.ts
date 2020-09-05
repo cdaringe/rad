@@ -1,9 +1,13 @@
-import { asserts } from "../src/3p/std.test.ts";
+import {
+  assertThrows,
+  assertEquals,
+  assertThrowsAsync,
+} from "../src/3p/std.test.ts";
 
 import { assertFlags, suchRad } from "../src/bin.ts";
 import { RadError } from "../src/errors.ts";
 import fixtures from "./fixtures/mod.ts";
-const { assertThrows, assertEquals, assertThrowsAsync } = asserts;
+
 Deno.test({
   name: fixtures.asTestName("cli flags accept/reject", import.meta),
   fn: () => {

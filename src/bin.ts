@@ -34,7 +34,7 @@ rad: a general-purpose, typed & portable build tool.
     --log-level, -l log level (debug,info,warning,error,critical)
     --print-graph  print task graph(s). use task-name arg to print a singular graph
     --radfile, -r  path/to/rad.ts
-    --tasks  list tasks
+    --list  list tasks
 
    Examples
      $ rad
@@ -101,7 +101,7 @@ export async function suchRad(args: flagsMod.Args): Promise<RadExecResult> {
     logger,
   });
   var tree = rad.createTaskGraph(radness, { logger });
-  if (args.list) {
+  if (args.list || args.tasks) {
     console.log(`${Object.keys(tree.graph).sort().join("\n")}`);
     return {};
   }

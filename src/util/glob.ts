@@ -10,7 +10,6 @@ export const createPathMatcher = ({
   const matcher = path.globToRegExp(
     isAbsolute ? pattern : path.resolve(root, pattern),
     {
-      flags: "g",
       extended: true,
       globstar: true,
     },

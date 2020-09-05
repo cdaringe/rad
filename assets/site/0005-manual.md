@@ -1,38 +1,38 @@
-## manual
+## Manual
 
-your guide to `rad`!
+Your guide to `rad`!
 
-### understanding rad
+### Understanding rad
 
 - `rad` is written in typescript and runs on [deno](https://deno.land/)
-- you write tasks, then ask `rad` to run them
+- You write tasks, then ask `rad` to run them
 - `rad` reads your radfile (i.e. `rad.ts`), compiles & type checks it, then runs it through its task graph executor
 
 🤯
 
-### getting started
+### Getting started
 
-the first step to using rad is installation.
-please see the [install](#install) section for specifics.
+The first step to using rad is installation.
+Please see the [install](#install) section for guidance.
 
-the cli also has a decent help page. once you've installed rad, try running
+The cli also has a decent help page. Once you've installed rad, try running
 `rad --help`, just to grow acquainted with some of the options you may expect
 down the road.
 
-next up, creating a radfile!
+Next up, creating a radfile!
 
-#### setting up rad.ts
+#### Setting up rad.ts
 
-to create a new radfile (`rad.ts`), run the following command:
+To create a new radfile (`rad.ts`), run the following command:
 
 `$ rad -l info --init`
 
 rad.ts should have _two_ key traits:
 
-- an `import { Task, Tasks } from 'https://path/to/rad/src/mod.ts` statment
+- an `import { Task, Tasks } from 'https://path/to/rad/src/mod.ts` statement
 - an `export const tasks: Tasks = {...}` statement
 
-tasks are named in `rad.ts` strictly by their _key_ in the `tasks` object.
+Tasks are named in `rad.ts` strictly by their _key_ in the `tasks` object.
 
 ```ts
 export const tasks: Tasks = {
@@ -41,20 +41,20 @@ export const tasks: Tasks = {
 }
 ```
 
-the above file has exactly two tasks--`meet` and `greet`! simple!
+The above file has exactly two tasks--`meet` and `greet`! Simple!
 
 `rad` will look in the working directory for your radfile by default.
 if you so choose, you are welcome place it elsewhere, and tell rad where to find it using the
-`-r/--radfile` flag. next up, let's define those tasks.
+`-r/--radfile` flag. Next up, let's define those tasks.
 
-### tasks
+### Tasks
 
-tasks can take a couple of different forms. generally, you can simply refer to
-the `Task` type in your radfile and get cracking. let's write a few _tasks_ of each type.
+Tasks can take a couple of different forms. Generally, you can simply refer to
+the `Task` type in your radfile and get cracking. Let's write a few _tasks_ of each type.
 
-#### command tasks
+#### Command tasks
 
-command tasks are the simplest tasks. they are shell commands for rad to execute:
+Command tasks are the simplest tasks. they are shell commands for rad to execute:
 
 ```ts
 // rad.ts
@@ -66,14 +66,17 @@ const greet: Task = `echo "hello, world!"`
 export const tasks: Tasks = { compile, greet }
 ```
 
-command tasks are the only `'string'` inferface tasks. the associated command
-will get executed by `rad` in a child process, a la `<your-shell> -c '<your-cmd>'`,
-e.g. `bash -c 'echo "hello, world!"'`.
+Command tasks are the only `'string'`ly defined tasks. The associated command
+will get executed by `rad` in a child process, a la `<your-shell> -c '<your-cmd>'`.
+For example, `rad greet` would be executed via `bash -c 'echo "hello, world!"'`
+under the hood if you are using the `bash` shell.
 
-#### function tasks
+> ☝🏼Command tasks should tend to be _fast_. If the executed command is not fast, you may consider trying a function or make style task to speed things up, if feasible.
 
-function tasks are the most capable of all tasks. all other task types internally get
-transformed into a function task. to use function tasks, create a POJO with a
+#### Function tasks
+
+Function tasks are the most capable of all tasks. All other task types internally get
+transformed into a function task. To use function tasks, create a POJO with a
 `fn` key and function value. `fn` brings one argument--[`toolkit`](#toolkit)--that
 offers a nice suite of batteries for your convenience. ⚡️
 
@@ -94,25 +97,30 @@ const build: Task = {
 export const tasks: Tasks = { build };
 ```
 
-this is a _pretty_ basic function task. when you get to the [`toolkit`](#toolkit)
-section, you will see the other _interesting_ utilities provided to do great
-things with!
+This is a pretty basic function task. When you get to the [`toolkit`](#toolkit)
+section, you will see the other interesting utilities provided to do great
+things with! You can of course also simply run rad, and introspect the toolkit
+API if you are using a deno plugin in your code editor!
 
-#### make tasks
+#### Make tasks
 
-make tasks are in honor of [gnu make](https://www.gnu.org/software/make/). our
-make task is not nearly feature complete with a proper make task--but it does have one essential
+Make tasks are in honor of [gnu make](https://www.gnu.org/software/make/). Our
+make task is not feature complete with a proper make task--but it does have one essential
 core parity--providing an api to access _only files that have changed_ since the
-last task run. more speficially, if offers an api to access only files that have been
-modified _since_ the `target` has been last modified.
-of course, it also exposes _all_ files specified by your prerequisites
-as well. one _essential_ difference between our make task and proper-make tasks
+last task run. More specifically, it offers an API to access only files that have been
+modified _since_ the `target` has been last modified. `target` is make-speak for
+an output file.
+Our make tasks also exposes _all_ files specified by your prerequisites
+as well. One _essential_ difference between our make task and proper-make tasks
 is that your `onMake` function will _still run_ even if
 no files have changed since the make `target` has changed--it is up to you to
-_do nothing_ in the task handler if no work is warranted.
+_do nothing_ in the task handler if no work is warranted. How do you know if
+know work is warranted? You can consult the `changedPrereqs` iterator or the
+`getChangedPrereqFilenames` function--both can signal to you changes that have
+occurred since the `target`'s last modification.
 
-let's take inspiration from a make task in our very own source project--the build
-for this website. here's a simplified version:
+Let us take inspiration from a make task in our very own source project--the build
+for this very website. Here is a simplified version:
 
 ```ts
 // rad.ts
@@ -137,49 +145,53 @@ const site: Task = {
     logger.info("collecting prereq filenames");
     const filenames = await getPrereqFilenames();
     const html = await Promise.all(filenames.map(
-      filename => fs.readFile(filename).then(
+      filename => Deno.readTextFile(filename).then(
         markdown => marked(markdown)
       )
     )).then(htmlSnippets => htmlSnippets.join('\n'));
-    await fs.writeFile("./public/index.html", html);
+    await Deno.writeTextFile("./public/index.html", html);
   },
 };
 ```
 
-if you have **many** prereqs, you should probably consider using
+If you have **many** prereqs, you should  consider using
 the `AsyncIterator` implementations referenced above so as to not eat
 all of your memory 😀.
 
-`gnu make` also have a [pattern syntax](https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html)
-for when your task maps *N* prereqs to *M* targets. if you have `prereqs` and
-the targets can be considered functions of the prereq file, make style tasks
-can _remove `target`, and add `mapPrereqToTarget`_.
+`gnu make` also has a [pattern syntax](https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html)
+for when your task maps *N* prereqs to *M* targets. This is a pretty handy feature.
+If you have `prereqs` and
+the targets can be considered functions of the prereq files, make style tasks
+can _remove the `target` task key, and instead use `mapPrereqToTarget`_.
+Here is what that looks like in practice:
 
 ```ts
 export const tasks: Tasks = {
-  clean: `rm -rf 'build'`,
-  build: {
+  clean: `rm -rf 'build'`, // command style task
+  build: { // make style task
     prereqs: ["src/*"],
     mapPrereqToTarget: ({ cwd /* string */, prereq /* string */, reroot }) =>
       reroot("src", "build", "coffee", "js"),
+      // maps src/tacos.coffee => build/tacos.js
     async onMake() { /* snip snip */ },
   },
 };
 ```
 
-this is certainly _more verbose_ than `make`'s syntax. but it has the benefit
-of being a clear, debuggable function 🤓! further, this api doesn't
-force you to have 1:1 mappings between inputs and outputs. if prereqs `a` and `b`
+This is certainly _more verbose_ than `make`'s syntax. However, it has the benefit
+of being a clear, debuggable function 🤓! Further, this API does not
+force you to have 1:1 mappings between inputs and outputs. If prereqs `a` and `b`
 mapped to `foo` and `c` mapped to `bar`--no problem, you can express that easily
 in `mapPrereqToTarget`!
 
-check out the type definitions for more.
+Check out the type definitions for more on make tasks!
 
-### task depedencies
+### Task dependencies
 
-all task types, except command style tasks, accept an optional `dependsOn` array.
-`dependsOn` is an array of task references. task references must be
+All task types, except command style tasks, accept an optional `dependsOn` array.
+`dependsOn` is an array of task references. Task references must be
 **actual task references**--string based task lookups are not supported, intentionally.
+Stringy lookups are brittle, and would be redundant functionality in `rad`.
 
 ```ts
 // rad.ts
@@ -214,8 +226,12 @@ export const tasks: Tasks = {
 }
 ```
 
-sweet! now, our `ci` task should depend on lint & test tasks, of which lint
-You can see `dependsOn` at work by using `--print-graph`:
+Sweet! I bet node.js users wish they could just clone a repo and run `rad test`,
+then let the system "know" exactly what is needed to be test-ready! Similiarly,
+as shown above, our `ci` task should depend on lint & test tasks, of which both
+will await an `install` to complete!
+
+You can see what a task `dependsOn` by using `--print-graph`:
 
 ```bash
 $ rad ci --print-graph
@@ -226,7 +242,9 @@ $ rad ci --print-graph
       └─ install
 ```
 
-### toolkit
+Dude. Nice! We can have nice things!
+
+### Toolkit
 
 The `toolkit` is the first argument to `function` based tasks!
 
@@ -245,16 +263,16 @@ export type Toolkit = {
 };
 ```
 
-well that's not _super_ helpful! let's study each these keys, one-by-one:
+Well that's not _super_ helpful! Let us study each these keys, one-by-one:
 
-| key                | value                                                                                                                                                                                                   |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Deno`             | see the [deno api docs](https://doc.deno.land/https/github.com/denoland/deno/releases/latest/download/lib.deno.d.ts )                                                                                   |
-| `fs`               | a few sugar methods, `{ readFile, writeFile, mkdirp }` that work on strings, vs buffers, and assume utf8 for shorthand                                                                                  |
-| `sh`               | execute a shell command. see the command task section above!                                                                                                                                            |
-| `dependentResults` | results of `dependsOn` tasks. currently these are untyped. getting type inference here is tricky. PRs welcome!                                                                                          |
-| `logger`           | the `rad` logger! a standard `Deno` logger with the commonplace log-level methods (e.g. `.info(...)`, `.debug(...)`, etc). see [the source](https://github.com/cdaringe/rad/blob/master/src/logger.ts) |
-| `path`             | a direct reference to [deno node path](https://deno.land/std/node/path.ts). this API is likely to change if Deno implements a full, proper path module                                                  |
-| `task`             | a reference to the internal `RadTask`                                                                                                                                                                   |
-| `iter`             | `AsyncIterable` utility functions                                                                                                                                                                       |
+| key                | value                                                                                                                                                                                                |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Deno`             | see the [deno api docs](https://doc.deno.land/https/github.com/denoland/deno/releases/latest/download/lib.deno.d.ts )                                                                                |
+| `fs`               | a few sugar methods, `{ readFile, writeFile, mkdirp }` that work on strings, vs buffers, and assume utf8 for shorthand                                                                               |
+| `sh`               | execute a shell command. see the command task section above!                                                                                                                                         |
+| `dependentResults` | results of `dependsOn` tasks. currently these are untyped. getting type inference here is tricky. PRs welcome!                                                                                       |
+| `logger`           | the `rad` logger! a standard `Deno` logger with the commonplace log-level methods (e.g. `.info(...)`, `.debug(...)`, etc). see [the source](https://github.com/cdaringe/rad/blob/main/src/logger.ts) |
+| `path`             | a direct reference to [deno node path](https://deno.land/std/node/path.ts). this API is likely to change if Deno implements a full, proper path module                                               |
+| `task`             | a reference to the internal `RadTask`                                                                                                                                                                |
+| `iter`             | `AsyncIterable` utility functions                                                                                                                                                                    |
 

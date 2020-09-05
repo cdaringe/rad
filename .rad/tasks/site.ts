@@ -9,7 +9,7 @@ export const task: Task = {
   target: "public/index.html",
   prereqs: ["assets/site/**/*.{html,md}"],
   onMake: async ({ task, fs, logger }, { getPrereqFilenames }) => {
-    const pruneNoSite = (str: string) => str.replace(/.*NOSITE.*$/im, "");
+    const pruneNoSite = (str: string) => str.replaceAll(/.*NOSITE.*$/img, "");
     await fs.mkdirp("public");
     logger.info("collecting prereq filenames");
     const filenames = await getPrereqFilenames();
@@ -19,7 +19,7 @@ export const task: Task = {
       md: (filename.match(/md$/) ? [filename, ...md] : md).sort(
         (a, b) =>
           parseInt(basename(a.substr(0, 4))) >
-            parseInt(basename(b.substr(0, 4)))
+              parseInt(basename(b.substr(0, 4)))
             ? 1
             : 0,
       ),
@@ -34,13 +34,13 @@ export const task: Task = {
         fs.readFile(html[0]),
         Deno.bundle("assets/site/index.ts").then((res) => res[1]),
         Deno.bundle("assets/site/supplemental-transforms.ts").then((res) =>
-          fs.writeFile("public/transforms.js", res[1])
+          Deno.writeTextFile("public/transforms.js", res[1])
         ),
         ...mdContentsP,
       ],
     );
     logger.info(`writing index.html`);
-    await fs.writeFile(
+    await Deno.writeTextFile(
       "public/index.html",
       index
         .replace(/jsjsjs/g, indexJs)

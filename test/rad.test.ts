@@ -1,8 +1,7 @@
 import * as rad from "../src/mod.ts";
 import fixtures from "./fixtures/mod.ts";
-import { asserts } from "../src/3p/std.test.ts";
+import { assert } from "../src/3p/std.test.ts";
 import { path } from "../src/3p/std.ts";
-const { assert } = asserts;
 
 Deno.test({
   name: fixtures.asTestName("fixtures", import.meta),

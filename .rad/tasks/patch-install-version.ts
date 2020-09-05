@@ -14,6 +14,6 @@ export const task: Task = {
       throw new Error("failed to update install version");
     }
     logger.info(nextContent);
-    await fs.writeFile(installScriptRelativeFilename, nextContent);
+    await Deno.writeTextFile(installScriptRelativeFilename, nextContent);
   },
 };

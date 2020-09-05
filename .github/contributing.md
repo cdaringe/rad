@@ -25,4 +25,4 @@ You're awesome.  Thank you!
 
 # code of conduct
 
-Please refer to the [nodejs code-of-conduct](https://github.com/nodejs/node/blob/master/CODE_OF_CONDUCT.md).
+Please refer to the [nodejs code-of-conduct](https://github.com/nodejs/node/blob/main/CODE_OF_CONDUCT.md).

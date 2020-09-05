@@ -1,8 +1,7 @@
-import { asserts } from "../src/3p/std.test.ts";
+import { assertEquals } from "../src/3p/std.test.ts";
 import { createPathMatcher } from "../src/util/glob.ts";
 import { path } from "../src/3p/std.ts";
 import fixtures from "./fixtures/mod.ts";
-const { assertEquals } = asserts;
 
 Deno.test({
   name: fixtures.asTestName("fs walk glob matcher", import.meta),

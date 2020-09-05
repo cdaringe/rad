@@ -1,7 +1,7 @@
 import {
   RadTask,
   execute,
-  getParialFromUserTask,
+  getPartialFromUserTask,
   Task,
   asFuncarooni,
 } from "./Task.ts";
@@ -34,10 +34,11 @@ export const graphToTreeifyGraph = ({ graph: { graph }, taskName, logger }: {
   return tree;
 };
 
-export const asTree = ({ graph, logger, taskName }: {
-  graph: TaskGraph;
-  taskName?: string;
-}
+export const asTree = ({ graph, logger, taskName }:
+  & {
+    graph: TaskGraph;
+    taskName?: string;
+  }
   & WithLogger) =>
   treeifyAsTree(graphToTreeifyGraph({ graph, logger, taskName }));
 
@@ -48,7 +49,7 @@ export function fromTasks(userTasks: Radness["tasks"], { logger }: WithLogger) {
     return acc;
   }, new Map<Task, string>());
   const tasks = userTaskNames.map((key) =>
-    getParialFromUserTask({ key, value: userTasks[key] }, { logger })
+    getPartialFromUserTask({ key, value: userTasks[key] }, { logger })
   );
   const graph: Record<string, RadTask> = tasks.reduce(
     (acc, v) => ({ ...acc, [v.name]: v }),
