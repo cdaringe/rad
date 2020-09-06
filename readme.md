@@ -21,6 +21,8 @@ Jump to:
 | main   | [![main](https://github.com/cdaringe/rad/workflows/main/badge.svg)](https://github.com/cdaringe/rad/actions?query=workflow%3Amain)             |
 | next   | [![next](https://github.com/cdaringe/rad/workflows/next/badge.svg?branch=next)](https://github.com/cdaringe/rad/actions?query=workflow%3Anext) |
 
+`rad@3.x` now supports `Deno@1.3.x+`!
+
 ## Usage
 
 Rad is generally used as a CLI:
