@@ -110,8 +110,15 @@ svg#radness {
 </div>
 <div class='content'>
   <h1 id="rad-💯">rad 💯</h1>
-<p>a general purpose build tool.</p>
-<p>statically typed, batteries included. command tasks, function tasks, and make-style tasks supported.</p>
+<p>A general purpose build tool. Terse, statically typed, batteries included. Command tasks, function tasks, and make-style tasks supported.</p>
+<p>Jump to:</p>
+<ol start="2">
+<li><a href="#usage">Usage</a></li>
+<li><a href="#install">Install</a></li>
+<li><a href="#what-is-it">What</a></li>
+<li><a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">Why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></li>
+<li><a href="https://cdaringe.github.io/rad/#manual">Manual</a></li>
+</ol>
 <table>
 <thead>
 <tr>
@@ -120,44 +127,42 @@ svg#radness {
 </tr>
 </thead>
 <tbody><tr>
-<td>master</td>
-<td><a href="https://github.com/cdaringe/rad/actions?query=workflow%3Amaster"><img src="https://github.com/cdaringe/rad/workflows/master/badge.svg" alt="master"></a></td>
+<td>main</td>
+<td><a href="https://github.com/cdaringe/rad/actions?query=workflow%3Amain"><img src="https://github.com/cdaringe/rad/workflows/main/badge.svg" alt="main"></a></td>
 </tr>
 <tr>
 <td>next</td>
 <td><a href="https://github.com/cdaringe/rad/actions?query=workflow%3Anext"><img src="https://github.com/cdaringe/rad/workflows/next/badge.svg?branch=next" alt="next"></a></td>
 </tr>
 </tbody></table>
-<p>jump to:</p>
-<ol start="2">
-<li><a href="#usage">usage</a></li>
-<li><a href="#install">install</a></li>
-<li><a href="#what-is-it">what</a></li>
-<li><a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></li>
-<li><a href="https://cdaringe.github.io/rad/#manual">manual</a></li>
-</ol>
-<h2 id="usage">usage</h2>
+<h2 id="usage">Usage</h2>
+<p>Rad is generally used as a CLI:</p>
 <p><code>$ rad &lt;task-name&gt; [--help]</code></p>
+<p>It can be used as a library too :).</p>
+<p>Rad always consumes a <code>rad.ts</code> file, such as the one shown here:</p>
 <pre><code class="language-ts">// rad.ts
-import { Tasks } from &quot;https://deno.land/x/rad/src/mod.ts&quot;;
+import { Task, Tasks } from &quot;https://deno.land/x/rad/src/mod.ts&quot;;
 
-// command tasks
+// command/shell tasks
 const format = `prettier --write`
 const test = `deno test`
 
 // function tasks
-const compile = {
+const compile: Task = {
   dependsOn: [format],
-  fn({ sh, ...toolkit }) =&gt; sh(&#39;tsc&#39;)
+  fn: ({ sh, ...toolkit }) =&gt; sh(&#39;tsc&#39;)
+}
+const greet = {
+  fn: () =&gt; Deno.writeTextFile(&quot;/tmp/hello&quot;, &quot;world&quot;)
 }
 
 // make-style tasks
-const transpile = {
+const transpile: Task = {
   target: &quot;phony&quot;,
-  prereqs: [&quot;p1&quot;, &quot;p2&quot;],
+  prereqs: [&quot;prereq1&quot;, &quot;prereq2&quot;],
   async onMake({ logger }, { changedPrereqs /*, prereqs */}) {
     for await (const req of changedPrereqs) {
-      logger.info(`req: ${req.filename} ${JSON.stringify(req.info)}`);
+      logger.info(`req: ${req.path} ${req.isFile}`);
     }
   },
 }
@@ -165,12 +170,13 @@ const transpile = {
 export const tasks: Tasks = {
   compile,
   format,
-  test
+  greet,
+  test,
 }</code></pre>
-<h2 id="install">install</h2>
-<p>there are a few formal ways to use <code>rad</code>. regardless of the route you choose,
+<h2 id="install">Install</h2>
+<p>There are a few formal ways to use <code>rad</code>. Regardless of the route you choose,
 know that all strategies support using pinned versions, adherent to semver.
-see the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p>
+See the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p>
 <table>
 <thead>
 <tr>
@@ -182,7 +188,7 @@ see the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p
 <tbody><tr>
 <td>cli</td>
 <td><code>deno</code></td>
-<td><code>deno install -A -n rad https://raw.githubusercontent.com/cdaringe/rad/master/src/bin.ts</code></td>
+<td><code>deno install --unstable -A -n rad https://raw.githubusercontent.com/cdaringe/rad/main/src/bin.ts</code><br /><code>deno install -A -n rad https://raw.githubusercontent.com/cdaringe/rad/next/src/bin.ts</code></td>
 </tr>
 <tr>
 <td>cli</td>
@@ -192,28 +198,32 @@ see the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p
 <tr>
 <td>cli</td>
 <td><code>curl</code></td>
-<td><code>curl -fsSL <a href="https://github.com/cdaringe/rad/releases/download/v1.2.0/install.sh">https://github.com/cdaringe/rad/releases/download/v1.2.0/install.sh</a> | sh</code> (versioned)<br /><code>curl -fsSL <a href="https://raw.githubusercontent.com/cdaringe/rad/master/assets/install.sh">https://raw.githubusercontent.com/cdaringe/rad/master/assets/install.sh</a> | sh</code> (latest)</td>
+<td><code>curl -fsSL <a href="https://github.com/cdaringe/rad/releases/download/v1.2.0/install.sh">https://github.com/cdaringe/rad/releases/download/v1.2.0/install.sh</a> | sh</code> (versioned)<br /><code>curl -fsSL <a href="https://raw.githubusercontent.com/cdaringe/rad/main/assets/install.sh">https://raw.githubusercontent.com/cdaringe/rad/main/assets/install.sh</a> | sh</code> (latest)</td>
 </tr>
 <tr>
 <td>library</td>
 <td><code>deno</code></td>
-<td><code>import * as rad from https://github.com/cdaringe/rad/blob/master/src/mod.ts</code></td>
+<td><code>import * as rad from https://github.com/cdaringe/rad/blob/main/src/mod.ts</code></td>
 </tr>
 </tbody></table>
 <p><sup>1</sup>For docker users, consider making a nice shell alias</p>
 <pre><code class="language-bash"># shell profile, e.g. .bash_profile
 function rad() {
-  docker run --rm -v $PWD:/rad cdaringe/rad &quot;$@&quot;;
+  docker run --unstable --rm -v $PWD:/rad cdaringe/rad --log-level info &quot;$@&quot;;
 }</code></pre>
-<h2 id="what-is-it">what is it</h2>
-<p>a build tool! it competes with make, npm-scripts, bazel, gradle, ant, gulp, or any of the
-other many tools out there!</p>
+<h2 id="what-is-it">What is it</h2>
+<p>A build tool! It competes with make, npm-scripts, velociraptor, bazel, gradle,
+ant, gulp, or any of the other many tools out there! On various metrics, <code>rad</code>
+is subjectively better than some of the outstanding tools out there, and in some
+cases, not-so-much. We invite you to understand some of its core characteristics
+and interfaces.</p>
 <p><code>rad</code> offers:</p>
 <ul>
-<li>simple, programmable task interfaces</li>
-<li>easy to understand, declarative build steps</li>
-<li>type-checked tasks</li>
-<li>productive toolkit API for nuanced tasks that benefit from progamming. see <a href="#toolkit">toolkit</a><!-- @todo write toolkit docs--></li>
+<li>simple, <strong>programmable</strong> task interfaces</li>
+<li><strong>easy to understand</strong>, declarative build steps</li>
+<li><strong>type-checked</strong> tasks</li>
+<li><strong>no quirky DSLs</strong> (<code>make</code>, <code>gradle</code>, and friends 😢). <strong>your build is code</strong>, not an arbitrary language or stringly (read: bummerly) typed script runner.</li>
+<li>productive toolkit API for nuanced tasks that benefit from programming. see <a href="#toolkit">toolkit</a><!-- @todo write toolkit docs--></li>
 <li>bottom-up, <code>make</code>-style build targets<ul>
 <li>fast builds, skip redundant work when inputs haven&#39;t changed</li>
 </ul>
@@ -221,11 +231,258 @@ other many tools out there!</p>
 <li>cli mode, or library mode</li>
 <li>portability. build automation for <em>any</em> language or project, in many environments (*limited to <em>Deno</em> target architectures, for the time being. long term, we may package this in <code>Rust</code>)</li>
 <li>great UX</li>
-<li>no quirky DSLs (<code>make</code>, <code>gradle</code>, and friends 😢). <strong>your build is code</strong>--tasks are typescript &amp; are indeed type-checked!</li>
-<li>debuggability. 🐛 inspect your data, tasks, or even <em>rad</em> itself</li>
-<li>a real scripting language--<strong>not</strong> <code>bash/sh</code>! shell languages are great for running other programs, not for plumbing data</li>
+<li>debug-ability. 🐛 inspect your data, tasks, or even <em>rad</em> itself</li>
+<li>employs a real scripting language--<strong>not</strong> <code>bash/sh</code>! shell languages are great for running other programs, not for plumbing data</li>
 </ul>
-<p>see <a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></p>
+<p>See <a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></p>
+
+<h2 id="manual">Manual</h2>
+<p>Your guide to <code>rad</code>!</p>
+<h3 id="understanding-rad">Understanding rad</h3>
+<ul>
+<li><code>rad</code> is written in typescript and runs on <a href="https://deno.land/">deno</a></li>
+<li>You write tasks, then ask <code>rad</code> to run them</li>
+<li><code>rad</code> reads your radfile (i.e. <code>rad.ts</code>), compiles &amp; type checks it, then runs it through its task graph executor</li>
+</ul>
+<p>🤯</p>
+<h3 id="getting-started">Getting started</h3>
+<p>The first step to using rad is installation.
+Please see the <a href="#install">install</a> section for guidance.</p>
+<p>The cli also has a decent help page. Once you&#39;ve installed rad, try running
+<code>rad --help</code>, just to grow acquainted with some of the options you may expect
+down the road.</p>
+<p>Next up, creating a radfile!</p>
+<h4 id="setting-up-radts">Setting up rad.ts</h4>
+<p>To create a new radfile (<code>rad.ts</code>), run the following command:</p>
+<p><code>$ rad -l info --init</code></p>
+<p>rad.ts should have <em>two</em> key traits:</p>
+<ul>
+<li>an <code>import { Task, Tasks } from &#39;https://path/to/rad/src/mod.ts</code> statement</li>
+<li>an <code>export const tasks: Tasks = {...}</code> statement</li>
+</ul>
+<p>Tasks are named in <code>rad.ts</code> strictly by their <em>key</em> in the <code>tasks</code> object.</p>
+<pre><code class="language-ts">export const tasks: Tasks = {
+  meet: /* omitted task */,
+  greet: /* omitted task */
+}</code></pre>
+<p>The above file has exactly two tasks--<code>meet</code> and <code>greet</code>! Simple!</p>
+<p><code>rad</code> will look in the working directory for your radfile by default.
+if you so choose, you are welcome place it elsewhere, and tell rad where to find it using the
+<code>-r/--radfile</code> flag. Next up, let&#39;s define those tasks.</p>
+<h3 id="tasks">Tasks</h3>
+<p>Tasks can take a couple of different forms. Generally, you can simply refer to
+the <code>Task</code> type in your radfile and get cracking. Let&#39;s write a few <em>tasks</em> of each type.</p>
+<h4 id="command-tasks">Command tasks</h4>
+<p>Command tasks are the simplest tasks. they are shell commands for rad to execute:</p>
+<pre><code class="language-ts">// rad.ts
+import { Task, Tasks } from &#39;url/to/rad/mod.ts&#39;
+
+const compile: Task = `clang file.c`
+const greet: Task = `echo &quot;hello, world!&quot;`
+
+export const tasks: Tasks = { compile, greet }</code></pre>
+<p>Command tasks are the only <code>&#39;string&#39;</code>ly defined tasks. The associated command
+will get executed by <code>rad</code> in a child process, a la <code>&lt;your-shell&gt; -c &#39;&lt;your-cmd&gt;&#39;</code>.
+For example, <code>rad greet</code> would be executed via <code>bash -c &#39;echo &quot;hello, world!&quot;&#39;</code>
+under the hood if you are using the <code>bash</code> shell.</p>
+<blockquote>
+<p>☝🏼Command tasks should tend to be <em>fast</em>. If the executed command is not fast, you may consider trying a function or make style task to speed things up, if feasible.</p>
+</blockquote>
+<h4 id="function-tasks">Function tasks</h4>
+<p>Function tasks are the most capable of all tasks. All other task types internally get
+transformed into a function task. To use function tasks, create a POJO with a
+<code>fn</code> key and function value. <code>fn</code> brings one argument--<a href="#toolkit"><code>toolkit</code></a>--that
+offers a nice suite of batteries for your convenience. ⚡️</p>
+<pre><code class="language-ts">// rad.ts
+import { Task, Tasks } from &#39;url/to/rad/mod.ts&#39;;
+
+const build: Task = {
+  fn: async toolkit =&gt; {
+    const { logger, sh } = toolkit;
+    await sh(`clang hello.c -o hello`);
+    logger.info(`compile ok, asserting executable`);
+    await sh(`./hello`); // stdout: Hello, world!
+    logger.info(&quot;binary ok&quot;);
+  },
+};
+
+export const tasks: Tasks = { build };</code></pre>
+<p>This is a pretty basic function task. When you get to the <a href="#toolkit"><code>toolkit</code></a>
+section, you will see the other interesting utilities provided to do great
+things with! You can of course also simply run rad, and introspect the toolkit
+API if you are using a deno plugin in your code editor!</p>
+<h4 id="make-tasks">Make tasks</h4>
+<p>Make tasks are in honor of <a href="https://www.gnu.org/software/make/">gnu make</a>. Our
+make task is not feature complete with a proper make task--but it does have one essential
+core parity--providing an api to access <em>only files that have changed</em> since the
+last task run. More specifically, it offers an API to access only files that have been
+modified <em>since</em> the <code>target</code> has been last modified. <code>target</code> is make-speak for
+an output file.
+Our make tasks also exposes <em>all</em> files specified by your prerequisites
+as well. One <em>essential</em> difference between our make task and proper-make tasks
+is that your <code>onMake</code> function will <em>still run</em> even if
+no files have changed since the make <code>target</code> has changed--it is up to you to
+<em>do nothing</em> in the task handler if no work is warranted. How do you know if
+know work is warranted? You can consult the <code>changedPrereqs</code> iterator or the
+<code>getChangedPrereqFilenames</code> function--both can signal to you changes that have
+occurred since the <code>target</code>&#39;s last modification.</p>
+<p>Let us take inspiration from a make task in our very own source project--the build
+for this very website. Here is a simplified version:</p>
+<pre><code class="language-ts">// rad.ts
+import { Task, Tasks } from &#39;url/to/rad/mod.ts&#39;
+
+const site: Task = {
+  target: &quot;public/index.html&quot;,
+  prereqs: [&quot;assets/site/**/*.{md}&quot;], // globs only
+  onMake: async (
+    /* toolkit api -- see #toolkit */
+    { fs, logger },
+    /* make task api */
+    {
+      getPrereqFilenames, // Promise&lt;string&gt;
+      /**
+       * prereqs, // AsyncIterable&lt;WalkInfo&gt;
+       * changedPrereqs, // AsyncIterable&lt;WalkInfo&gt;
+       * getChangedPrereqFilenames, // Promise&lt;string&gt;
+       */
+    }) =&gt; {
+    await fs.mkdirp(&quot;public&quot;);
+    logger.info(&quot;collecting prereq filenames&quot;);
+    const filenames = await getPrereqFilenames();
+    const html = await Promise.all(filenames.map(
+      filename =&gt; Deno.readTextFile(filename).then(
+        markdown =&gt; marked(markdown)
+      )
+    )).then(htmlSnippets =&gt; htmlSnippets.join(&#39;\n&#39;));
+    await Deno.writeTextFile(&quot;./public/index.html&quot;, html);
+  },
+};</code></pre>
+<p>If you have <strong>many</strong> prereqs, you should  consider using
+the <code>AsyncIterator</code> implementations referenced above so as to not eat
+all of your memory 😀.</p>
+<p><code>gnu make</code> also has a <a href="https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html">pattern syntax</a>
+for when your task maps <em>N</em> prereqs to <em>M</em> targets. This is a pretty handy feature.
+If you have <code>prereqs</code> and
+the targets can be considered functions of the prereq files, make style tasks
+can <em>remove the <code>target</code> task key, and instead use <code>mapPrereqToTarget</code></em>.
+Here is what that looks like in practice:</p>
+<pre><code class="language-ts">export const tasks: Tasks = {
+  clean: `rm -rf &#39;build&#39;`, // command style task
+  build: { // make style task
+    prereqs: [&quot;src/*&quot;],
+    mapPrereqToTarget: ({ cwd /* string */, prereq /* string */, reroot }) =&gt;
+      reroot(&quot;src&quot;, &quot;build&quot;, &quot;coffee&quot;, &quot;js&quot;),
+      // maps src/tacos.coffee =&gt; build/tacos.js
+    async onMake() { /* snip snip */ },
+  },
+};</code></pre>
+<p>This is certainly <em>more verbose</em> than <code>make</code>&#39;s syntax. However, it has the benefit
+of being a clear, debuggable function 🤓! Further, this API does not
+force you to have 1:1 mappings between inputs and outputs. If prereqs <code>a</code> and <code>b</code>
+mapped to <code>foo</code> and <code>c</code> mapped to <code>bar</code>--no problem, you can express that easily
+in <code>mapPrereqToTarget</code>!</p>
+<p>Check out the type definitions for more on make tasks!</p>
+<h3 id="task-dependencies">Task dependencies</h3>
+<p>All task types, except command style tasks, accept an optional <code>dependsOn</code> array.
+<code>dependsOn</code> is an array of task references. Task references must be
+<strong>actual task references</strong>--string based task lookups are not supported, intentionally.
+Stringy lookups are brittle, and would be redundant functionality in <code>rad</code>.</p>
+<pre><code class="language-ts">// rad.ts
+import { Task, Tasks } from &#39;url/to/rad/mod.ts&#39;
+
+const install: Task = {
+  target: &#39;node_modules&#39;,
+  prereqs: [&#39;package.json&#39;],
+  onMake: async ({ sh }, { getChangedPrereqFilenames }) =&gt; {
+    const changed = await getChangedPrereqFilenames()
+    if (changed.length) await sh(`npm ci --verbose`)
+  }
+}
+const lint: Task = {
+  dependsOn: [install],
+  fn: ({ sh }) =&gt; sh(`npm run lint`)
+}
+const test: Task = {
+  dependsOn: [install],
+  fn: ({ sh }) =&gt; sh(`npm test`)
+}
+
+const ci: Task = {
+  dependsOn: [lint, test],
+};
+
+export const tasks: Tasks = {
+  ci,
+  install,
+  lint,
+  test,
+}</code></pre>
+<p>Sweet! I bet node.js users wish they could just clone a repo and run <code>rad test</code>,
+then let the system &quot;know&quot; exactly what is needed to be test-ready! Similiarly,
+as shown above, our <code>ci</code> task should depend on lint &amp; test tasks, of which both
+will await an <code>install</code> to complete!</p>
+<p>You can see what a task <code>dependsOn</code> by using <code>--print-graph</code>:</p>
+<pre><code class="language-bash">$ rad ci --print-graph
+└─ ci
+   ├─ lint
+   │  └─ install
+   └─ test
+      └─ install</code></pre>
+<p>Dude. Nice! We can have nice things!</p>
+<h3 id="toolkit">Toolkit</h3>
+<p>The <code>toolkit</code> is the first argument to <code>function</code> based tasks!</p>
+<p>It has the following type!</p>
+<pre><code class="language-ts">export type Toolkit = {
+  Deno: typeof Deno;
+  fs: fs.FsUtil;
+  sh: typeof sh;
+  dependentResults: any[];
+  logger: Logger;
+  path: typeof path;
+  task: RadTask;
+  iter: typeof iter;
+};</code></pre>
+<p>Well that&#39;s not <em>super</em> helpful! Let us study each these keys, one-by-one:</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Deno</code></td>
+<td>see the <a href="https://doc.deno.land/https/github.com/denoland/deno/releases/latest/download/lib.deno.d.ts">deno api docs</a></td>
+</tr>
+<tr>
+<td><code>fs</code></td>
+<td>a few sugar methods, <code>{ readFile, writeFile, mkdirp }</code> that work on strings, vs buffers, and assume utf8 for shorthand</td>
+</tr>
+<tr>
+<td><code>sh</code></td>
+<td>execute a shell command. see the command task section above!</td>
+</tr>
+<tr>
+<td><code>dependentResults</code></td>
+<td>results of <code>dependsOn</code> tasks. currently these are untyped. getting type inference here is tricky. PRs welcome!</td>
+</tr>
+<tr>
+<td><code>logger</code></td>
+<td>the <code>rad</code> logger! a standard <code>Deno</code> logger with the commonplace log-level methods (e.g. <code>.info(...)</code>, <code>.debug(...)</code>, etc). see <a href="https://github.com/cdaringe/rad/blob/main/src/logger.ts">the source</a></td>
+</tr>
+<tr>
+<td><code>path</code></td>
+<td>a direct reference to <a href="https://deno.land/std/node/path.ts">deno node path</a>. this API is likely to change if Deno implements a full, proper path module</td>
+</tr>
+<tr>
+<td><code>task</code></td>
+<td>a reference to the internal <code>RadTask</code></td>
+</tr>
+<tr>
+<td><code>iter</code></td>
+<td><code>AsyncIterable</code> utility functions</td>
+</tr>
+</tbody></table>
 
 <h1 id="why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</h1>
 <p>your build tool is probably great. keep using it if you love it.
@@ -239,7 +496,7 @@ the intent here it not to dump on anyone or any tool, but articulate feature gap
 <th>standalone</th>
 <th>polyglot</th>
 <th>incremental</th>
-<th>debuggable</th>
+<th>debug-able</th>
 <th>beautiful</th>
 <th>dependency manager</th>
 </tr>
@@ -251,6 +508,17 @@ the intent here it not to dump on anyone or any tool, but articulate feature gap
 <td></td>
 <td>✓</td>
 <td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>denox</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -300,7 +568,7 @@ the intent here it not to dump on anyone or any tool, but articulate feature gap
 <td>✓</td>
 </tr>
 <tr>
-<td>rad</td>
+<td><strong>rad</strong></td>
 <td>✓</td>
 <td>✓</td>
 <td></td>
@@ -310,259 +578,45 @@ the intent here it not to dump on anyone or any tool, but articulate feature gap
 <td>✓</td>
 <td></td>
 </tr>
-</tbody></table>
-<p>ant, scons, ninja, etc were omitted. haven&#39;t used &#39;em!</p>
-<p>here are some genuine, not-trying-be-rude-opinions.</p>
-<ul>
-<li>bazel is complex. maybe you need that complexity. 🤷🏻‍♀️</li>
-<li>gradle is full of magic and is often hard to reason about <em>where</em> behavior comes from.</li>
-<li>gulp/grunt have no make-style tasks, are generally node only, comparatively slow, &amp; stringly typed in various places.</li>
-<li>make is great, but has a lame DSL and is coupled to a poor scripting language</li>
-<li>npm-scripts are simple, but suffer releated drawbacks to gulp/grunt.</li>
-</ul>
-<p>loose typing, unneeded/obsolete DSLs, lack of great static analysis, and <em>other</em> gaps
-leave room for improvement in this space.</p>
-
-<h2 id="manual">manual</h2>
-<p>your guide to <code>rad</code>!</p>
-<h3 id="understanding-rad">understanding rad</h3>
-<ul>
-<li><code>rad</code> is written in typescript and runs on <a href="https://deno.land/">deno</a></li>
-<li>you write tasks, then ask <code>rad</code> to run them</li>
-<li><code>rad</code> reads your radfile (i.e. <code>rad.ts</code>), compiles &amp; type checks it, then runs it through its task graph executor</li>
-</ul>
-<p>🤯</p>
-<h3 id="getting-started">getting started</h3>
-<p>the first step to using rad is installation.
-please see the <a href="#install">install</a> section for specifics.</p>
-<p>the cli also has a decent help page. once you&#39;ve installed rad, try running
-<code>rad --help</code>, just to grow acquainted with some of the options you may expect
-down the road.</p>
-<p>next up, creating a radfile!</p>
-<h4 id="setting-up-radts">setting up rad.ts</h4>
-<p>to create a new radfile (<code>rad.ts</code>), run the following command:</p>
-<p><code>$ rad -l info --init</code></p>
-<p>rad.ts should have <em>two</em> key traits:</p>
-<ul>
-<li>an <code>import { Task, Tasks } from &#39;https://path/to/rad/src/mod.ts</code> statment</li>
-<li>an <code>export const tasks: Tasks = {...}</code> statement</li>
-</ul>
-<p>tasks are named in <code>rad.ts</code> strictly by their <em>key</em> in the <code>tasks</code> object.</p>
-<pre><code class="language-ts">export const tasks: Tasks = {
-  meet: /* omitted task */,
-  greet: /* omitted task */
-}</code></pre>
-<p>the above file has exactly two tasks--<code>meet</code> and <code>greet</code>! simple!</p>
-<p><code>rad</code> will look in the working directory for your radfile by default.
-if you so choose, you are welcome place it elsewhere, and tell rad where to find it using the
-<code>-r/--radfile</code> flag. next up, let&#39;s define those tasks.</p>
-<h3 id="tasks">tasks</h3>
-<p>tasks can take a couple of different forms. generally, you can simply refer to
-the <code>Task</code> type in your radfile and get cracking. let&#39;s write a few <em>tasks</em> of each type.</p>
-<h4 id="command-tasks">command tasks</h4>
-<p>command tasks are the simplest tasks. they are shell commands for rad to execute:</p>
-<pre><code class="language-ts">// rad.ts
-import { Task, Tasks } from &#39;url/to/rad/mod.ts&#39;
-
-const compile: Task = `clang file.c`
-const greet: Task = `echo &quot;hello, world!&quot;`
-
-export const tasks: Tasks = { compile, greet }</code></pre>
-<p>command tasks are the only <code>&#39;string&#39;</code> inferface tasks. the associated command
-will get executed by <code>rad</code> in a child process, a la <code>&lt;your-shell&gt; -c &#39;&lt;your-cmd&gt;&#39;</code>,
-e.g. <code>bash -c &#39;echo &quot;hello, world!&quot;&#39;</code>.</p>
-<h4 id="function-tasks">function tasks</h4>
-<p>function tasks are the most capable of all tasks. all other task types internally get
-transformed into a function task. to use function tasks, create a POJO with a
-<code>fn</code> key and function value. <code>fn</code> brings one argument--<a href="#toolkit"><code>toolkit</code></a>--that
-offers a nice suite of batteries for your convenience. ⚡️</p>
-<pre><code class="language-ts">// rad.ts
-import { Task, Tasks } from &#39;url/to/rad/mod.ts&#39;;
-
-const build: Task = {
-  fn: async toolkit =&gt; {
-    const { logger, sh } = toolkit;
-    await sh(`clang hello.c -o hello`);
-    logger.info(`compile ok, asserting executable`);
-    await sh(`./hello`); // stdout: Hello, world!
-    logger.info(&quot;binary ok&quot;);
-  },
-};
-
-export const tasks: Tasks = { build };</code></pre>
-<p>this is a <em>pretty</em> basic function task. when you get to the <a href="#toolkit"><code>toolkit</code></a>
-section, you will see the other <em>interesting</em> utilities provided to do great
-things with!</p>
-<h4 id="make-tasks">make tasks</h4>
-<p>make tasks are in honor of <a href="https://www.gnu.org/software/make/">gnu make</a>. our
-make task is not nearly feature complete with a proper make task--but it does have one essential
-core parity--providing an api to access <em>only files that have changed</em> since the
-last task run. more speficially, if offers an api to access only files that have been
-modified <em>since</em> the <code>target</code> has been last modified.
-of course, it also exposes <em>all</em> files specified by your prerequisites
-as well. one <em>essential</em> difference between our make task and proper-make tasks
-is that your <code>onMake</code> function will <em>still run</em> even if
-no files have changed since the make <code>target</code> has changed--it is up to you to
-<em>do nothing</em> in the task handler if no work is warranted.</p>
-<p>let&#39;s take inspiration from a make task in our very own source project--the build
-for this website. here&#39;s a simplified version:</p>
-<pre><code class="language-ts">// rad.ts
-import { Task, Tasks } from &#39;url/to/rad/mod.ts&#39;
-
-const site: Task = {
-  target: &quot;public/index.html&quot;,
-  prereqs: [&quot;assets/site/**/*.{md}&quot;], // globs only
-  onMake: async (
-    /* toolkit api -- see #toolkit */
-    { fs, logger },
-    /* make task api */
-    {
-      getPrereqFilenames, // Promise&lt;string&gt;
-      /**
-       * prereqs, // AsyncIterable&lt;WalkInfo&gt;
-       * changedPrereqs, // AsyncIterable&lt;WalkInfo&gt;
-       * getChangedPrereqFilenames, // Promise&lt;string&gt;
-       */
-    }) =&gt; {
-    await fs.mkdirp(&quot;public&quot;);
-    logger.info(&quot;collecting prereq filenames&quot;);
-    const filenames = await getPrereqFilenames();
-    const html = await Promise.all(filenames.map(
-      filename =&gt; fs.readFile(filename).then(
-        markdown =&gt; marked(markdown)
-      )
-    )).then(htmlSnippets =&gt; htmlSnippets.join(&#39;\n&#39;));
-    await fs.writeFile(&quot;./public/index.html&quot;, html);
-  },
-};</code></pre>
-<p>if you have <strong>many</strong> prereqs, you should probably consider using
-the <code>AsyncIterator</code> implementations referenced above so as to not eat
-all of your memory 😀.</p>
-<p><code>gnu make</code> also have a <a href="https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html">pattern syntax</a>
-for when your task maps <em>N</em> prereqs to <em>M</em> targets. if you have <code>prereqs</code> and
-the targets can be considered functions of the prereq file, make style tasks
-can <em>remove <code>target</code>, and add <code>mapPrereqToTarget</code></em>.</p>
-<pre><code class="language-ts">export const tasks: Tasks = {
-  clean: `rm -rf &#39;build&#39;`,
-  build: {
-    prereqs: [&quot;src/*&quot;],
-    mapPrereqToTarget: ({ cwd /* string */, prereq /* string */, reroot }) =&gt;
-      reroot(&quot;src&quot;, &quot;build&quot;, &quot;coffee&quot;, &quot;js&quot;),
-    async onMake() { /* snip snip */ },
-  },
-};</code></pre>
-<p>this is certainly <em>more verbose</em> than <code>make</code>&#39;s syntax. but it has the benefit
-of being a clear, debuggable function 🤓! further, this api doesn&#39;t
-force you to have 1:1 mappings between inputs and outputs. if prereqs <code>a</code> and <code>b</code>
-mapped to <code>foo</code> and <code>c</code> mapped to <code>bar</code>--no problem, you can express that easily
-in <code>mapPrereqToTarget</code>!</p>
-<p>check out the type definitions for more.</p>
-<h3 id="task-depedencies">task depedencies</h3>
-<p>all task types, except command style tasks, accept an optional <code>dependsOn</code> array.
-<code>dependsOn</code> is an array of task references. task references must be
-<strong>actual task references</strong>--string based task lookups are not supported, intentionally.</p>
-<pre><code class="language-ts">// rad.ts
-import { Task, Tasks } from &#39;url/to/rad/mod.ts&#39;
-
-const install: Task = {
-  target: &#39;node_modules&#39;,
-  prereqs: [&#39;package.json&#39;],
-  onMake: async ({ sh }, { getChangedPrereqFilenames }) =&gt; {
-    const changed = await getChangedPrereqFilenames()
-    if (changed.length) await sh(`npm ci --verbose`)
-  }
-}
-const lint: Task = {
-  dependsOn: [install],
-  fn: ({ sh }) =&gt; sh(`npm run lint`)
-}
-const test: Task = {
-  dependsOn: [install],
-  fn: ({ sh }) =&gt; sh(`npm test`)
-}
-
-const ci: Task = {
-  dependsOn: [lint, test],
-};
-
-export const tasks: Tasks = {
-  ci,
-  install,
-  lint,
-  test,
-}</code></pre>
-<p>sweet! now, our <code>ci</code> task should depend on lint &amp; test tasks, of which lint
-You can see <code>dependsOn</code> at work by using <code>--print-graph</code>:</p>
-<pre><code class="language-bash">$ rad ci --print-graph
-└─ ci
-   ├─ lint
-   │  └─ install
-   └─ test
-      └─ install</code></pre>
-<h3 id="toolkit">toolkit</h3>
-<p>The <code>toolkit</code> is the first argument to <code>function</code> based tasks!</p>
-<p>It has the following type!</p>
-<pre><code class="language-ts">export type Toolkit = {
-  Deno: typeof Deno;
-  fs: fs.FsUtil;
-  sh: typeof sh;
-  dependentResults: any[];
-  logger: Logger;
-  path: typeof path;
-  task: RadTask;
-  iter: typeof iter;
-};</code></pre>
-<p>well that&#39;s not <em>super</em> helpful! let&#39;s study each these keys, one-by-one:</p>
-<table>
-<thead>
 <tr>
-<th>key</th>
-<th>value</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>Deno</code></td>
-<td>see the <a href="https://doc.deno.land/https/github.com/denoland/deno/releases/latest/download/lib.deno.d.ts">deno api docs</a></td>
-</tr>
-<tr>
-<td><code>fs</code></td>
-<td>a few sugar methods, <code>{ readFile, writeFile, mkdirp }</code> that work on strings, vs buffers, and assume utf8 for shorthand</td>
-</tr>
-<tr>
-<td><code>sh</code></td>
-<td>execute a shell command. see the command task section above!</td>
-</tr>
-<tr>
-<td><code>dependentResults</code></td>
-<td>results of <code>dependsOn</code> tasks. currently these are untyped. getting type inference here is tricky. PRs welcome!</td>
-</tr>
-<tr>
-<td><code>logger</code></td>
-<td>the <code>rad</code> logger! a standard <code>Deno</code> logger with the commonplace log-level methods (e.g. <code>.info(...)</code>, <code>.debug(...)</code>, etc). see <a href="https://github.com/cdaringe/rad/blob/master/src/logger.ts">the source</a></td>
-</tr>
-<tr>
-<td><code>path</code></td>
-<td>a direct reference to <a href="https://deno.land/std/node/path.ts">deno node path</a>. this API is likely to change if Deno implements a full, proper path module</td>
-</tr>
-<tr>
-<td><code>task</code></td>
-<td>a reference to the internal <code>RadTask</code></td>
-</tr>
-<tr>
-<td><code>iter</code></td>
-<td><code>AsyncIterable</code> utility functions</td>
+<td>velociraptor</td>
+<td></td>
+<td>partial</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>partial</td>
 </tr>
 </tbody></table>
+<p>ant, scons, ninja, etc were omitted. haven&#39;t used &#39;em! other builders, such as
+cargo, dune, nx, and friends were omitted, as they are not generally considered
+general purpose. npm-scripts &amp; the Deno tools are not general purpose either,
+but included merely by proximity of underlying tech stacks used.</p>
+<p>Here are some genuine, not-trying-be-rude-opinions.</p>
+<ul>
+<li><code>bazel</code> is complex. maybe you need that complexity. 🤷🏻‍♀️</li>
+<li><code>gradle</code> is full of magic and is often hard to reason about <em>where</em> behavior comes from. Once kotlin integration is first class, it&#39;s worth revisiting gradle.</li>
+<li><code>gulp</code>/<code>grunt</code> have no make-style tasks, are generally node only, comparatively slow, &amp; stringly typed in various places.</li>
+<li><code>make</code> is great, but has a lame DSL and is coupled to a poor scripting language</li>
+<li><code>npm-scripts</code>/<code>velociraptor</code> are simple, but suffer related drawbacks to gulp, grunt, and make.</li>
+</ul>
+<p>Loose typing, unneeded DSLs, lack of great static analysis, and <em>other</em> gaps
+leave room for improvement in this space. <code>rad</code> is the first tool to bring a
+subjectively <em>powerful</em> scripting language into the build system space coupled with great
+static analysis and make-capable performance.</p>
 
 </div>
 <script>// Copyright 2018-2020 the Deno authors. All rights reserved. MIT license.
 
 // This is a specialised implementation of a System module loader.
 
+"use strict";
+
 // @ts-nocheck
 /* eslint-disable */
-let System, __instantiateAsync, __instantiate;
-
+let System, __instantiate;
 (() => {
   const r = new Map();
 
@@ -571,7 +625,6 @@ let System, __instantiateAsync, __instantiate;
       r.set(id, { d, f, exp: {} });
     },
   };
-
   async function dI(mid, src) {
     let id = mid.replace(/\.\w+$/i, "");
     if (id.includes("./")) {
@@ -648,17 +701,10 @@ let System, __instantiateAsync, __instantiate;
     }
     return m.exp;
   }
-
-  __instantiateAsync = async (m) => {
-    System = __instantiateAsync = __instantiate = undefined;
+  __instantiate = (m, a) => {
+    System = __instantiate = undefined;
     rF(m);
-    return gExpA(m);
-  };
-
-  __instantiate = (m) => {
-    System = __instantiateAsync = __instantiate = undefined;
-    rF(m);
-    return gExp(m);
+    return a ? gExpA(m) : gExp(m);
   };
 })();
 
@@ -743,14 +789,12 @@ System.register("index", ["transforms/chaos", "transforms/order"], function (exp
         var nodes = Array.from(group.children);
         const getTransformString = ({ translate, rotate, scale }) => `translate(${translate.join(" ")}) rotate(${rotate.join(" ")}) scale(${scale})`;
         const xforms = transform({ count, w, h });
-        // update existing nodes
         if (group.innerHTML) {
             xforms.forEach((xform, i) => {
                 nodes[i].setAttribute("transform", getTransformString(xform));
             });
         }
         else {
-            // create initial nodes
             group.innerHTML = xforms.map((xform, i) => `
     <use id='baby_${i}' class='text baby-rad' xlink:href="#repeatme"
       transform="${getTransformString(xform)}"
@@ -761,11 +805,10 @@ System.register("index", ["transforms/chaos", "transforms/order"], function (exp
     function whileNotInstallingTransforms(cb) {
         let isExecuting = false;
         return async () => {
+            if (isExecuting)
+                return;
             isExecuting = true;
             try {
-                /**
-                 * update default transforms with remote transforms
-                 */
                 if (transforms.length === 2) {
                     const tUrl = window.location.port == "3333"
                         ? "http://localhost:3333/transforms.js"
@@ -774,10 +817,10 @@ System.register("index", ["transforms/chaos", "transforms/order"], function (exp
                             : `${window.location.origin}/transforms.js`);
                     transforms = await context_4.import(tUrl).then((r) => transforms.concat(r.transforms));
                 }
-                await Promise.resolve(cb());
             }
             finally {
                 isExecuting = false;
+                await Promise.resolve(cb());
             }
         };
     }
@@ -792,12 +835,10 @@ System.register("index", ["transforms/chaos", "transforms/order"], function (exp
         ],
         execute: function () {
             transforms = [chaos_ts_1.chaos, order_ts_1.order];
-            // initial paint
             paintBabies(chaos_ts_1.chaos);
-            // funsies initial animation
             chaosTimer = setTimeout(() => window.requestAnimationFrame(() => paintBabies(order_ts_1.order)), 500);
-            transformIndex = 1; // start at 1 to not revisit eager pageload xforms
-            onClick = window.onClick = whileNotInstallingTransforms(() => {
+            transformIndex = 1;
+            onClick = window.onclick = whileNotInstallingTransforms(() => {
                 clearTimeout(chaosTimer);
                 ++transformIndex;
                 if (!transforms[transformIndex]) {
@@ -811,7 +852,7 @@ System.register("index", ["transforms/chaos", "transforms/order"], function (exp
     };
 });
 
-__instantiate("index");
+__instantiate("index", false);
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/autoloader/prism-autoloader.min.js"></script>
