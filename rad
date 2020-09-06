@@ -1,1 +1,0 @@
-deno run --log-level info --unstable -A src/bin.ts "$@"
