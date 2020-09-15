@@ -1,4 +1,4 @@
-import { Tasks } from "../../../src/mod.ts";
+import type { Tasks } from "../../../src/mod.ts";
 
 export const tasks: Tasks = {
   docs: {

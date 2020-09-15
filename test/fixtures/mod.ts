@@ -1,4 +1,4 @@
-import { Radness } from "../../src/mod.ts";
+import type { Radness } from "../../src/mod.ts";
 import { createFsUtil } from "../../src/util/fs.ts";
 import { createLogger } from "../../src/logger.ts";
 import { path, fs } from "../../src/3p/std.ts";

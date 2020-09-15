@@ -6,8 +6,8 @@ import {
   asFuncarooni,
 } from "./Task.ts";
 import * as errors from "./errors.ts";
-import { Radness } from "./Radness.ts";
-import { WithLogger } from "./logger.ts";
+import type { Radness } from "./Radness.ts";
+import type { WithLogger } from "./logger.ts";
 import { asTree as treeifyAsTree } from "./3p/treeify.js";
 
 export type TaskGraph = ReturnType<typeof fromTasks>;

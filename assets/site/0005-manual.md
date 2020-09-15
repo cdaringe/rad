@@ -15,8 +15,8 @@ Your guide to `rad`!
 The first step to using rad is installation.
 Please see the [install](#install) section for guidance.
 
-The cli also has a decent help page. Once you've installed rad, try running
-`rad --help`, just to grow acquainted with some of the options you may expect
+The CLI also has a decent help page. Once you have installed rad, try running
+`rad --help`, to grow acquainted with some of the options you may expect to use
 down the road.
 
 Next up, creating a radfile!
@@ -29,7 +29,7 @@ To create a new radfile (`rad.ts`), run the following command:
 
 rad.ts should have _two_ key traits:
 
-- an `import { Task, Tasks } from 'https://path/to/rad/src/mod.ts` statement
+- an `import type { Task, Tasks } from 'https://path/to/rad/src/mod.ts` statement
 - an `export const tasks: Tasks = {...}` statement
 
 Tasks are named in `rad.ts` strictly by their _key_ in the `tasks` object.
@@ -44,13 +44,13 @@ export const tasks: Tasks = {
 The above file has exactly two tasks--`meet` and `greet`! Simple!
 
 `rad` will look in the working directory for your radfile by default.
-if you so choose, you are welcome place it elsewhere, and tell rad where to find it using the
+If you so choose, you may place `rad.ts` elsewhere, and tell rad where to find it using the
 `-r/--radfile` flag. Next up, let's define those tasks.
 
 ### Tasks
 
 Tasks can take a couple of different forms. Generally, you can simply refer to
-the `Task` type in your radfile and get cracking. Let's write a few _tasks_ of each type.
+the `Task` type in your radfile and get cracking. Let's write a few tasks of each type.
 
 #### Command tasks
 
@@ -58,7 +58,7 @@ Command tasks are the simplest tasks. they are shell commands for rad to execute
 
 ```ts
 // rad.ts
-import { Task, Tasks } from 'url/to/rad/mod.ts'
+import type { Task, Tasks } from 'url/to/rad/mod.ts'
 
 const compile: Task = `clang file.c`
 const greet: Task = `echo "hello, world!"`
@@ -82,7 +82,7 @@ offers a nice suite of batteries for your convenience. ⚡️
 
 ```ts
 // rad.ts
-import { Task, Tasks } from 'url/to/rad/mod.ts';
+import type { Task, Tasks } from 'url/to/rad/mod.ts';
 
 const build: Task = {
   fn: async toolkit => {
@@ -105,8 +105,8 @@ API if you are using a deno plugin in your code editor!
 #### Make tasks
 
 Make tasks are in honor of [gnu make](https://www.gnu.org/software/make/). Our
-make task is not feature complete with a proper make task--but it does have one essential
-core parity--providing an api to access _only files that have changed_ since the
+make task is intentionally not feature complete with the proper make task--but it does have an essential
+core parity--providing an API to access _only files that have changed_ since the
 last task run. More specifically, it offers an API to access only files that have been
 modified _since_ the `target` has been last modified. `target` is make-speak for
 an output file.
@@ -116,7 +116,7 @@ is that your `onMake` function will _still run_ even if
 no files have changed since the make `target` has changed--it is up to you to
 _do nothing_ in the task handler if no work is warranted. How do you know if
 know work is warranted? You can consult the `changedPrereqs` iterator or the
-`getChangedPrereqFilenames` function--both can signal to you changes that have
+`getChangedPrereqFilenames` function. Both symbols signal to you changes that have
 occurred since the `target`'s last modification.
 
 Let us take inspiration from a make task in our very own source project--the build
@@ -124,7 +124,7 @@ for this very website. Here is a simplified version:
 
 ```ts
 // rad.ts
-import { Task, Tasks } from 'url/to/rad/mod.ts'
+import type { Task, Tasks } from 'url/to/rad/mod.ts'
 
 const site: Task = {
   target: "public/index.html",
@@ -195,7 +195,7 @@ Stringy lookups are brittle, and would be redundant functionality in `rad`.
 
 ```ts
 // rad.ts
-import { Task, Tasks } from 'url/to/rad/mod.ts'
+import type { Task, Tasks } from 'url/to/rad/mod.ts'
 
 const install: Task = {
   target: 'node_modules',

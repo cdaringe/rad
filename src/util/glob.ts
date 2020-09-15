@@ -1,5 +1,5 @@
 import { path, fs } from "../3p/std.ts";
-import { WithLogger } from "../logger.ts";
+import type { WithLogger } from "../logger.ts";
 
 type CreatePathMatcherOpts = { root: string; pattern: string };
 export const createPathMatcher = ({

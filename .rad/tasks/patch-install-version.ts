@@ -1,4 +1,4 @@
-import { Task } from "../../src/mod.ts";
+import type { Task } from "../../src/mod.ts";
 
 export const task: Task = {
   fn: async ({ Deno, fs, logger }) => {

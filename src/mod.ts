@@ -1,7 +1,7 @@
 import * as errors from "./errors.ts";
 import * as taskGraph from "./TaskGraph.ts";
-import { Logger, WithLogger } from "./logger.ts";
-import { Task } from "./Task.ts";
+import type { Logger, WithLogger } from "./logger.ts";
+import type { Task } from "./Task.ts";
 import { Radness, from } from "./Radness.ts";
 import { path } from "./3p/std.ts";
 import { asFileUrl } from "./util/fs.ts";
@@ -43,11 +43,29 @@ export async function init(opts: InitOptions) {
   return import(asFileUrl(radFilename)).then((mod) => from(mod));
 }
 
-export function createRadfile(targetDirname: string, { logger }: WithLogger) {
+export async function createRadfile(
+  targetDirname: string,
+  { logger }: WithLogger,
+) {
   const dirname = path.dirname(import.meta.url.replace("file://", ""));
   const src = path.resolve(dirname, "../assets/rad.ts");
   logger.info(`copy radfile from ${src} (dirname: ${dirname})`);
-  return Deno.copyFile(src, path.resolve(targetDirname, "rad.ts"));
+  const destFilename = path.resolve(targetDirname, "rad.ts");
+  let fileContents = await Deno.readTextFile(src);
+  const customImportUrl = Deno.env.get("RAD_IMPORT_URL");
+  if (customImportUrl) {
+    const toMatch = "https://deno.land/x/rad/src/mod.ts";
+    if (!fileContents.match(toMatch)) {
+      throw new Error(
+        `failed to replace customImportUrl, unable to find ${toMatch}`,
+      );
+    }
+    fileContents = fileContents.replace(
+      toMatch,
+      customImportUrl,
+    );
+  }
+  await Deno.writeTextFile(destFilename, fileContents);
 }
 
 export function createTaskGraph(radness: Radness, { logger }: WithLogger) {
@@ -60,4 +78,4 @@ export function createTaskGraph(radness: Radness, { logger }: WithLogger) {
 }
 
 export type Tasks = Radness["tasks"];
-export { Task, Radness };
+export type { Task, Radness };

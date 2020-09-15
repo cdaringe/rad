@@ -1,4 +1,4 @@
-import { Task } from "../../src/mod.ts";
+import type { Task } from "../../src/mod.ts";
 import { path } from "../../src/3p/std.ts";
 import "https://cdn.jsdelivr.net/npm/marked/marked.min.js";
 

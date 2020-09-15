@@ -15,7 +15,7 @@ import { sh } from "./util/sh.ts";
 import { timer } from "./util/timer.ts";
 import { glob } from "./util/glob.ts";
 import * as iter from "./util/iterable.ts";
-import { Logger, WithLogger } from "./logger.ts";
+import type { Logger, WithLogger } from "./logger.ts";
 import { path, fs, colors } from "./3p/std.ts";
 import { getReRoot } from "./util/reroot.ts";
 

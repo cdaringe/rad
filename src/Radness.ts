@@ -1,4 +1,4 @@
-import { Task } from "./Task.ts";
+import type { Task } from "./Task.ts";
 export interface Radness {
   tasks: Record<string, Task>;
 }
@@ -8,4 +8,4 @@ export const from = (radness: Radness) => {
   return radness as Radness;
 };
 
-export { Task };
+export type { Task };

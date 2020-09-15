@@ -1,4 +1,4 @@
-import { WithLogger } from "../logger.ts";
+import type { WithLogger } from "../logger.ts";
 
 export const isFileUrl = (filename: string) => filename.startsWith("file://");
 export const asFileUrl = (filename: string) =>

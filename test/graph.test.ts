@@ -1,8 +1,8 @@
-import { Radness } from "../src/Radness.ts";
-import { run, fromTasks, asTree } from "../src/TaskGraph.ts";
-import { Task } from "../src/Task.ts";
-import fixtures from "./fixtures/mod.ts";
 import { assert, assertEquals } from "../src/3p/std.test.ts";
+import type { Radness } from "../src/Radness.ts";
+import type { Task } from "../src/Task.ts";
+import { asTree, fromTasks, run } from "../src/TaskGraph.ts";
+import fixtures from "./fixtures/mod.ts";
 
 const basicRadness: Radness = {
   tasks: {
