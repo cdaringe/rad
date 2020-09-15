@@ -4,6 +4,6 @@ FROM hayd/deno:alpine-1.4.0
 RUN mkdir /radinstall
 WORKDIR /radinstall
 COPY . .
-RUN ./rad test
+RUN RAD_SKIP_INTEGRATION_TESTS=1 ./rad test
 WORKDIR /rad
 ENTRYPOINT ["deno", "--unstable", "-A", "src/bin.ts"]
