@@ -9,6 +9,7 @@ const test: Task = {
   async fn({ sh, logger }) {
     logger.info(`:: unit tests`);
     await sh(`deno test --unstable -A --coverage`);
+    if (Deno.env.get("RAD_SKIP_INTEGRATION_TESTS")) return;
     logger.info(`:: cli integration tests`);
     await sh(
       `docker run --name rad-integration --rm -v $PWD:/radness --entrypoint /radness/test/integration/rad.cli.init.sh --workdir /radness hayd/deno:alpine-${DENO_VERSION}`,
