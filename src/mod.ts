@@ -43,6 +43,27 @@ export async function init(opts: InitOptions) {
   return import(asFileUrl(radFilename)).then((mod) => from(mod));
 }
 
+export function getCustomImportUrl({
+  defaultUrl,
+  srcUrl,
+  envUrl,
+}: {
+  defaultUrl: string;
+  srcUrl: string;
+  envUrl?: string;
+}) {
+  if (envUrl) return envUrl;
+  const versionMatch = srcUrl.match(/(x\/rad@v\d\.\d\.\d)/);
+  if (versionMatch) {
+    const version = versionMatch[1];
+    if (!defaultUrl.match("x/rad")) {
+      throw new Error("default rad.ts asset missing x/rad in URL");
+    }
+    return defaultUrl.replace(/x\/rad[^\/]*/, version);
+  }
+  return null;
+}
+
 export async function createRadfile(
   targetDirname: string,
   { logger }: WithLogger,
@@ -55,21 +76,26 @@ export async function createRadfile(
     );
   logger.info(`copying radfile from ${src}`);
   const destFilename = path.resolve(targetDirname, "rad.ts");
-  let fileContents = src.match(/http/)
+  const isHttpInit = src.match(/http/);
+  let fileContents = isHttpInit
     ? await fetch(src).then(
       (r) => r.text(),
     )
     : await Deno.readTextFile(src);
-  const customImportUrl = Deno.env.get("RAD_IMPORT_URL");
+  const defaultUrl = "https://deno.land/x/rad/src/mod.ts";
+  const customImportUrl = isHttpInit ? null : getCustomImportUrl({
+    defaultUrl,
+    srcUrl: src,
+    envUrl: Deno.env.get("RAD_IMPORT_URL"),
+  });
   if (customImportUrl) {
-    const toMatch = "https://deno.land/x/rad/src/mod.ts";
-    if (!fileContents.match(toMatch)) {
+    if (!fileContents.match(defaultUrl)) {
       throw new Error(
-        `failed to replace customImportUrl, unable to find ${toMatch}`,
+        `failed to replace customImportUrl, unable to find ${defaultUrl}`,
       );
     }
     fileContents = fileContents.replace(
-      toMatch,
+      defaultUrl,
       customImportUrl,
     );
   }

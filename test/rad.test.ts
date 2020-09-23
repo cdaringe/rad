@@ -17,3 +17,27 @@ Deno.test({
     assert(radness.tasks, "tasks found in radfile");
   },
 });
+
+const defaultUrl = "https://deno.land/x/rad/src/mod.ts";
+
+Deno.test({
+  name: fixtures.asTestName("getCustomImportUrl", import.meta),
+  fn: () => {
+    const noCustomUrl = rad.getCustomImportUrl({
+      defaultUrl,
+      srcUrl: "https://some.place.rad/src/mod.ts",
+    });
+    assert(
+      noCustomUrl === null,
+      "no custom url returned when no version in srcUrl",
+    );
+    const customUrlWithVersion = rad.getCustomImportUrl({
+      defaultUrl,
+      srcUrl: "https://deno.land/x/rad@v4.0.3/src/mod.ts",
+    });
+    assert(
+      customUrlWithVersion === "https://deno.land/x/rad@v4.0.3/src/mod.ts",
+      "url returned when version in srcUrl",
+    );
+  },
+});
