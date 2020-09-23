@@ -47,11 +47,19 @@ export async function createRadfile(
   targetDirname: string,
   { logger }: WithLogger,
 ) {
-  const dirname = path.dirname(import.meta.url.replace("file://", ""));
-  const src = path.resolve(dirname, "../assets/rad.ts");
-  logger.info(`copy radfile from ${src} (dirname: ${dirname})`);
+  const src = import.meta.url.match(/http/)
+    ? import.meta.url.replace("src/mod.ts", "assets/rad.ts")
+    : path.resolve(
+      path.dirname(import.meta.url.replace("file://", "")),
+      "../assets/rad.ts",
+    );
+  logger.info(`copying radfile from ${src}`);
   const destFilename = path.resolve(targetDirname, "rad.ts");
-  let fileContents = await Deno.readTextFile(src);
+  let fileContents = src.match(/http/)
+    ? await fetch(src).then(
+      (r) => r.text(),
+    )
+    : await Deno.readTextFile(src);
   const customImportUrl = Deno.env.get("RAD_IMPORT_URL");
   if (customImportUrl) {
     const toMatch = "https://deno.land/x/rad/src/mod.ts";
