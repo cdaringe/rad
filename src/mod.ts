@@ -77,17 +77,22 @@ export async function createRadfile(
   logger.info(`copying radfile from ${src}`);
   const destFilename = path.resolve(targetDirname, "rad.ts");
   const isHttpInit = src.match(/http/);
+  logger.debug(`is radfile initializing from HTTP pathname?: ${isHttpInit}`);
   let fileContents = isHttpInit
     ? await fetch(src).then(
       (r) => r.text(),
     )
     : await Deno.readTextFile(src);
   const defaultUrl = "https://deno.land/x/rad/src/mod.ts";
-  const customImportUrl = isHttpInit ? null : getCustomImportUrl({
-    defaultUrl,
-    srcUrl: src,
-    envUrl: Deno.env.get("RAD_IMPORT_URL"),
-  });
+  logger.debug(`default mod.ts url: ${defaultUrl}`);
+  const customImportUrl = isHttpInit
+    ? getCustomImportUrl({
+      defaultUrl,
+      srcUrl: src,
+      envUrl: Deno.env.get("RAD_IMPORT_URL"),
+    })
+    : null;
+  logger.debug(`custom mod.ts url? ${customImportUrl || "false"}`);
   if (customImportUrl) {
     if (!fileContents.match(defaultUrl)) {
       throw new Error(
