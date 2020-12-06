@@ -1,7 +1,4 @@
-import type {
-  Task,
-  Tasks,
-} from "https://deno.land/x/rad/src/mod.ts";
+import type { Task, Tasks } from "https://deno.land/x/rad/src/mod.ts";
 
 const meet: Task = `echo "hi friend."`;
 

@@ -1,7 +1,7 @@
 import type { Radness } from "../../src/mod.ts";
 import { createFsUtil } from "../../src/util/fs.ts";
 import { createLogger } from "../../src/logger.ts";
-import { path, fs } from "../../src/3p/std.ts";
+import { fs, path } from "../../src/3p/std.ts";
 
 const __dirname = path.dirname(import.meta.url).replace("file://", "");
 

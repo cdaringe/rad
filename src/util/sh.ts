@@ -21,4 +21,5 @@ export async function sh(
       `non-zero exit code: ${code}`,
     );
   }
+  proc.close();
 }

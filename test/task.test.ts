@@ -1,9 +1,9 @@
 import {
-  Task,
+  asFuncarooni,
   execute,
   getPartialFromUserTask,
   Makearooni,
-  asFuncarooni,
+  Task,
 } from "../src/Task.ts";
 import fixtures from "./fixtures/mod.ts";
 import { fs, path } from "../src/3p/std.ts";

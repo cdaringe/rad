@@ -1,8 +1,5 @@
 /// <reference lib="dom" />
-import {
-  Transform,
-  RadSvgTransform,
-} from "./common.ts";
+import { RadSvgTransform, Transform } from "./common.ts";
 import { chaos } from "./transforms/chaos.ts";
 import { order } from "./transforms/order.ts";
 

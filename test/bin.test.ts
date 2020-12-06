@@ -1,6 +1,6 @@
 import {
-  assertThrows,
   assertEquals,
+  assertThrows,
   assertThrowsAsync,
 } from "../src/3p/std.test.ts";
 

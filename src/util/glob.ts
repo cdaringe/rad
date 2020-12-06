@@ -1,4 +1,4 @@
-import { path, fs } from "../3p/std.ts";
+import { fs, path } from "../3p/std.ts";
 import type { WithLogger } from "../logger.ts";
 
 type CreatePathMatcherOpts = { root: string; pattern: string };

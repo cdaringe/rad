@@ -16,7 +16,7 @@ import { timer } from "./util/timer.ts";
 import { glob } from "./util/glob.ts";
 import * as iter from "./util/iterable.ts";
 import type { Logger, WithLogger } from "./logger.ts";
-import { path, fs, colors } from "./3p/std.ts";
+import { colors, fs, path } from "./3p/std.ts";
 import { getReRoot } from "./util/reroot.ts";
 
 type WalkEntry = fs.WalkEntry;
