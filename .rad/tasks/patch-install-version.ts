@@ -14,6 +14,14 @@ export const task: Task = {
       throw new Error("failed to update install version");
     }
     logger.info(nextContent);
-    await Deno.writeTextFile(installScriptRelativeFilename, nextContent);
+    const oldReadmeContent = await fs.readFile("readme.md");
+    const nextReadmeContent = oldReadmeContent.replace(
+      /rad\/releases\/download\/v\d+.\d+.\d+/g,
+      `rad/releases/download/v${nextVersion}`,
+    );
+    await Promise.all([
+      Deno.writeTextFile(installScriptRelativeFilename, nextContent),
+      Deno.writeTextFile("readme.md", nextReadmeContent),
+    ]);
   },
 };

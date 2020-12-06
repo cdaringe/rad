@@ -8,7 +8,8 @@
     }],
     ["@semantic-release/github", {
       "assets": [
-        {"path": "assets/install.sh", "label": "install.sh"}
+        { "path": "assets/install.sh", "label": "install.sh" },
+        { "path": "readme.md", "label": "readme.md"  },
       ]
     }]
   ]

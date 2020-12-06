@@ -21,7 +21,7 @@ Jump to:
 | main   | [![main](https://github.com/cdaringe/rad/workflows/main/badge.svg)](https://github.com/cdaringe/rad/actions?query=workflow%3Amain)             |
 | next   | [![next](https://github.com/cdaringe/rad/workflows/next/badge.svg?branch=next)](https://github.com/cdaringe/rad/actions?query=workflow%3Anext) |
 
-`rad@4.x` now supports `Deno@1.4.x+`!
+`rad@4.x` now supports `Deno@1.5.x+`!
 
 ## Usage
 
@@ -79,7 +79,7 @@ See the [releases page](https://github.com/cdaringe/rad/releases).
 
 | usage   | install-method | install-steps                                                                                                                                                                                                                   |
 | ------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| cli     | `deno`         | `deno install --unstable -A -n rad https://raw.githubusercontent.com/cdaringe/rad/main/src/bin.ts`<br />`deno install -A -n rad https://raw.githubusercontent.com/cdaringe/rad/next/src/bin.ts`                                 |
+| cli     | `deno`         | `deno install --unstable -f -A -n rad https://raw.githubusercontent.com/cdaringe/rad/main/src/bin.ts`|
 | cli     | `docker`       | `docker pull cdaringe/rad` <sup>1</sup>                                                                                                                                                                                         |
 | cli     | `curl`         | <code>curl -fsSL https://github.com/cdaringe/rad/releases/download/v1.2.0/install.sh \| sh</code> (versioned)<br /><code>curl -fsSL https://raw.githubusercontent.com/cdaringe/rad/main/assets/install.sh \| sh</code> (latest) |
 | library | `deno`         | `import * as rad from https://github.com/cdaringe/rad/blob/main/src/mod.ts`                                                                                                                                                     |
