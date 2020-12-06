@@ -135,7 +135,7 @@ svg#radness {
 <td><a href="https://github.com/cdaringe/rad/actions?query=workflow%3Anext"><img src="https://github.com/cdaringe/rad/workflows/next/badge.svg?branch=next" alt="next"></a></td>
 </tr>
 </tbody></table>
-<p><code>rad@4.x</code> now supports <code>Deno@1.4.x+</code>!</p>
+<p><code>rad@4.x</code> now supports <code>Deno@1.5.x+</code>!</p>
 <h2 id="usage">Usage</h2>
 <p>Rad is generally used as a CLI:</p>
 <p><code>$ rad &lt;task-name&gt; [--help]</code></p>
@@ -190,7 +190,7 @@ See the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p
 <tbody><tr>
 <td>cli</td>
 <td><code>deno</code></td>
-<td><code>deno install --unstable -A -n rad https://raw.githubusercontent.com/cdaringe/rad/main/src/bin.ts</code><br /><code>deno install -A -n rad https://raw.githubusercontent.com/cdaringe/rad/next/src/bin.ts</code></td>
+<td><code>deno install --unstable -f -A -n rad https://raw.githubusercontent.com/cdaringe/rad/main/src/bin.ts</code></td>
 </tr>
 <tr>
 <td>cli</td>
@@ -237,129 +237,6 @@ and interfaces.</p>
 <li>employs a real scripting language--<strong>not</strong> <code>bash/sh</code>! shell languages are great for running other programs, not for plumbing data</li>
 </ul>
 <p>See <a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></p>
-
-<h1 id="why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</h1>
-<p>your build tool is probably great. keep using it if you love it.
-the intent here it not to dump on anyone or any tool, but articulate feature gaps.</p>
-<table>
-<thead>
-<tr>
-<th>tool</th>
-<th>DSL-less</th>
-<th>static types</th>
-<th>standalone</th>
-<th>polyglot</th>
-<th>incremental</th>
-<th>debug-able</th>
-<th>beautiful</th>
-<th>dependency manager</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>bazel</td>
-<td></td>
-<td></td>
-<td></td>
-<td>✓</td>
-<td>✓</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>denox</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>gradle</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>✓</td>
-<td></td>
-<td>✓</td>
-<td>✓</td>
-</tr>
-<tr>
-<td>gulp/grunt</td>
-<td>✓</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>✓</td>
-<td>✓</td>
-<td></td>
-</tr>
-<tr>
-<td>make</td>
-<td></td>
-<td></td>
-<td>✓</td>
-<td>✓</td>
-<td>✓</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>npm-scripts</td>
-<td>✓</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>✓</td>
-</tr>
-<tr>
-<td><strong>rad</strong></td>
-<td>✓</td>
-<td>✓</td>
-<td></td>
-<td>✓</td>
-<td>✓</td>
-<td>(soon!)</td>
-<td>✓</td>
-<td></td>
-</tr>
-<tr>
-<td>velociraptor</td>
-<td></td>
-<td>partial</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>partial</td>
-</tr>
-</tbody></table>
-<p>ant, scons, ninja, etc were omitted. haven&#39;t used &#39;em! other builders, such as
-cargo, dune, nx, and friends were omitted, as they are not generally considered
-general purpose. npm-scripts &amp; the Deno tools are not general purpose either,
-but included merely by proximity of underlying tech stacks used.</p>
-<p>Here are some genuine, not-trying-be-rude-opinions.</p>
-<ul>
-<li><code>bazel</code> is complex. maybe you need that complexity. 🤷🏻‍♀️</li>
-<li><code>gradle</code> is full of magic and is often hard to reason about <em>where</em> behavior comes from. Once kotlin integration is first class, it&#39;s worth revisiting gradle.</li>
-<li><code>gulp</code>/<code>grunt</code> have no make-style tasks, are generally node only, comparatively slow, &amp; stringly typed in various places.</li>
-<li><code>make</code> is great, but has a lame DSL and is coupled to a poor scripting language</li>
-<li><code>npm-scripts</code>/<code>velociraptor</code> are simple, but suffer related drawbacks to gulp, grunt, and make.</li>
-</ul>
-<p>Loose typing, unneeded DSLs, lack of great static analysis, and <em>other</em> gaps
-leave room for improvement in this space. <code>rad</code> is the first tool to bring a
-subjectively <em>powerful</em> scripting language into the build system space coupled with great
-static analysis and make-capable performance.</p>
 
 <h2 id="manual">Manual</h2>
 <p>Your guide to <code>rad</code>!</p>
@@ -608,6 +485,129 @@ will await an <code>install</code> to complete!</p>
 <td><code>AsyncIterable</code> utility functions</td>
 </tr>
 </tbody></table>
+
+<h1 id="why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</h1>
+<p>your build tool is probably great. keep using it if you love it.
+the intent here it not to dump on anyone or any tool, but articulate feature gaps.</p>
+<table>
+<thead>
+<tr>
+<th>tool</th>
+<th>DSL-less</th>
+<th>static types</th>
+<th>standalone</th>
+<th>polyglot</th>
+<th>incremental</th>
+<th>debug-able</th>
+<th>beautiful</th>
+<th>dependency manager</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bazel</td>
+<td></td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>denox</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>gradle</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>gulp/grunt</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>make</td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>npm-scripts</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>rad</strong></td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+<td>(soon!)</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>velociraptor</td>
+<td></td>
+<td>partial</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>partial</td>
+</tr>
+</tbody></table>
+<p>ant, scons, ninja, etc were omitted. haven&#39;t used &#39;em! other builders, such as
+cargo, dune, nx, and friends were omitted, as they are not generally considered
+general purpose. npm-scripts &amp; the Deno tools are not general purpose either,
+but included merely by proximity of underlying tech stacks used.</p>
+<p>Here are some genuine, not-trying-be-rude-opinions.</p>
+<ul>
+<li><code>bazel</code> is complex. maybe you need that complexity. 🤷🏻‍♀️</li>
+<li><code>gradle</code> is full of magic and is often hard to reason about <em>where</em> behavior comes from. Once kotlin integration is first class, it&#39;s worth revisiting gradle.</li>
+<li><code>gulp</code>/<code>grunt</code> have no make-style tasks, are generally node only, comparatively slow, &amp; stringly typed in various places.</li>
+<li><code>make</code> is great, but has a lame DSL and is coupled to a poor scripting language</li>
+<li><code>npm-scripts</code>/<code>velociraptor</code> are simple, but suffer related drawbacks to gulp, grunt, and make.</li>
+</ul>
+<p>Loose typing, unneeded DSLs, lack of great static analysis, and <em>other</em> gaps
+leave room for improvement in this space. <code>rad</code> is the first tool to bring a
+subjectively <em>powerful</em> scripting language into the build system space coupled with great
+static analysis and make-capable performance.</p>
 
 </div>
 <script>// Copyright 2018-2020 the Deno authors. All rights reserved. MIT license.
