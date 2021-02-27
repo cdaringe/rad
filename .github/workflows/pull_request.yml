@@ -13,14 +13,6 @@ jobs:
       # https://github.com/denolib/setup-deno
       - uses: denolib/setup-deno@master
         with:
-          deno-version: 0.x
-      - name: test
-        run: ./rad test
-      # - name: gh-pages
-      #   run: |
-      #     set -ex
-      #     NODE_DEBUG=gh-pages \
-      #     GH_TOKEN=${{ secrets.GH_TOKEN }} \
-      #     node \
-      #       -r perish \
-      #       -e "require('gh-pages').publish('packages/effects-docs/public', { repo: 'https://' + process.env.GH_TOKEN + '@github.com/effectsjs/effectsjs.git', user: { name: 'cdaringe', email: 'cdaringe@nope.com' } })"
+          deno-version: 1.7.5
+      - name: check
+        run: ./rad check
