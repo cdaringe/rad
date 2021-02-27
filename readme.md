@@ -23,7 +23,7 @@ Jump to:
 | main   | [![main](https://github.com/cdaringe/rad/workflows/main/badge.svg)](https://github.com/cdaringe/rad/actions?query=workflow%3Amain)             |
 | next   | [![next](https://github.com/cdaringe/rad/workflows/next/badge.svg?branch=next)](https://github.com/cdaringe/rad/actions?query=workflow%3Anext) |
 
-`rad@4.x` now supports `Deno@1.5.x+`!
+`rad@6.x` now supports `Deno@1.7.x+`!
 
 ## Usage
 
