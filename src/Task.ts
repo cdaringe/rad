@@ -21,7 +21,8 @@ import { getReRoot } from "./util/reroot.ts";
 
 type WalkEntry = fs.WalkEntry;
 const { italic, bold, green, red } = colors;
-const noop = (a: any, b: any) => {};
+// deno-lint-ignore no-explicit-any
+const noop = (...args: any[]) => {};
 const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 export enum TASK_STATES {
@@ -41,17 +42,19 @@ export type Toolkit = {
   Deno: typeof Deno;
   fs: fsU.FsUtil;
   sh: typeof sh;
-  dependentResults: any[]; // @todo add _sweet_ generics to unpack dependent result types
+  dependentResults: unknown[]; // @todo add _sweet_ generics to unpack dependent result types
   logger: Logger;
   path: typeof path;
   task: RadTask;
   iter: typeof iter;
   sleep: typeof sleep;
 };
-export type TaskFn<A2 = undefined> = (
+
+// deno-lint-ignore no-explicit-any
+export type TaskFn<A2 = undefined, R = any> = (
   toolkit: Toolkit,
   arg: A2,
-) => any;
+) => Promise<R> | R;
 
 /**
  * Maximally expressive, user-definable task.
@@ -139,7 +142,7 @@ export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
 ) => {
   const { onMake, prereqs = [], cwd = ".", ...rest } = task;
   const funcer: Funcarooni = {
-    fn: async function makeTaskFn(toolkit) {
+    fn: function makeTaskFn(toolkit) {
       const getPrereqs = async function* getMakePrereqs(
         filter: (predicate: WalkEntry) => Promise<boolean>,
       ): AsyncIterable<WalkEntry> {
@@ -165,7 +168,7 @@ export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
             ? await glob(
               { root: cwd, pattern: task.target, logger: toolkit.logger },
             ).next().then((
-              res: IteratorResult<fs.WalkEntry, any>,
+              res: IteratorResult<fs.WalkEntry, unknown>,
             ) => res.done ? "" : res.value.path)
             : await Promise.resolve(
               task.mapPrereqToTarget(
@@ -188,10 +191,10 @@ export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
       return onMake(
         toolkit,
         {
-          prereqs: getPrereqs(async (i) => !!i),
+          prereqs: getPrereqs((i) => Promise.resolve(!!i)),
           changedPrereqs: changedPrereqs(),
           getPrereqFilenames: () =>
-            iter.toArray(getPrereqs(async (i) => !!i)).then((reqs) =>
+            iter.toArray(getPrereqs((i) => Promise.resolve(!!i))).then((reqs) =>
               reqs.map((req) => req.path)
             ),
           getChangedPrereqFilenames: () =>
@@ -231,15 +234,14 @@ type TaskReport = {
   };
 };
 
-export type RadTask<T = {}> = {
+export type RadTask<Result = unknown> = {
   cmd?: string;
-  complete?: Promise<any>;
+  complete?: Promise<Result>;
   dependsOn?: RadTask[];
   fn: TaskFn;
   kind?: string;
   name: string;
   report?: TaskReport;
-  specialized?: T;
   state: TaskState;
 };
 
@@ -247,7 +249,7 @@ export type RadTask<T = {}> = {
  * creates a Task from a UserTask, without `dependsOn` field hydrated
  */
 export function getPartialFromUserTask(
-  { key, value }: { key: string; value: any },
+  { key, value }: { key: string; value: Partial<Task> },
   { logger }: WithLogger,
 ): RadTask {
   if (!key) throw new errors.RadInvalidTaskError(`missing task key`);
@@ -266,7 +268,7 @@ export function getPartialFromUserTask(
   return task;
 }
 
-export async function execute(task: RadTask, { logger }: WithLogger) {
+export function execute(task: RadTask, { logger }: WithLogger) {
   const dependents = task.dependsOn || [];
   const getTotalDuration = timer();
   const getDependentsDuration = timer();
@@ -274,14 +276,15 @@ export async function execute(task: RadTask, { logger }: WithLogger) {
   task.complete = async function executeToCompletion() {
     task.state = TASK_STATES.RUNNING_WAITING_UPSTREAM;
     logger.info(`${bold(task.name)} ${italic("start")}`);
-    const dependentResults: any[] = await Promise.all(
+    const dependentResults: unknown[] = await Promise.all(
       dependents.map((dependent) => execute(dependent, { logger })),
     );
     const dependentsDuration = getDependentsDuration();
     const getActiveDuration = timer();
+    let result: undefined | unknown;
     task.state = TASK_STATES.RUNNING_ACTIVE;
     try {
-      var result = await Promise.resolve(
+      result = await Promise.resolve(
         task.fn({
           Deno,
           dependentResults,

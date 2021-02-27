@@ -12,13 +12,14 @@ export const createFsUtil = ({ logger }: WithLogger) => {
     );
   }
 
-  async function writeFile(filename: string, data: any) {
+  // deno-lint-ignore no-explicit-any
+  function writeFile(filename: string, data: any) {
     logger.debug(`write file: ${filename}`);
     const encoder = new TextEncoder();
     return Deno.writeFileSync(filename, encoder.encode(data));
   }
 
-  async function mkdirp(filename: string, opts?: any) {
+  function mkdirp(filename: string, opts?: Deno.MkdirOptions) {
     const recursiveOpts = opts || {};
     recursiveOpts.recursive = true;
     logger.debug(`mkdirp: ${filename}`);

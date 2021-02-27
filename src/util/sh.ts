@@ -14,7 +14,7 @@ export async function sh(
     stderr: "inherit",
   });
   logger?.debug(`sh: running process ${cmd}`);
-  let { code } = await proc.status();
+  const { code } = await proc.status();
   logger?.debug(`sh: exit code ${code}`);
   if (code != 0 && !opts?.ignoreExitCode) {
     throw new Error(

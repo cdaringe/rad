@@ -3,6 +3,7 @@ import { path } from "../../src/3p/std.ts";
 import "https://cdn.jsdelivr.net/npm/marked/marked.min.js";
 
 const { basename } = path.posix;
+// deno-lint-ignore no-explicit-any
 const marked = (window as any).marked;
 
 export const task: Task = {
@@ -14,16 +15,19 @@ export const task: Task = {
     logger.info("collecting prereq filenames");
     const filenames = await getPrereqFilenames();
     logger.info(JSON.stringify(filenames));
-    const { html, md } = filenames.reduce(({ html, md }, filename) => ({
-      html: filename.match(/html$/) ? [filename, ...html] : html,
-      md: (filename.match(/md$/) ? [filename, ...md] : md).sort(
-        (a, b) =>
-          parseInt(basename(a.substr(0, 4))) >
-              parseInt(basename(b.substr(0, 4)))
-            ? 1
-            : 0,
-      ),
-    }), { html: [] as string[], md: [] as string[] });
+    const { html, md } = filenames.reduce(
+      ({ html, md }, filename) => ({
+        html: filename.match(/html$/) ? [filename, ...html] : html,
+        md: (filename.match(/md$/) ? [filename, ...md] : md).sort(
+          (a: string, b: string) =>
+            parseInt(basename(a.substr(0, 4))) >
+                parseInt(basename(b.substr(0, 4)))
+              ? 1
+              : 0,
+        ),
+      }),
+      { html: [] as string[], md: [] as string[] },
+    );
     logger.info(`reading site inputs`);
     const mdContentsP = ["./readme.md", ...md].map(async (f) =>
       marked(pruneNoSite(await fs.readFile(f)))
@@ -32,10 +36,18 @@ export const task: Task = {
     const [index, indexJs, _transform, ...sections] = await Promise.all(
       [
         fs.readFile(html[0]),
-        Deno.bundle("assets/site/index.ts").then((res) => res[1]),
-        Deno.bundle("assets/site/supplemental-transforms.ts").then((res) =>
-          Deno.writeTextFile("public/transforms.js", res[1])
-        ),
+        Deno.emit("assets/site/index.ts", {
+          bundle: "esm",
+        }).then((res) => {
+          const files = Object.values(res.files);
+          return files[0];
+        }),
+        Deno.emit("assets/site/supplemental-transforms.ts", {
+          bundle: "esm",
+        }).then((res) => {
+          const files = Object.values(res.files);
+          return Deno.writeTextFile("public/transforms.js", files[0]);
+        }),
         ...mdContentsP,
       ],
     );

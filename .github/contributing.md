@@ -6,7 +6,8 @@ Thanks for your interest in contributing.
 
 To bootstrap development, please
 
-- install [deno](https://deno.land/), latest. it's changing constantly, and we want to keep up with it :)
+- install [deno](https://deno.land/), latest. it's changing constantly, and we
+  want to keep up with it :)
 - fork & clone this repo
 - `./rad test` to install and warm the compiled dependency cache
 
@@ -16,7 +17,7 @@ To bootstrap development, please
 
 # submitting patches
 
-You're awesome.  Thank you!
+You're awesome. Thank you!
 
 - write tests.
 - run the tests, `rad test`
@@ -25,4 +26,5 @@ You're awesome.  Thank you!
 
 # code of conduct
 
-Please refer to the [nodejs code-of-conduct](https://github.com/nodejs/node/blob/main/CODE_OF_CONDUCT.md).
+Please refer to the
+[nodejs code-of-conduct](https://github.com/nodejs/node/blob/main/CODE_OF_CONDUCT.md).

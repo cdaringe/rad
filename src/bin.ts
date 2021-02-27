@@ -44,7 +44,7 @@ rad: a general-purpose, typed & portable build tool.
      $ rad check --print-graph
 `;
 
-export function assertFlags(userFlags: { [key: string]: any }) {
+export function assertFlags(userFlags: { [key: string]: unknown }) {
   const aliases = Object.values(flags.alias).flatMap((i) => i);
   const fullFlags = Object.keys(flags.alias);
   const permitted = [...aliases, ...fullFlags];
@@ -76,10 +76,10 @@ export function assertFlags(userFlags: { [key: string]: any }) {
   }
 }
 
-export type RadExecResult = {
+export type RadExecResult<R = unknown> = {
   task?: rad.Task;
   taskName?: string;
-  result?: any;
+  result?: R;
   logger?: Logger;
 };
 

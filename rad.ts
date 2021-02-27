@@ -16,9 +16,11 @@ const test: Task = {
     );
   },
 };
-const check: Task = { dependsOn: [format, test] };
+const lint: Task = `deno --unstable lint .rad examples src test`;
+const check: Task = { dependsOn: [format, lint, test] };
 
 export const tasks: Tasks = {
+  ...{ l: lint, lint },
   ...{ f: format, format },
   ...{ t: test, test },
   ...{ s: site, site },

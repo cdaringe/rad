@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 module.exports = {
   tasks: {
     a: {

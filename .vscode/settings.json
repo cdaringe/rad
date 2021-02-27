@@ -9,4 +9,9 @@
   },
   "eslint.enable": false,
   "yaml.completion": false,
+  "deno.codeLens.implementations": true,
+  "deno.codeLens.references": true,
+  "deno.codeLens.referencesAllFunctions": true,
+  "deno.lint": true,
+  "deno.unstable": true,
 }

@@ -1,6 +1,6 @@
 import { assert, assertEquals } from "../src/3p/std.test.ts";
 import type { Radness } from "../src/Radness.ts";
-import type { Task } from "../src/Task.ts";
+import type { Task, TaskFn } from "../src/Task.ts";
 import { asTree, fromTasks, run } from "../src/TaskGraph.ts";
 import fixtures from "./fixtures/mod.ts";
 
@@ -12,9 +12,12 @@ const basicRadness: Radness = {
   },
 };
 
-const sumDependentResultsWith = (input: any) =>
+const sumDependentResultsWith = (
+  input: string,
+) =>
+  // deno-lint-ignore no-explicit-any
   ({ dependentResults }: { dependentResults: any[] }) =>
-    dependentResults.reduce((acc, v) => acc + v, input);
+    dependentResults.reduce((acc, v) => acc + v, input) as TaskFn;
 
 const d: Task = {
   fn: sumDependentResultsWith("d"),
@@ -109,7 +112,7 @@ const expectedPrintGraphTree = `
 
 Deno.test({
   name: fixtures.asTestName("print-graph", import.meta),
-  async fn() {
+  fn() {
     const graph = fromTasks(
       basicRadnessWithDependencies.tasks,
       fixtures.withTestLogger,

@@ -1,7 +1,13 @@
 import * as errors from "./errors.ts";
 import * as taskGraph from "./TaskGraph.ts";
 import type { Logger, WithLogger } from "./logger.ts";
-import type { Task } from "./Task.ts";
+import type {
+  Commandarooni,
+  Dependarooni,
+  Funcarooni,
+  Makearooni,
+  Task,
+} from "./Task.ts";
 import { from, Radness } from "./Radness.ts";
 import { path } from "./3p/std.ts";
 import { asFileUrl } from "./util/fs.ts";
@@ -117,4 +123,11 @@ export function createTaskGraph(radness: Radness, { logger }: WithLogger) {
 }
 
 export type Tasks = Radness["tasks"];
-export type { Radness, Task };
+export type {
+  Commandarooni,
+  Dependarooni,
+  Funcarooni,
+  Makearooni,
+  Radness,
+  Task,
+};

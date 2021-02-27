@@ -1,4 +1,5 @@
-import { Point, RadSvgTransform, Transform } from "../common.ts";
+// deno-lint-ignore-file camelcase
+import { RadSvgTransform, Transform } from "../common.ts";
 
 const TWO_PI = 2 * Math.PI;
 

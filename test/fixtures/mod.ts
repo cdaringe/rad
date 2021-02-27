@@ -10,7 +10,7 @@ export type Context = {
 };
 
 const getTestLogger = () =>
-  createLogger(Deno.env.get("TEST_LOG_LEVEL") as any ?? "CRITICAL");
+  createLogger(Deno.env.get("TEST_LOG_LEVEL") as "CRITICAL" ?? "CRITICAL");
 
 const mod = {
   asTestName: (description: string, meta: { url: string }) =>
@@ -47,7 +47,7 @@ const mod = {
     await createFsUtil({ logger: await getTestLogger() }).mkdirp(dirname);
     return { dirname, radFilename: path.join(dirname, "rad.ts") };
   },
-  async destroyTestFolderContext(context: Context) {
+  destroyTestFolderContext(context: Context) {
     return Deno.remove(context.dirname);
   },
   async loadFixture(src: string, dst: string) {

@@ -13,9 +13,9 @@ function makePrefix(key, last) {
 
 function filterKeys(obj, hideFunctions) {
   var keys = [];
-  for (var branch in obj) {
+  for (const branch in obj) {
     // always exclude anything in the object's prototype
-    if (!obj.hasOwnProperty(branch)) {
+    if (!(branch in obj)) {
       continue;
     }
     // ... and hide any keys mapped to functions if we've been told to
@@ -68,7 +68,7 @@ function growBranch(
 
   // can we descend into the next item?
   if (!circular && typeof root === "object") {
-    var keys = filterKeys(root, hideFunctions);
+    const keys = filterKeys(root, hideFunctions);
     keys.forEach(function (branch) {
       // the last key is always printed with a different prefix, so we'll need to know if we have it
       lastKey = ++index === keys.length;

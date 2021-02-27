@@ -30,11 +30,13 @@ RadNoTasksError.emoji = "💣";
  * bind rad friendly error handlers when running in bin mode, vs lib mode
  * @returns {undefined}
  */
+
+// deno-lint-ignore no-explicit-any
 export function onFail(err: any) {
+  const msg = err?.message || err?.constructor?.message;
+  const reason = err?.reason?.message || "";
   let emoji = err?.constructor?.emoji ? `${err.constructor.emoji} ` : "";
-  var toLog;
-  let msg = err?.message || err?.constructor?.message;
-  let reason = err?.reason?.message || "";
+  let toLog: undefined | string;
   if (err instanceof SyntaxError) {
     emoji = RadInvalidRadFile.emoji!;
     toLog = `${emoji} syntax error detected\n\n${

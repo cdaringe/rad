@@ -1,6 +1,5 @@
 import { colors, log, logger, logLevels } from "./3p/std.ts";
 import { format } from "./3p/date-fns.ts";
-
 export type Logger = logger.Logger;
 export type WithLogger = { logger: Logger };
 

@@ -1,6 +1,7 @@
 import {
   asFuncarooni,
   execute,
+  Funcarooni,
   getPartialFromUserTask,
   Makearooni,
   Task,
@@ -128,10 +129,10 @@ Deno.test({
     let callCount = 0;
     assert(radness.tasks.build, "dangerously mutating fixture task in memory");
     radness.tasks.build = {
-      ...radness.tasks.build as any,
+      ...radness.tasks.build as Makearooni,
       cwd: dirname,
       onMake: (t, m) => ++callCount && nextOnMake(t, m),
-    };
+    } as Makearooni;
     const getBuildTask = () =>
       fromTasks(radness.tasks, fixtures.withTestLogger).graph.build;
 
@@ -169,7 +170,7 @@ Deno.test({
     assertEquals(callCount, 2);
 
     //
-    nextOnMake = async ({}, { getChangedPrereqFilenames }) => {
+    nextOnMake = async (_, { getChangedPrereqFilenames }) => {
       const changed = await getChangedPrereqFilenames();
       assertEquals(changed.length, 1, "onChange has one changed");
       assertEquals(

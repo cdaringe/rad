@@ -5,7 +5,7 @@ export const tasks: Tasks = {
   build: {
     prereqs: ["src/*"],
     mapPrereqToTarget: ({ reroot }) => reroot("src", "out", "inext", "outext"),
-    async onMake() {
+    onMake() {
       throw new Error(`test must override`);
     },
   },
