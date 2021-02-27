@@ -110,7 +110,8 @@ svg#radness {
 </div>
 <div class='content'>
   <h1 id="rad-💯">rad 💯</h1>
-<p>A general purpose build tool. Terse, statically typed, batteries included. Command tasks, function tasks, and make-style tasks supported.</p>
+<p>A general purpose build tool. Terse, statically typed, batteries included.
+Command tasks, function tasks, and make-style tasks supported.</p>
 <p>Jump to:</p>
 <ol start="2">
 <li><a href="#usage">Usage</a></li>
@@ -146,39 +147,40 @@ svg#radness {
 import { Task, Tasks } from &quot;https://deno.land/x/rad/src/mod.ts&quot;;
 
 // command/shell tasks
-const format = `prettier --write`
-const test = `deno test`
+const format = `prettier --write`;
+const test = `deno test`;
 
 // function tasks
 const compile: Task = {
   dependsOn: [format],
-  fn: ({ sh, ...toolkit }) =&gt; sh(&#39;tsc&#39;)
-}
+  fn: ({ sh, ...toolkit }) =&gt; sh(&quot;tsc&quot;),
+};
 const greet = {
-  fn: () =&gt; Deno.writeTextFile(&quot;/tmp/hello&quot;, &quot;world&quot;)
-}
+  fn: () =&gt; Deno.writeTextFile(&quot;/tmp/hello&quot;, &quot;world&quot;),
+};
 
 // make-style tasks
 const transpile: Task = {
   target: &quot;phony&quot;,
   prereqs: [&quot;prereq1&quot;, &quot;prereq2&quot;],
-  async onMake({ logger }, { changedPrereqs /*, prereqs */}) {
+  async onMake({ logger }, { changedPrereqs /*, prereqs */ }) {
     for await (const req of changedPrereqs) {
       logger.info(`req: ${req.path} ${req.isFile}`);
     }
   },
-}
+};
 
 export const tasks: Tasks = {
   compile,
   format,
   greet,
   test,
-}</code></pre>
+};
+</code></pre>
 <h2 id="install">Install</h2>
 <p>There are a few formal ways to use <code>rad</code>. Regardless of the route you choose,
-know that all strategies support using pinned versions, adherent to semver.
-See the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p>
+know that all strategies support using pinned versions, adherent to semver. See
+the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p>
 <table>
 <thead>
 <tr>
@@ -212,7 +214,8 @@ See the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p
 <pre><code class="language-bash"># shell profile, e.g. .bash_profile
 function rad() {
   docker run --unstable --rm -v $PWD:/rad cdaringe/rad --log-level info &quot;$@&quot;;
-}</code></pre>
+}
+</code></pre>
 <h2 id="what-is-it">What is it</h2>
 <p>A build tool! It competes with make, npm-scripts, velociraptor, bazel, gradle,
 ant, gulp, or any of the other many tools out there! On various metrics, <code>rad</code>
@@ -224,19 +227,26 @@ and interfaces.</p>
 <li>simple, <strong>programmable</strong> task interfaces</li>
 <li><strong>easy to understand</strong>, declarative build steps</li>
 <li><strong>type-checked</strong> tasks</li>
-<li><strong>no quirky DSLs</strong> (<code>make</code>, <code>gradle</code>, and friends 😢). <strong>your build is code</strong>, not an arbitrary language or stringly (read: bummerly) typed script runner.</li>
-<li>productive toolkit API for nuanced tasks that benefit from programming. see <a href="#toolkit">toolkit</a><!-- @todo write toolkit docs--></li>
+<li><strong>no quirky DSLs</strong> (<code>make</code>, <code>gradle</code>, and friends 😢). <strong>your build is code</strong>,
+not an arbitrary language or stringly (read: bummerly) typed script runner.</li>
+<li>productive toolkit API for nuanced tasks that benefit from programming. see
+<a href="#toolkit">toolkit</a><!-- @todo write toolkit docs--></li>
 <li>bottom-up, <code>make</code>-style build targets<ul>
 <li>fast builds, skip redundant work when inputs haven&#39;t changed</li>
 </ul>
 </li>
 <li>cli mode, or library mode</li>
-<li>portability. build automation for <em>any</em> language or project, in many environments (*limited to <em>Deno</em> target architectures, for the time being. long term, we may package this in <code>Rust</code>)</li>
+<li>portability. build automation for <em>any</em> language or project, in many
+environments (*limited to <em>Deno</em> target architectures, for the time being.
+long term, we may package this in <code>Rust</code>)</li>
 <li>great UX</li>
 <li>debug-ability. 🐛 inspect your data, tasks, or even <em>rad</em> itself</li>
-<li>employs a real scripting language--<strong>not</strong> <code>bash/sh</code>! shell languages are great for running other programs, not for plumbing data</li>
+<li>employs a real scripting language--<strong>not</strong> <code>bash/sh</code>! shell languages are
+great for running other programs, not for plumbing data</li>
 </ul>
-<p>See <a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></p>
+<p>See
+<a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></p>
+<p>Read more on our <a href="https://cdaringe.github.io/rad/">documentation site</a></p>
 
 <h2 id="manual">Manual</h2>
 <p>Your guide to <code>rad</code>!</p>
@@ -244,12 +254,13 @@ and interfaces.</p>
 <ul>
 <li><code>rad</code> is written in typescript and runs on <a href="https://deno.land/">deno</a></li>
 <li>You write tasks, then ask <code>rad</code> to run them</li>
-<li><code>rad</code> reads your radfile (i.e. <code>rad.ts</code>), compiles &amp; type checks it, then runs it through its task graph executor</li>
+<li><code>rad</code> reads your radfile (i.e. <code>rad.ts</code>), compiles &amp; type checks it, then runs
+it through its task graph executor</li>
 </ul>
 <p>🤯</p>
 <h3 id="getting-started">Getting started</h3>
-<p>The first step to using rad is installation.
-Please see the <a href="#install">install</a> section for guidance.</p>
+<p>The first step to using rad is installation. Please see the <a href="#install">install</a>
+section for guidance.</p>
 <p>The CLI also has a decent help page. Once you have installed rad, try running
 <code>rad --help</code>, to grow acquainted with some of the options you may expect to use
 down the road.</p>
@@ -259,47 +270,56 @@ down the road.</p>
 <p><code>$ rad -l info --init</code></p>
 <p>rad.ts should have <em>two</em> key traits:</p>
 <ul>
-<li>an <code>import type { Task, Tasks } from &#39;https://path/to/rad/src/mod.ts</code> statement</li>
+<li>an <code>import type { Task, Tasks } from &#39;https://path/to/rad/src/mod.ts</code>
+statement</li>
 <li>an <code>export const tasks: Tasks = {...}</code> statement</li>
 </ul>
 <p>Tasks are named in <code>rad.ts</code> strictly by their <em>key</em> in the <code>tasks</code> object.</p>
 <pre><code class="language-ts">export const tasks: Tasks = {
   meet: /* omitted task */,
   greet: /* omitted task */
-}</code></pre>
+}
+</code></pre>
 <p>The above file has exactly two tasks--<code>meet</code> and <code>greet</code>! Simple!</p>
-<p><code>rad</code> will look in the working directory for your radfile by default.
-If you so choose, you may place <code>rad.ts</code> elsewhere, and tell rad where to find it using the
-<code>-r/--radfile</code> flag. Next up, let&#39;s define those tasks.</p>
+<p><code>rad</code> will look in the working directory for your radfile by default. If you so
+choose, you may place <code>rad.ts</code> elsewhere, and tell rad where to find it using
+the <code>-r/--radfile</code> flag. Next up, let&#39;s define those tasks.</p>
 <h3 id="tasks">Tasks</h3>
 <p>Tasks can take a couple of different forms. Generally, you can simply refer to
-the <code>Task</code> type in your radfile and get cracking. Let&#39;s write a few tasks of each type.</p>
+the <code>Task</code> type in your radfile and get cracking. Let&#39;s write a few tasks of
+each type.</p>
 <h4 id="command-tasks">Command tasks</h4>
-<p>Command tasks are the simplest tasks. they are shell commands for rad to execute:</p>
+<p>Command tasks are the simplest tasks. they are shell commands for rad to
+execute:</p>
 <pre><code class="language-ts">// rad.ts
-import type { Task, Tasks } from &#39;url/to/rad/mod.ts&#39;
+import type { Task, Tasks } from &quot;url/to/rad/mod.ts&quot;;
 
-const compile: Task = `clang file.c`
-const greet: Task = `echo &quot;hello, world!&quot;`
+const compile: Task = `clang file.c`;
+const greet: Task = `echo &quot;hello, world!&quot;`;
 
-export const tasks: Tasks = { compile, greet }</code></pre>
+export const tasks: Tasks = { compile, greet };
+</code></pre>
 <p>Command tasks are the only <code>&#39;string&#39;</code>ly defined tasks. The associated command
-will get executed by <code>rad</code> in a child process, a la <code>&lt;your-shell&gt; -c &#39;&lt;your-cmd&gt;&#39;</code>.
-For example, <code>rad greet</code> would be executed via <code>bash -c &#39;echo &quot;hello, world!&quot;&#39;</code>
-under the hood if you are using the <code>bash</code> shell.</p>
+will get executed by <code>rad</code> in a child process, a la
+<code>&lt;your-shell&gt; -c &#39;&lt;your-cmd&gt;&#39;</code>. For example, <code>rad greet</code> would be executed via
+<code>bash -c &#39;echo &quot;hello, world!&quot;&#39;</code> under the hood if you are using the <code>bash</code>
+shell.</p>
 <blockquote>
-<p>☝🏼Command tasks should tend to be <em>fast</em>. If the executed command is not fast, you may consider trying a function or make style task to speed things up, if feasible.</p>
+<p>☝🏼Command tasks should tend to be <em>fast</em>. If the executed command is not fast,
+you may consider trying a function or make style task to speed things up, if
+feasible.</p>
 </blockquote>
 <h4 id="function-tasks">Function tasks</h4>
-<p>Function tasks are the most capable of all tasks. All other task types internally get
-transformed into a function task. To use function tasks, create a POJO with a
-<code>fn</code> key and function value. <code>fn</code> brings one argument--<a href="#toolkit"><code>toolkit</code></a>--that
-offers a nice suite of batteries for your convenience. ⚡️</p>
+<p>Function tasks are the most capable of all tasks. All other task types
+internally get transformed into a function task. To use function tasks, create a
+POJO with a <code>fn</code> key and function value. <code>fn</code> brings one
+argument--<a href="#toolkit"><code>toolkit</code></a>--that offers a nice suite of batteries for your
+convenience. ⚡️</p>
 <pre><code class="language-ts">// rad.ts
-import type { Task, Tasks } from &#39;url/to/rad/mod.ts&#39;;
+import type { Task, Tasks } from &quot;url/to/rad/mod.ts&quot;;
 
 const build: Task = {
-  fn: async toolkit =&gt; {
+  fn: async (toolkit) =&gt; {
     const { logger, sh } = toolkit;
     await sh(`clang hello.c -o hello`);
     logger.info(`compile ok, asserting executable`);
@@ -308,30 +328,31 @@ const build: Task = {
   },
 };
 
-export const tasks: Tasks = { build };</code></pre>
+export const tasks: Tasks = { build };
+</code></pre>
 <p>This is a pretty basic function task. When you get to the <a href="#toolkit"><code>toolkit</code></a>
 section, you will see the other interesting utilities provided to do great
 things with! You can of course also simply run rad, and introspect the toolkit
 API if you are using a deno plugin in your code editor!</p>
 <h4 id="make-tasks">Make tasks</h4>
 <p>Make tasks are in honor of <a href="https://www.gnu.org/software/make/">gnu make</a>. Our
-make task is intentionally not feature complete with the proper make task--but it does have an essential
-core parity--providing an API to access <em>only files that have changed</em> since the
-last task run. More specifically, it offers an API to access only files that have been
-modified <em>since</em> the <code>target</code> has been last modified. <code>target</code> is make-speak for
-an output file.
-Our make tasks also exposes <em>all</em> files specified by your prerequisites
-as well. One <em>essential</em> difference between our make task and proper-make tasks
-is that your <code>onMake</code> function will <em>still run</em> even if
-no files have changed since the make <code>target</code> has changed--it is up to you to
-<em>do nothing</em> in the task handler if no work is warranted. How do you know if
-know work is warranted? You can consult the <code>changedPrereqs</code> iterator or the
-<code>getChangedPrereqFilenames</code> function. Both symbols signal to you changes that have
-occurred since the <code>target</code>&#39;s last modification.</p>
-<p>Let us take inspiration from a make task in our very own source project--the build
-for this very website. Here is a simplified version:</p>
+make task is intentionally not feature complete with the proper make task--but
+it does have an essential core parity--providing an API to access <em>only files
+that have changed</em> since the last task run. More specifically, it offers an API
+to access only files that have been modified <em>since</em> the <code>target</code> has been last
+modified. <code>target</code> is make-speak for an output file. Our make tasks also exposes
+<em>all</em> files specified by your prerequisites as well. One <em>essential</em> difference
+between our make task and proper-make tasks is that your <code>onMake</code> function will
+<em>still run</em> even if no files have changed since the make <code>target</code> has
+changed--it is up to you to <em>do nothing</em> in the task handler if no work is
+warranted. How do you know if know work is warranted? You can consult the
+<code>changedPrereqs</code> iterator or the <code>getChangedPrereqFilenames</code> function. Both
+symbols signal to you changes that have occurred since the <code>target</code>&#39;s last
+modification.</p>
+<p>Let us take inspiration from a make task in our very own source project--the
+build for this very website. Here is a simplified version:</p>
 <pre><code class="language-ts">// rad.ts
-import type { Task, Tasks } from &#39;url/to/rad/mod.ts&#39;
+import type { Task, Tasks } from &quot;url/to/rad/mod.ts&quot;;
 
 const site: Task = {
   target: &quot;public/index.html&quot;,
@@ -347,67 +368,71 @@ const site: Task = {
        * changedPrereqs, // AsyncIterable&lt;WalkInfo&gt;
        * getChangedPrereqFilenames, // Promise&lt;string&gt;
        */
-    }) =&gt; {
+    },
+  ) =&gt; {
     await fs.mkdirp(&quot;public&quot;);
     logger.info(&quot;collecting prereq filenames&quot;);
     const filenames = await getPrereqFilenames();
     const html = await Promise.all(filenames.map(
-      filename =&gt; Deno.readTextFile(filename).then(
-        markdown =&gt; marked(markdown)
-      )
-    )).then(htmlSnippets =&gt; htmlSnippets.join(&#39;\n&#39;));
+      (filename) =&gt;
+        Deno.readTextFile(filename).then(
+          (markdown) =&gt; marked(markdown),
+        ),
+    )).then((htmlSnippets) =&gt; htmlSnippets.join(&quot;\n&quot;));
     await Deno.writeTextFile(&quot;./public/index.html&quot;, html);
   },
-};</code></pre>
-<p>If you have <strong>many</strong> prereqs, you should  consider using
-the <code>AsyncIterator</code> implementations referenced above so as to not eat
-all of your memory 😀.</p>
-<p><code>gnu make</code> also has a <a href="https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html">pattern syntax</a>
-for when your task maps <em>N</em> prereqs to <em>M</em> targets. This is a pretty handy feature.
-If you have <code>prereqs</code> and
-the targets can be considered functions of the prereq files, make style tasks
-can <em>remove the <code>target</code> task key, and instead use <code>mapPrereqToTarget</code></em>.
-Here is what that looks like in practice:</p>
+};
+</code></pre>
+<p>If you have <strong>many</strong> prereqs, you should consider using the <code>AsyncIterator</code>
+implementations referenced above so as to not eat all of your memory 😀.</p>
+<p><code>gnu make</code> also has a
+<a href="https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html">pattern syntax</a>
+for when your task maps <em>N</em> prereqs to <em>M</em> targets. This is a pretty handy
+feature. If you have <code>prereqs</code> and the targets can be considered functions of
+the prereq files, make style tasks can <em>remove the <code>target</code> task key, and
+instead use <code>mapPrereqToTarget</code></em>. Here is what that looks like in practice:</p>
 <pre><code class="language-ts">export const tasks: Tasks = {
   clean: `rm -rf &#39;build&#39;`, // command style task
   build: { // make style task
     prereqs: [&quot;src/*&quot;],
-    mapPrereqToTarget: ({ cwd /* string */, prereq /* string */, reroot }) =&gt;
+    mapPrereqToTarget: ({ cwd, /* string */ prereq, /* string */ reroot }) =&gt;
       reroot(&quot;src&quot;, &quot;build&quot;, &quot;coffee&quot;, &quot;js&quot;),
-      // maps src/tacos.coffee =&gt; build/tacos.js
-    async onMake() { /* snip snip */ },
+    // maps src/tacos.coffee =&gt; build/tacos.js
+    async onMake() {/* snip snip */},
   },
-};</code></pre>
-<p>This is certainly <em>more verbose</em> than <code>make</code>&#39;s syntax. However, it has the benefit
-of being a clear, debuggable function 🤓! Further, this API does not
-force you to have 1:1 mappings between inputs and outputs. If prereqs <code>a</code> and <code>b</code>
-mapped to <code>foo</code> and <code>c</code> mapped to <code>bar</code>--no problem, you can express that easily
-in <code>mapPrereqToTarget</code>!</p>
+};
+</code></pre>
+<p>This is certainly <em>more verbose</em> than <code>make</code>&#39;s syntax. However, it has the
+benefit of being a clear, debuggable function 🤓! Further, this API does not
+force you to have 1:1 mappings between inputs and outputs. If prereqs <code>a</code> and
+<code>b</code> mapped to <code>foo</code> and <code>c</code> mapped to <code>bar</code>--no problem, you can express that
+easily in <code>mapPrereqToTarget</code>!</p>
 <p>Check out the type definitions for more on make tasks!</p>
 <h3 id="task-dependencies">Task dependencies</h3>
-<p>All task types, except command style tasks, accept an optional <code>dependsOn</code> array.
-<code>dependsOn</code> is an array of task references. Task references must be
-<strong>actual task references</strong>--string based task lookups are not supported, intentionally.
-Stringy lookups are brittle, and would be redundant functionality in <code>rad</code>.</p>
+<p>All task types, except command style tasks, accept an optional <code>dependsOn</code>
+array. <code>dependsOn</code> is an array of task references. Task references must be
+<strong>actual task references</strong>--string based task lookups are not supported,
+intentionally. Stringy lookups are brittle, and would be redundant functionality
+in <code>rad</code>.</p>
 <pre><code class="language-ts">// rad.ts
-import type { Task, Tasks } from &#39;url/to/rad/mod.ts&#39;
+import type { Task, Tasks } from &quot;url/to/rad/mod.ts&quot;;
 
 const install: Task = {
-  target: &#39;node_modules&#39;,
-  prereqs: [&#39;package.json&#39;],
+  target: &quot;node_modules&quot;,
+  prereqs: [&quot;package.json&quot;],
   onMake: async ({ sh }, { getChangedPrereqFilenames }) =&gt; {
-    const changed = await getChangedPrereqFilenames()
-    if (changed.length) await sh(`npm ci --verbose`)
-  }
-}
+    const changed = await getChangedPrereqFilenames();
+    if (changed.length) await sh(`npm ci --verbose`);
+  },
+};
 const lint: Task = {
   dependsOn: [install],
-  fn: ({ sh }) =&gt; sh(`npm run lint`)
-}
+  fn: ({ sh }) =&gt; sh(`npm run lint`),
+};
 const test: Task = {
   dependsOn: [install],
-  fn: ({ sh }) =&gt; sh(`npm test`)
-}
+  fn: ({ sh }) =&gt; sh(`npm test`),
+};
 
 const ci: Task = {
   dependsOn: [lint, test],
@@ -418,7 +443,8 @@ export const tasks: Tasks = {
   install,
   lint,
   test,
-}</code></pre>
+};
+</code></pre>
 <p>Sweet! I bet node.js users wish they could just clone a repo and run <code>rad test</code>,
 then let the system &quot;know&quot; exactly what is needed to be test-ready! Similiarly,
 as shown above, our <code>ci</code> task should depend on lint &amp; test tasks, of which both
@@ -429,7 +455,8 @@ will await an <code>install</code> to complete!</p>
    ├─ lint
    │  └─ install
    └─ test
-      └─ install</code></pre>
+      └─ install
+</code></pre>
 <p>Dude. Nice! We can have nice things!</p>
 <h3 id="toolkit">Toolkit</h3>
 <p>The <code>toolkit</code> is the first argument to <code>function</code> based tasks!</p>
@@ -443,7 +470,8 @@ will await an <code>install</code> to complete!</p>
   path: typeof path;
   task: RadTask;
   iter: typeof iter;
-};</code></pre>
+};
+</code></pre>
 <p>Well that&#39;s not <em>super</em> helpful! Let us study each these keys, one-by-one:</p>
 <table>
 <thead>
@@ -487,8 +515,8 @@ will await an <code>install</code> to complete!</p>
 </tbody></table>
 
 <h1 id="why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</h1>
-<p>your build tool is probably great. keep using it if you love it.
-the intent here it not to dump on anyone or any tool, but articulate feature gaps.</p>
+<p>your build tool is probably great. keep using it if you love it. the intent here
+it not to dump on anyone or any tool, but articulate feature gaps.</p>
 <table>
 <thead>
 <tr>
@@ -599,262 +627,143 @@ but included merely by proximity of underlying tech stacks used.</p>
 <p>Here are some genuine, not-trying-be-rude-opinions.</p>
 <ul>
 <li><code>bazel</code> is complex. maybe you need that complexity. 🤷🏻‍♀️</li>
-<li><code>gradle</code> is full of magic and is often hard to reason about <em>where</em> behavior comes from. Once kotlin integration is first class, it&#39;s worth revisiting gradle.</li>
-<li><code>gulp</code>/<code>grunt</code> have no make-style tasks, are generally node only, comparatively slow, &amp; stringly typed in various places.</li>
-<li><code>make</code> is great, but has a lame DSL and is coupled to a poor scripting language</li>
-<li><code>npm-scripts</code>/<code>velociraptor</code> are simple, but suffer related drawbacks to gulp, grunt, and make.</li>
+<li><code>gradle</code> is full of magic and is often hard to reason about <em>where</em> behavior
+comes from. Once kotlin integration is first class, it&#39;s worth revisiting
+gradle.</li>
+<li><code>gulp</code>/<code>grunt</code> have no make-style tasks, are generally node only,
+comparatively slow, &amp; stringly typed in various places.</li>
+<li><code>make</code> is great, but has a lame DSL and is coupled to a poor scripting
+language</li>
+<li><code>npm-scripts</code>/<code>velociraptor</code> are simple, but suffer related drawbacks to gulp,
+grunt, and make.</li>
 </ul>
 <p>Loose typing, unneeded DSLs, lack of great static analysis, and <em>other</em> gaps
 leave room for improvement in this space. <code>rad</code> is the first tool to bring a
-subjectively <em>powerful</em> scripting language into the build system space coupled with great
-static analysis and make-capable performance.</p>
+subjectively <em>powerful</em> scripting language into the build system space coupled
+with great static analysis and make-capable performance.</p>
 
 </div>
-<script>// Copyright 2018-2020 the Deno authors. All rights reserved. MIT license.
-
-// This is a specialised implementation of a System module loader.
-
-"use strict";
-
-// @ts-nocheck
-/* eslint-disable */
-let System, __instantiate;
-(() => {
-  const r = new Map();
-
-  System = {
-    register(id, d, f) {
-      r.set(id, { d, f, exp: {} });
-    },
-  };
-  async function dI(mid, src) {
-    let id = mid.replace(/\.\w+$/i, "");
-    if (id.includes("./")) {
-      const [o, ...ia] = id.split("/").reverse(),
-        [, ...sa] = src.split("/").reverse(),
-        oa = [o];
-      let s = 0,
-        i;
-      while ((i = ia.shift())) {
-        if (i === "..") s++;
-        else if (i === ".") break;
-        else oa.push(i);
-      }
-      if (s < sa.length) oa.push(...sa.slice(s));
-      id = oa.reverse().join("/");
-    }
-    return r.has(id) ? gExpA(id) : import(mid);
-  }
-
-  function gC(id, main) {
-    return {
-      id,
-      import: (m) => dI(m, id),
-      meta: { url: id, main },
-    };
-  }
-
-  function gE(exp) {
-    return (id, v) => {
-      v = typeof id === "string" ? { [id]: v } : id;
-      for (const [id, value] of Object.entries(v)) {
-        Object.defineProperty(exp, id, {
-          value,
-          writable: true,
-          enumerable: true,
+<script>const chaos = ({ w , h , count ,  })=>{
+    const xforms = [];
+    const getTranslateProposal = ()=>[
+            Math.random() * w * 0.85,
+            h * Math.random()
+        ]
+    ;
+    const distance = ([a, b], [x, y])=>Math.sqrt(Math.pow(a - x, 2) + Math.pow(b - y, 2))
+    ;
+    const scootchAway = ([a, b], [stepX, stepY] = [
+        10,
+        30
+    ])=>[
+            a + (Math.random() + stepX) * (Math.random() > 0.5 ? 1 : -1),
+            b + (1 + Math.random() + stepY) * (Math.random() > 0.5 ? 1 : -1), 
+        ]
+    ;
+    let i = count;
+    while(i){
+        let translate = getTranslateProposal();
+        while(distance(translate, [
+            700,
+            280
+        ]) < 190){
+            translate = scootchAway(translate);
+        }
+        xforms.push({
+            translate,
+            rotate: [
+                360 * Math.random()
+            ],
+            scale: 0.5
         });
-      }
-    };
-  }
-
-  function rF(main) {
-    for (const [id, m] of r.entries()) {
-      const { f, exp } = m;
-      const { execute: e, setters: s } = f(gE(exp), gC(id, id === main));
-      delete m.f;
-      m.e = e;
-      m.s = s;
+        --i;
     }
-  }
-
-  async function gExpA(id) {
-    if (!r.has(id)) return;
-    const m = r.get(id);
-    if (m.s) {
-      const { d, e, s } = m;
-      delete m.s;
-      delete m.e;
-      for (let i = 0; i < s.length; i++) s[i](await gExpA(d[i]));
-      const r = e();
-      if (r) await r;
-    }
-    return m.exp;
-  }
-
-  function gExp(id) {
-    if (!r.has(id)) return;
-    const m = r.get(id);
-    if (m.s) {
-      const { d, e, s } = m;
-      delete m.s;
-      delete m.e;
-      for (let i = 0; i < s.length; i++) s[i](gExp(d[i]));
-      e();
-    }
-    return m.exp;
-  }
-  __instantiate = (m, a) => {
-    System = __instantiate = undefined;
-    rF(m);
-    return a ? gExpA(m) : gExp(m);
-  };
-})();
-
-System.register("common", [], function (exports_1, context_1) {
-    "use strict";
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [],
-        execute: function () {
-        }
-    };
-});
-System.register("transforms/chaos", [], function (exports_2, context_2) {
-    "use strict";
-    var chaos;
-    var __moduleName = context_2 && context_2.id;
-    return {
-        setters: [],
-        execute: function () {
-            exports_2("chaos", chaos = ({ w, h, count, }) => {
-                const xforms = [];
-                const getTranslateProposal = () => [(Math.random() * w * .85), (h * Math.random())];
-                const distance = ([a, b], [x, y]) => Math.sqrt(Math.pow(a - x, 2) + Math.pow(b - y, 2));
-                const scootchAway = ([a, b], [stepX, stepY] = [10, 30]) => [
-                    a + ((Math.random()) + stepX) * (Math.random() > 0.5 ? 1 : -1),
-                    b + ((1 + Math.random()) + stepY) * (Math.random() > 0.5 ? 1 : -1),
-                ];
-                let i = count;
-                while (i) {
-                    let translate = getTranslateProposal();
-                    while (distance(translate, [700, 280]) < 190) {
-                        translate = scootchAway(translate);
-                    }
-                    xforms.push({
-                        translate,
-                        rotate: [360 * Math.random()],
-                        scale: 0.5,
-                    });
-                    --i;
-                }
-                return xforms;
+    return xforms;
+};
+const order = ({ w , h , count ,  })=>{
+    const times = (count1)=>"_".repeat(count1).split("")
+    ;
+    const xforms = [];
+    const numRows = 3;
+    const numCols = 17;
+    const ySep = h / (3 + 1);
+    const xSep = w / (17 + 1);
+    times(3).forEach((_, iy)=>{
+        times(17).forEach((_1, ix)=>{
+            xforms.push({
+                translate: [
+                    ix * xSep,
+                    iy * ySep - 35
+                ],
+                rotate: [
+                    70
+                ],
+                scale: 0.5
             });
-        }
-    };
-});
-System.register("transforms/order", [], function (exports_3, context_3) {
-    "use strict";
-    var order;
-    var __moduleName = context_3 && context_3.id;
-    return {
-        setters: [],
-        execute: function () {
-            exports_3("order", order = ({ w, h, count, }) => {
-                const times = (count) => "_".repeat(count).split("");
-                const xforms = [];
-                const numRows = 3;
-                const numCols = 17;
-                const ySep = h / (numRows + 1);
-                const xSep = w / (numCols + 1);
-                times(numRows).forEach((_, iy) => {
-                    times(numCols).forEach((_, ix) => {
-                        xforms.push({
-                            translate: [ix * xSep, iy * ySep - 35],
-                            rotate: [70],
-                            scale: 0.5,
-                        });
-                    });
-                });
-                return xforms;
-            });
-        }
-    };
-});
-System.register("index", ["transforms/chaos", "transforms/order"], function (exports_4, context_4) {
-    "use strict";
-    var chaos_ts_1, order_ts_1, transforms, chaosTimer, transformIndex, onClick;
-    var __moduleName = context_4 && context_4.id;
-    function paintBabies(transform) {
-        let count = 51;
-        const [w, h] = [800, 300];
-        var group = document.getElementById("repeats");
-        var nodes = Array.from(group.children);
-        const getTransformString = ({ translate, rotate, scale }) => `translate(${translate.join(" ")}) rotate(${rotate.join(" ")}) scale(${scale})`;
-        const xforms = transform({ count, w, h });
-        if (group.innerHTML) {
-            xforms.forEach((xform, i) => {
-                nodes[i].setAttribute("transform", getTransformString(xform));
-            });
-        }
-        else {
-            group.innerHTML = xforms.map((xform, i) => `
-    <use id='baby_${i}' class='text baby-rad' xlink:href="#repeatme"
-      transform="${getTransformString(xform)}"
-    />
-  `).join("");
-        }
+        });
+    });
+    return xforms;
+};
+function paintBabies(transform) {
+    let count = 51;
+    const [w, h] = [
+        800,
+        300
+    ];
+    var group = document.getElementById("repeats");
+    var nodes = Array.from(group.children);
+    const getTransformString = ({ translate , rotate , scale  })=>`translate(${translate.join(" ")}) rotate(${rotate.join(" ")}) scale(${scale})`
+    ;
+    const xforms = transform({
+        count,
+        w,
+        h
+    });
+    if (group.innerHTML) {
+        xforms.forEach((xform, i)=>{
+            nodes[i].setAttribute("transform", getTransformString(xform));
+        });
+    } else {
+        group.innerHTML = xforms.map((xform, i)=>`\n    <use id='baby_${i}' class='text baby-rad' xlink:href="#repeatme"\n      transform="${getTransformString(xform)}"\n    />\n  `
+        ).join("");
     }
-    function whileNotInstallingTransforms(cb) {
-        let isExecuting = false;
-        return async () => {
-            if (isExecuting)
-                return;
-            isExecuting = true;
-            try {
-                if (transforms.length === 2) {
-                    const tUrl = window.location.port == "3333"
-                        ? "http://localhost:3333/transforms.js"
-                        : (window.location.href.match(/github/)
-                            ? `https://cdaringe.github.io/rad/transforms.js`
-                            : `${window.location.origin}/transforms.js`);
-                    transforms = await context_4.import(tUrl).then((r) => transforms.concat(r.transforms));
-                }
+}
+let transforms = [
+    chaos,
+    order
+];
+paintBabies(chaos);
+const chaosTimer = setTimeout(()=>window.requestAnimationFrame(()=>paintBabies(order)
+    )
+, 500);
+function whileNotInstallingTransforms(cb) {
+    let isExecuting = false;
+    return async ()=>{
+        if (isExecuting) return;
+        isExecuting = true;
+        try {
+            if (transforms.length === 2) {
+                const tUrl = window.location.port == "3333" ? "http://localhost:3333/transforms.js" : window.location.href.match(/github/) ? `https://cdaringe.github.io/rad/transforms.js` : `${window.location.origin}/transforms.js`;
+                transforms = await import(tUrl).then((r)=>transforms.concat(r.transforms)
+                );
             }
-            finally {
-                isExecuting = false;
-                await Promise.resolve(cb());
-            }
-        };
-    }
-    return {
-        setters: [
-            function (chaos_ts_1_1) {
-                chaos_ts_1 = chaos_ts_1_1;
-            },
-            function (order_ts_1_1) {
-                order_ts_1 = order_ts_1_1;
-            }
-        ],
-        execute: function () {
-            transforms = [chaos_ts_1.chaos, order_ts_1.order];
-            paintBabies(chaos_ts_1.chaos);
-            chaosTimer = setTimeout(() => window.requestAnimationFrame(() => paintBabies(order_ts_1.order)), 500);
-            transformIndex = 1;
-            onClick = window.onclick = whileNotInstallingTransforms(() => {
-                clearTimeout(chaosTimer);
-                ++transformIndex;
-                if (!transforms[transformIndex]) {
-                    transformIndex = 0;
-                    document.getElementById("add_more_transforms").style.display = "";
-                }
-                paintBabies(transforms[transformIndex]);
-            });
-            document.getElementById("radness").addEventListener("click", onClick);
+        } finally{
+            isExecuting = false;
+            await Promise.resolve(cb());
         }
     };
+}
+let transformIndex = 1;
+const onClick = window.onclick = whileNotInstallingTransforms(()=>{
+    clearTimeout(chaosTimer);
+    ++transformIndex;
+    if (!transforms[transformIndex]) {
+        transformIndex = 0;
+        document.getElementById("add_more_transforms").style.display = "";
+    }
+    paintBabies(transforms[transformIndex]);
 });
-
-__instantiate("index", false);
+document.getElementById("radness").addEventListener("click", onClick);
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/autoloader/prism-autoloader.min.js"></script>
