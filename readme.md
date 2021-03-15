@@ -6,7 +6,7 @@
 
 # rad 💯
 
-A general purpose build tool. Terse, statically typed, batteries included.
+A general purpose build tool. Concise, statically typed, batteries included.
 Command tasks, function tasks, and make-style tasks supported.
 
 Jump to:
