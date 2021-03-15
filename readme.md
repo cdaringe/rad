@@ -23,7 +23,7 @@ Jump to:
 | main   | [![main](https://github.com/cdaringe/rad/workflows/main/badge.svg)](https://github.com/cdaringe/rad/actions?query=workflow%3Amain)             |
 | next   | [![next](https://github.com/cdaringe/rad/workflows/next/badge.svg?branch=next)](https://github.com/cdaringe/rad/actions?query=workflow%3Anext) |
 
-`rad@6.x` now supports `Deno@1.7.x+`!
+`rad@6.x` now supports `Deno@1.8.x+`!
 
 ## Usage
 
@@ -116,7 +116,7 @@ and interfaces.
   - fast builds, skip redundant work when inputs haven't changed
 - cli mode, or library mode
 - portability. build automation for _any_ language or project, in many
-  environments (*limited to _Deno_ target architectures, for the time being.
+  environments (\*limited to _Deno_ target architectures, for the time being.
   long term, we may package this in `Rust`)
 - great UX
 - debug-ability. 🐛 inspect your data, tasks, or even _rad_ itself

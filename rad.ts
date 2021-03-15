@@ -2,13 +2,13 @@ import type { Task, Tasks } from "./src/mod.ts";
 import { task as site } from "./.rad/tasks/site.ts";
 import { task as patchInstallVersion } from "./.rad/tasks/patch-install-version.ts";
 
-const DENO_VERSION = "1.4.0";
+const DENO_VERSION = Deno.version.deno;
 
 const format: Task = { fn: ({ sh }) => sh(`deno fmt`) };
 const test: Task = {
   async fn({ sh, logger }) {
     logger.info(`:: unit tests`);
-    await sh(`deno test --unstable -A --coverage`);
+    await sh(`deno test --unstable -A --coverage=.coverage`);
     if (Deno.env.get("RAD_SKIP_INTEGRATION_TESTS")) return;
     logger.info(`:: cli integration tests in docker`);
     await sh(
