@@ -39,7 +39,7 @@ Rad always consumes a `rad.ts` file, such as the one shown here:
 
 ```ts
 // rad.ts
-import { Task, Tasks } from "https://deno.land/x/rad/src/mod.ts";
+import { Task, Tasks } from "https://deno.land/x/rad@v6.3.3/src/mod.ts";
 
 // command/shell tasks
 const format = `prettier --write`;
