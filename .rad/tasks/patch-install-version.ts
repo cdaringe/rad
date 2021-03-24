@@ -17,7 +17,7 @@ export const task: Task = {
     }
 
     const toPatch = [
-      { filename: "assets/install.sh", regex: /__RAD_VERSION__=.*/g },
+      { filename: "assets/install.sh", regex: /\d+.\d+.\d+.*/g },
       { filename: "readme.md", regex: /\d+.\d+.\d+[^/]*/g },
       { filename: "src/version.ts", regex: /\d+.\d+.\d+[^"]*/ },
       { filename: "assets/site/0005-manual.md", regex: /\d+.\d+.\d+[^/]*/g },
