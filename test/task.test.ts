@@ -1,17 +1,18 @@
 import {
   asFuncarooni,
   execute,
-  Funcarooni,
   getPartialFromUserTask,
   Makearooni,
+  RadTask,
   Task,
 } from "../src/Task.ts";
 import fixtures from "./fixtures/mod.ts";
-import { fs, path } from "../src/3p/std.ts";
+import { path } from "../src/3p/std.ts";
 import * as rad from "../src/mod.ts";
 import { fromTasks } from "../src/TaskGraph.ts";
-import { assert, assertEquals } from "../src/3p/std.test.ts";
+import { assert, assertEquals, assertMatch } from "../src/3p/std.test.ts";
 
+const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 const logster = { logger: await fixtures.getTestLogger() };
 
 Deno.test({
@@ -25,6 +26,80 @@ Deno.test({
       logster,
     );
     assertEquals(result, 1, "task fn returns result");
+  },
+});
+
+Deno.test({
+  name: fixtures.asTestName("depends on task with parent error", import.meta),
+  fn: async () => {
+    const failingTask: Task = {
+      fn: () => {
+        throw new Error("test_error_message");
+      },
+    };
+    const failingRadTask = getPartialFromUserTask({
+      key: "rootTask",
+      value: failingTask,
+    }, logster);
+    const rootTask: Task = {
+      dependsOn: [failingTask],
+      fn: () => 1,
+    };
+    const rootRadTask = getPartialFromUserTask({
+      key: "rootTask",
+      value: rootTask,
+    }, logster);
+    try {
+      await execute(
+        {
+          ...rootRadTask,
+          dependsOn: [failingRadTask],
+        },
+        logster,
+      );
+      assertEquals(
+        true,
+        false,
+        "task should have failed--dependsOn task throws",
+      );
+    } catch (err) {
+      assertMatch(
+        (err as Error).message,
+        /test_error_message/,
+        `execute emits error message`,
+      );
+    }
+  },
+});
+
+Deno.test({
+  name: fixtures.asTestName("serial dependsOn", import.meta),
+  fn: async () => {
+    const emittedTaskOutput: number[] = [];
+    // the following numbers are sleep durations. when processing serially,
+    // the fast tasks should be blocked by the slow task. we will capture the
+    // completion order of the tasks, and assert that ordering is stable
+    const [a, b, c, d] = [0, 10, 5, 1].map((ms) =>
+      [String(ms), {
+        fn: () =>
+          sleep(ms).then(() => {
+            emittedTaskOutput.push(ms);
+            return ms;
+          }),
+      } as Task] as const
+    )
+      .map(([key, value]) => getPartialFromUserTask({ key, value }, logster));
+    const root: RadTask = {
+      ...a,
+      dependsOn: [b, c, d],
+      dependsOnSerial: true,
+    };
+    await execute(root, logster);
+    assertEquals(
+      emittedTaskOutput,
+      [10, 5, 1, 0],
+      "dependsOn tasks should execute serially",
+    );
   },
 });
 

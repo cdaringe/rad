@@ -5,8 +5,9 @@
     "noEmit": true,
     "lib": ["ESNext"],
     "strict": true,
-    "target": "es2018",
+    "target": "es2018"
   },
   "include": [
     "./**/*.ts"
-  ]}
+  ]
+}

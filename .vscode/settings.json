@@ -2,10 +2,10 @@
   "deno.enable": true,
   // "deno.import_map": "./path/to/import_map.json",
   "[typescript]": {
-    "editor.defaultFormatter": "denoland.vscode-deno",
+    "editor.defaultFormatter": "denoland.vscode-deno"
   },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "denoland.vscode-deno",
+    "editor.defaultFormatter": "denoland.vscode-deno"
   },
   "eslint.enable": false,
   "yaml.completion": false,
@@ -13,5 +13,5 @@
   "deno.codeLens.references": true,
   "deno.codeLens.referencesAllFunctions": true,
   "deno.lint": true,
-  "deno.unstable": true,
+  "deno.unstable": true
 }

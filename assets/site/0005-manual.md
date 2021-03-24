@@ -148,17 +148,16 @@ const site: Task = {
        * changedPrereqs, // AsyncIterable<WalkInfo>
        * getChangedPrereqFilenames, // Promise<string>
        */
-    },
+    }
   ) => {
     await fs.mkdirp("public");
     logger.info("collecting prereq filenames");
     const filenames = await getPrereqFilenames();
-    const html = await Promise.all(filenames.map(
-      (filename) =>
-        Deno.readTextFile(filename).then(
-          (markdown) => marked(markdown),
-        ),
-    )).then((htmlSnippets) => htmlSnippets.join("\n"));
+    const html = await Promise.all(
+      filenames.map((filename) =>
+        Deno.readTextFile(filename).then((markdown) => marked(markdown))
+      )
+    ).then((htmlSnippets) => htmlSnippets.join("\n"));
     await Deno.writeTextFile("./public/index.html", html);
   },
 };
@@ -177,12 +176,15 @@ instead use `mapPrereqToTarget`_. Here is what that looks like in practice:
 ```ts
 export const tasks: Tasks = {
   clean: `rm -rf 'build'`, // command style task
-  build: { // make style task
+  build: {
+    // make style task
     prereqs: ["src/*"],
     mapPrereqToTarget: ({ cwd, /* string */ prereq, /* string */ reroot }) =>
       reroot("src", "build", "coffee", "js"),
     // maps src/tacos.coffee => build/tacos.js
-    async onMake() {/* snip snip */},
+    async onMake() {
+      /* snip snip */
+    },
   },
 };
 ```
@@ -202,6 +204,8 @@ array. `dependsOn` is an array of task references. Task references must be
 **actual task references**--string based task lookups are not supported,
 intentionally. Stringy lookups are brittle, and would be redundant functionality
 in `rad`.
+
+> `dependsOn` tasks can be serialized by setting the sibling field `dependsOnSerial: true`
 
 ```ts
 // rad.ts

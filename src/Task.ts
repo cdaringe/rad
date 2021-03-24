@@ -64,6 +64,7 @@ export type Task = Dependarooni | Funcarooni | Commandarooni | Makearooni;
 
 export type Dependarooni = {
   dependsOn?: Task[];
+  serializeDependents?: boolean;
 };
 
 /**
@@ -238,6 +239,7 @@ export type RadTask<Result = unknown> = {
   cmd?: string;
   complete?: Promise<Result>;
   dependsOn?: RadTask[];
+  dependsOnSerial?: boolean;
   fn: TaskFn;
   kind?: string;
   name: string;
@@ -246,7 +248,8 @@ export type RadTask<Result = unknown> = {
 };
 
 /**
- * creates a Task from a UserTask, without `dependsOn` field hydrated
+ * creates a RadTask from a Task (a user provided task), without
+ * `dependsOn` hydrated
  */
 export function getPartialFromUserTask(
   { key, value }: { key: string; value: Partial<Task> },
@@ -276,9 +279,18 @@ export function execute(task: RadTask, { logger }: WithLogger) {
   task.complete = async function executeToCompletion() {
     task.state = TASK_STATES.RUNNING_WAITING_UPSTREAM;
     logger.info(`${bold(task.name)} ${italic("start")}`);
-    const dependentResults: unknown[] = await Promise.all(
-      dependents.map((dependent) => execute(dependent, { logger })),
-    );
+    const dependentResults: unknown[] =
+      await (task.dependsOnSerial
+        ? ((async () => {
+          const results = [];
+          for (const dependent of dependents) {
+            results.push(await execute(dependent, { logger }));
+          }
+          return results;
+        }))()
+        : Promise.all(
+          dependents.map((dependent) => execute(dependent, { logger })),
+        ));
     const dependentsDuration = getDependentsDuration();
     const getActiveDuration = timer();
     let result: undefined | unknown;
