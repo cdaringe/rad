@@ -9,14 +9,8 @@
     ["@semantic-release/exec", {
       "prepareCmd": "export NEXT_VERSION=${nextRelease.version} && NEXT_VERSION=${nextRelease.version} ./rad patchInstallVersion",
     }],
-    ["@semantic-release/github", {
-      "assets": [
-        { "path": "assets/install.sh", "label": "install.sh" },
-        { "path": "readme.md", "label": "readme.md" },
-      ]
-    }],
     ["@semantic-release/git", {
-      "assets": ["readme.md", "src/version.ts"],
+      "assets": ["assets/install.sh", "readme.md", "src/version.ts"],
       "message": "docs(release): update assets with ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
     }]
   ]
