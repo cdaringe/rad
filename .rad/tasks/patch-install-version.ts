@@ -25,7 +25,7 @@ export const task: Task = {
     // update docs
     const oldReadmeContent = await fs.readFile(readmeFilename);
     const nextReadmeContent = oldReadmeContent.replace(
-      /rad\/releases\/download\/v\d+.\d+.\d+/g,
+      /rad\/releases\/download\/v\d+.\d+.\d+[^/]*/g,
       `rad/releases/download/v${nextVersion}`,
     );
     logger.info(
