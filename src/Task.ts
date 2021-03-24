@@ -64,7 +64,7 @@ export type Task = Dependarooni | Funcarooni | Commandarooni | Makearooni;
 
 export type Dependarooni = {
   dependsOn?: Task[];
-  serializeDependents?: boolean;
+  dependsOnSerial?: boolean;
 };
 
 /**
