@@ -43,4 +43,4 @@ jobs:
             "@semantic-release/git" \
             "@semantic-release/exec" \
             && \
-          npx semantic-release --dry-release
+          npx semantic-release --dry-run
