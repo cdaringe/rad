@@ -22,13 +22,6 @@ jobs:
           deno-version: 1.8.2
       - name: check
         run: ./rad check
-      - name: site
-        run: ./rad -l info site
-      - name: deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
 
       # release
       - name: setup-node
@@ -49,3 +42,12 @@ jobs:
             "@semantic-release/exec" \
             && \
           npx semantic-release
+
+      # publish site after release to pick up new version numbers
+      - name: site
+        run: ./rad -l info site
+      - name: deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
