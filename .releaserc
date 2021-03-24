@@ -9,8 +9,12 @@
     ["@semantic-release/github", {
       "assets": [
         { "path": "assets/install.sh", "label": "install.sh" },
-        { "path": "readme.md", "label": "readme.md"  },
+        { "path": "readme.md", "label": "readme.md" },
       ]
+    }],
+    ["@semantic-release/git", {
+      "assets": ["readme.md"],
+      "message": "docs(release): update readme with ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
     }]
   ]
 }
