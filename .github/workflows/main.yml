@@ -16,19 +16,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           persist-credentials: false
-      # https://github.com/denolib/setup-deno
-      - uses: denolib/setup-deno@master
-        with:
-          deno-version: 1.8.2
-      - name: check
-        run: ./rad check
-      - name: site
-        run: ./rad -l info site
-      - name: deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
 
       # release
       - name: setup-node
@@ -49,3 +36,18 @@ jobs:
             "@semantic-release/exec" \
             && \
           npx semantic-release
+
+      # https://github.com/denolib/setup-deno
+      # publish site after release to pick up new version numbers
+      - uses: denolib/setup-deno@master
+        with:
+          deno-version: 1.8.2
+      - name: check
+        run: ./rad check
+      - name: site
+        run: ./rad -l info site
+      - name: deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
