@@ -5,9 +5,6 @@ export const task: Task = {
     const nextVersion = Deno.env.get("NEXT_VERSION");
     if (!nextVersion) throw new Error("NEXT_VERSION not found");
     const isNextBeta = nextVersion.match(/next/i);
-    const installScriptRelativeFilename = "assets/install.sh";
-    const readmeFilename = "readme.md";
-    const versionFilename = "src/version.ts";
 
     if (isNextBeta) {
       logger.warning([
@@ -19,43 +16,18 @@ export const task: Task = {
       return;
     }
 
-    // update install scripts
-    const oldContent = await fs.readFile(installScriptRelativeFilename);
-    const nextContent = oldContent.replace(
-      /__RAD_VERSION__=.*/g,
-      `__RAD_VERSION__=${nextVersion}`,
-    );
-    if (oldContent === nextContent) {
-      throw new Error("failed to update install version");
+    const toPatch = [
+      { filename: "assets/install.sh", regex: /__RAD_VERSION__=.*/g },
+      { filename: "readme.md", regex: /\d+.\d+.\d+[^/]*/g },
+      { filename: "src/version.ts", regex: /\d+.\d+.\d+[^"]*/ },
+      { filename: "assets/site/0005-manual.md", regex: /\d+.\d+.\d+[^/]*/g },
+    ];
+
+    for (const { filename, regex } of toPatch) {
+      logger.info(`updating ${filename} with new version ${nextVersion}`);
+      const oldContent = await Deno.readTextFile(filename);
+      const nextContent = oldContent.replace(regex, nextVersion);
+      await Deno.writeTextFile(filename, nextContent);
     }
-    logger.info(
-      `updated ${installScriptRelativeFilename}, patched for next version: ${nextVersion}`,
-    );
-    logger.info(nextContent);
-
-    // update docs
-    const oldReadmeContent = await fs.readFile(readmeFilename);
-    const nextReadmeContent = oldReadmeContent.replace(
-      /rad\/releases\/download\/v\d+.\d+.\d+[^/]*/g,
-      `rad/releases/download/v${nextVersion}`,
-    );
-    logger.info(
-      `updated ${readmeFilename}, patched for next version: ${nextVersion}`,
-    );
-
-    // update source
-    const oldVersionContent = await fs.readFile(versionFilename);
-    const nextVersionContent = oldVersionContent.replace(
-      /\d+.\d+.\d+[^"]*/g,
-      `${nextVersion}`,
-    );
-    logger.info(
-      `updated ${versionFilename}, patched for next version: ${nextVersion}`,
-    );
-    await Promise.all([
-      Deno.writeTextFile(installScriptRelativeFilename, nextContent),
-      Deno.writeTextFile(readmeFilename, nextReadmeContent),
-      Deno.writeTextFile(versionFilename, nextVersionContent),
-    ]);
   },
 };

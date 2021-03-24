@@ -148,7 +148,7 @@ const site: Task = {
        * changedPrereqs, // AsyncIterable<WalkInfo>
        * getChangedPrereqFilenames, // Promise<string>
        */
-    }
+    },
   ) => {
     await fs.mkdirp("public");
     logger.info("collecting prereq filenames");
@@ -156,7 +156,7 @@ const site: Task = {
     const html = await Promise.all(
       filenames.map((filename) =>
         Deno.readTextFile(filename).then((markdown) => marked(markdown))
-      )
+      ),
     ).then((htmlSnippets) => htmlSnippets.join("\n"));
     await Deno.writeTextFile("./public/index.html", html);
   },
@@ -205,7 +205,8 @@ array. `dependsOn` is an array of task references. Task references must be
 intentionally. Stringy lookups are brittle, and would be redundant functionality
 in `rad`.
 
-> `dependsOn` tasks can be serialized by setting the sibling field `dependsOnSerial: true`
+> `dependsOn` tasks can be serialized by setting the sibling field
+> `dependsOnSerial: true`
 
 ```ts
 // rad.ts
@@ -279,13 +280,13 @@ export type Toolkit = {
 
 Well that's not _super_ helpful! Let us study each these keys, one-by-one:
 
-| key                | value                                                                                                                                                                                                |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Deno`             | see the [deno api docs](https://doc.deno.land/https/github.com/denoland/deno/releases/latest/download/lib.deno.d.ts)                                                                                 |
-| `fs`               | a few sugar methods, `{ readFile, writeFile, mkdirp }` that work on strings, vs buffers, and assume utf8 for shorthand                                                                               |
-| `sh`               | execute a shell command. see the command task section above!                                                                                                                                         |
-| `dependentResults` | results of `dependsOn` tasks. currently these are untyped. getting type inference here is tricky. PRs welcome!                                                                                       |
-| `logger`           | the `rad` logger! a standard `Deno` logger with the commonplace log-level methods (e.g. `.info(...)`, `.debug(...)`, etc). see [the source](https://github.com/cdaringe/rad/blob/main/src/logger.ts) |
-| `path`             | a direct reference to [deno node path](https://deno.land/std/node/path.ts). this API is likely to change if Deno implements a full, proper path module                                               |
-| `task`             | a reference to the internal `RadTask`                                                                                                                                                                |
-| `iter`             | `AsyncIterable` utility functions                                                                                                                                                                    |
+| key                | value                                                                                                                                                                                                  |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Deno`             | see the [deno api docs](https://doc.deno.land/https/github.com/denoland/deno/releases/latest/download/lib.deno.d.ts)                                                                                   |
+| `fs`               | a few sugar methods, `{ readFile, writeFile, mkdirp }` that work on strings, vs buffers, and assume utf8 for shorthand                                                                                 |
+| `sh`               | execute a shell command. see the command task section above!                                                                                                                                           |
+| `dependentResults` | results of `dependsOn` tasks. currently these are untyped. getting type inference here is tricky. PRs welcome!                                                                                         |
+| `logger`           | the `rad` logger! a standard `Deno` logger with the commonplace log-level methods (e.g. `.info(...)`, `.debug(...)`, etc). see [the source](https://github.com/cdaringe/rad/blob/v6.3.0/src/logger.ts) |
+| `path`             | a direct reference to [deno node path](https://deno.land/std/node/path.ts). this API is likely to change if Deno implements a full, proper path module                                                 |
+| `task`             | a reference to the internal `RadTask`                                                                                                                                                                  |
+| `iter`             | `AsyncIterable` utility functions                                                                                                                                                                      |

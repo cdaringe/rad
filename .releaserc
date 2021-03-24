@@ -10,7 +10,7 @@
       "prepareCmd": "export NEXT_VERSION=${nextRelease.version} && NEXT_VERSION=${nextRelease.version} ./rad patchInstallVersion",
     }],
     ["@semantic-release/git", {
-      "assets": ["assets/install.sh", "readme.md", "src/version.ts"],
+      "assets": ["assets/install.sh", "assets/site/0005-manual.md", "readme.md", "src/version.ts"],
       "message": "docs(release): update assets with ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
     }]
   ]
