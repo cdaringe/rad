@@ -6,6 +6,7 @@ import { createLogger, Logger } from "./logger.ts";
 import { execute } from "./Task.ts";
 import { asTree } from "./TaskGraph.ts";
 import { flags as flagsMod } from "./3p/std.ts";
+import { version } from "./version.ts";
 
 const flags = {
   alias: {
@@ -15,9 +16,11 @@ const flags = {
     "print-graph": ["p"],
     "init": [],
     "list": [],
+    "version": ["v"],
   },
   boolean: [
     "help",
+    "version",
   ],
 };
 const parsed = flagsMod.parse(Deno.args);
@@ -35,6 +38,7 @@ rad: a general-purpose, typed & portable build tool.
     --print-graph  print task graph(s). use task-name arg to print a singular graph
     --radfile, -r  path/to/rad.ts
     --list  list tasks
+    --version, -v print rad version
 
    Examples
      $ rad
@@ -84,12 +88,15 @@ export type RadExecResult<R = unknown> = {
 };
 
 export async function suchRad(args: flagsMod.Args): Promise<RadExecResult> {
+  const { _, ...flags } = args;
+  assertFlags(flags);
   if (args.help || args.h) {
     console.info(helpText);
     return {};
+  } else if (args.version || args.v) {
+    console.info(version);
+    return {};
   }
-  const { _, ...flags } = args;
-  assertFlags(flags);
   const logger = await createLogger(args["log-level"] || args.l);
   if (args.init) {
     await rad.createRadfile(Deno.cwd(), { logger });

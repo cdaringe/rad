@@ -16,8 +16,8 @@
       ]
     }],
     ["@semantic-release/git", {
-      "assets": ["readme.md"],
-      "message": "docs(release): update readme with ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      "assets": ["readme.md", "src/version.ts"],
+      "message": "docs(release): update assets with ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
     }]
   ]
 }

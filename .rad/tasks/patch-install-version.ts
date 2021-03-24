@@ -6,6 +6,9 @@ export const task: Task = {
     if (!nextVersion) throw new Error("NEXT_VERSION not found");
     const installScriptRelativeFilename = "assets/install.sh";
     const readmeFilename = "readme.md";
+    const versionFilename = "src/version.ts";
+
+    // update install scripts
     const oldContent = await fs.readFile(installScriptRelativeFilename);
     const nextContent = oldContent.replace(
       /__RAD_VERSION__=.*/g,
@@ -18,6 +21,8 @@ export const task: Task = {
       `updated ${installScriptRelativeFilename}, patched for next version: ${nextVersion}`,
     );
     logger.info(nextContent);
+
+    // update docs
     const oldReadmeContent = await fs.readFile(readmeFilename);
     const nextReadmeContent = oldReadmeContent.replace(
       /rad\/releases\/download\/v\d+.\d+.\d+/g,
@@ -26,9 +31,20 @@ export const task: Task = {
     logger.info(
       `updated ${readmeFilename}, patched for next version: ${nextVersion}`,
     );
+
+    // update source
+    const oldVersionContent = await fs.readFile(versionFilename);
+    const nextVersionContent = oldVersionContent.replace(
+      /\d+.\d+.\d+[^"]*/g,
+      `${nextVersion}`,
+    );
+    logger.info(
+      `updated ${versionFilename}, patched for next version: ${nextVersion}`,
+    );
     await Promise.all([
       Deno.writeTextFile(installScriptRelativeFilename, nextContent),
       Deno.writeTextFile(readmeFilename, nextReadmeContent),
+      Deno.writeTextFile(versionFilename, nextVersionContent),
     ]);
   },
 };
