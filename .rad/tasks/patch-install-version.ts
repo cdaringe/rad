@@ -4,9 +4,20 @@ export const task: Task = {
   fn: async ({ Deno, fs, logger }) => {
     const nextVersion = Deno.env.get("NEXT_VERSION");
     if (!nextVersion) throw new Error("NEXT_VERSION not found");
+    const isNextBeta = nextVersion.match(/next/i);
     const installScriptRelativeFilename = "assets/install.sh";
     const readmeFilename = "readme.md";
     const versionFilename = "src/version.ts";
+
+    if (isNextBeta) {
+      logger.warning([
+        "pre-releases are _only_ installable from git, and do not receive ",
+        "automated docs or install update patches. ",
+        "this ensures that there are no conflicts when merging our next branch ",
+        "into the main branch",
+      ].join(""));
+      return;
+    }
 
     // update install scripts
     const oldContent = await fs.readFile(installScriptRelativeFilename);
