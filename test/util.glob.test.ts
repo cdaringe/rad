@@ -18,10 +18,6 @@ Deno.test({
       root: ".",
       pattern: "./*",
     });
-    const dotRootAllFilesDeep = createPathMatcher({
-      root: ".",
-      pattern: "./**",
-    });
     [
       [`dotRootSingleFile`, dotRootSingleFile, "file1", true],
       [`dotRootSingleFile`, dotRootSingleFile, "./file1", true],

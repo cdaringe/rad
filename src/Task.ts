@@ -22,7 +22,7 @@ import { getReRoot } from "./util/reroot.ts";
 type WalkEntry = fs.WalkEntry;
 const { italic, bold, green, red } = colors;
 // deno-lint-ignore no-explicit-any
-const noop = (...args: any[]) => {};
+const noop = (..._args: any[]) => {};
 const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 export enum TASK_STATES {
@@ -217,7 +217,7 @@ export const asFuncarooni = (
   if (typeof task === "string") {
     return { fn: ({ sh }) => sh(task, { logger }) } as Funcarooni;
   } else if ("cmd" in task) {
-    const { cmd, ...rest } = task;
+    const { cmd: _cmd, ...rest } = task;
     return { fn: ({ sh }) => sh(task.cmd, { logger }), ...rest } as Funcarooni;
   } else if ("prereqs" in task) {
     return makearooniToFuncarooni(task);

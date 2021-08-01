@@ -20,7 +20,7 @@ export const addTreeNode = (task: RadTask) => {
   for (const dep of task.dependsOn) subTree[dep.name] = addTreeNode(dep);
   return subTree;
 };
-export const graphToTreeifyGraph = ({ graph: { graph }, taskName, logger }: {
+export const graphToTreeifyGraph = ({ graph: { graph }, taskName, logger: _ }: {
   graph: TaskGraph;
   taskName?: string;
 } & WithLogger) => {
@@ -56,7 +56,7 @@ export function fromTasks(userTasks: Radness["tasks"], { logger }: WithLogger) {
     {},
   );
   // dangerously mutate new task memory to swap user input tasks with owned tasks
-  userTaskNames.forEach((taskName, i) => {
+  userTaskNames.forEach((taskName, _i) => {
     const task = graph[taskName];
     const dependents: Task[] =
       asFuncarooni(userTasks[taskName], { logger })?.dependsOn ||

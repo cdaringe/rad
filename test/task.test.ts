@@ -124,7 +124,7 @@ Deno.test({
       onMake: async (
         _toolkit,
         {
-          changedPrereqs,
+          changedPrereqs: _,
           prereqs,
           getPrereqFilenames,
           getChangedPrereqFilenames,
@@ -200,7 +200,7 @@ Deno.test({
         ...fixtures.withTestLogger,
       },
     );
-    let nextOnMake: Makearooni["onMake"] = async (tk, m) => {};
+    let nextOnMake: Makearooni["onMake"] = async (_tk, _m) => {};
     let callCount = 0;
     assert(radness.tasks.build, "dangerously mutating fixture task in memory");
     radness.tasks.build = {
@@ -217,7 +217,7 @@ Deno.test({
     assertEquals(callCount, 0);
 
     //
-    nextOnMake = async ({ fs, sleep, task }, { getChangedPrereqFilenames }) => {
+    nextOnMake = async ({ sleep }, { getChangedPrereqFilenames }) => {
       const changed = await getChangedPrereqFilenames();
       assertEquals(changed.length, 2, "initial build has two inputs");
       // mock "build" outputs o1, o2, edit i1
@@ -233,7 +233,7 @@ Deno.test({
     assertEquals(callCount, 1);
 
     //
-    nextOnMake = async ({ fs, sleep }, { getChangedPrereqFilenames }) => {
+    nextOnMake = async ({ sleep }, { getChangedPrereqFilenames }) => {
       const changed = await getChangedPrereqFilenames();
       assertEquals(changed.length, 1, "onChange has one changed");
       assertEquals(changed[0], i1, "input 1 (i1) is only changed file");

@@ -2,7 +2,7 @@ import type { Tasks } from "../../../src/mod.ts";
 
 export const tasks: Tasks = {
   docs: {
-    fn: async function makeDocs({ logger, path, fs }) {
+    fn: async function makeDocs() {
       // const __dirname = import.meta.url.replace('file://', '')
       // const input = path.join(__dirname, "./doc.md");
       // const output = path.join(__dirname, "./build/dummy.md");

@@ -59,7 +59,7 @@ export function onFail(err: any) {
       if (err.message && err.stack.indexOf(err.message) === -1) {
         console.error(err.message);
       }
-    } catch (err) {
+    } catch (_err) {
       /* pass */
     }
   }

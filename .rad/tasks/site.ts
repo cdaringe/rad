@@ -9,7 +9,7 @@ const marked = (window as any).marked;
 export const task: Task = {
   target: "public/index.html",
   prereqs: ["assets/site/**/*.{html,md}"],
-  onMake: async ({ task, fs, logger }, { getPrereqFilenames }) => {
+  onMake: async ({ task: _, fs, logger }, { getPrereqFilenames }) => {
     const pruneNoSite = (str: string) => str.replaceAll(/.*NOSITE.*$/img, "");
     await fs.mkdirp("public");
     logger.info("collecting prereq filenames");
@@ -37,13 +37,13 @@ export const task: Task = {
       [
         fs.readFile(html[0]),
         Deno.emit("assets/site/index.ts", {
-          bundle: "esm",
+          bundle: "module",
         }).then((res) => {
           const files = Object.values(res.files);
           return files[0];
         }),
         Deno.emit("assets/site/supplemental-transforms.ts", {
-          bundle: "esm",
+          bundle: "classic",
         }).then((res) => {
           const files = Object.values(res.files);
           return Deno.writeTextFile("public/transforms.js", files[0]);
