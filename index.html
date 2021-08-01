@@ -3,8 +3,8 @@
 <head>
   <title>rad - general purpose, typed build tools</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism-okaidia.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-okaidia.min.css" rel="stylesheet" />
 <style>
 /* prefixed by https://autoprefixer.github.io (PostCSS: v7.0.26, autoprefixer: v9.7.3) */
 /**
@@ -649,8 +649,129 @@ will await an <code>install</code> to complete!</p>
 </tbody></table>
 
 </div>
-<script>{"version":3,"sources":["<file:///home/runner/work/rad/rad/assets/site/transforms/chaos.ts>","<file:///home/runner/work/rad/rad/assets/site/transforms/order.ts>","<file:///home/runner/work/rad/rad/assets/site/index.ts>"],"sourcesContent":["import { Point, RadSvgTransform, Transform } from \"../common.ts\";\n\nexport const chaos: Transform = ({\n  w,\n  h,\n  count,\n}) => {\n  const xforms: RadSvgTransform[] = [];\n  const getTranslateProposal: () => Point =\n    () => [(Math.random() * w * .85), (h * Math.random())];\n  const distance = ([a, b]: Point, [x, y]: Point) =>\n    Math.sqrt(\n      Math.pow(a - x, 2) + Math.pow(b - y, 2),\n    );\n  const scootchAway = (\n    [a, b]: Point,\n    [stepX, stepY]: Point = [10, 30],\n  ): Point => [\n    a + ((Math.random()) + stepX) * (Math.random() > 0.5 ? 1 : -1),\n    b + ((1 + Math.random()) + stepY) * (Math.random() > 0.5 ? 1 : -1),\n  ];\n  let i = count;\n  while (i) {\n    let translate: Point = getTranslateProposal();\n    while (distance(translate, [700, 280]) < 190) {\n      translate = scootchAway(translate);\n    }\n    xforms.push({\n      translate,\n      rotate: [360 * Math.random()],\n      scale: 0.5,\n    });\n    --i;\n  }\n  return xforms;\n};\n","import { RadSvgTransform, Transform } from \"../common.ts\";\n\nexport const order: Transform = ({\n  w,\n  h,\n  count,\n}) => {\n  const times = (count: number) => \"_\".repeat(count).split(\"\");\n  const xforms: RadSvgTransform[] = [];\n  const numRows = 3;\n  const numCols = 17;\n  const ySep = h / (numRows + 1);\n  const xSep = w / (numCols + 1);\n  times(numRows).forEach((_, iy) => {\n    times(numCols).forEach((_, ix) => {\n      xforms.push({\n        translate: [ix * xSep, iy * ySep - 35],\n        rotate: [70],\n        scale: 0.5,\n      });\n    });\n  });\n  return xforms;\n};\n","/// <reference lib=\"dom\" />\nimport { RadSvgTransform, Transform } from \"./common.ts\";\nimport { chaos } from \"./transforms/chaos.ts\";\nimport { order } from \"./transforms/order.ts\";\n\nfunction paintBabies(transform: Transform) {\n  let count = 51;\n  const [w, h] = [800, 300];\n  var group = document.getElementById(\"repeats\")!;\n  var nodes = Array.from(group.children);\n  const getTransformString = ({ translate, rotate, scale }: RadSvgTransform) =>\n    `translate(${translate.join(\" \")}) rotate(${\n      rotate.join(\" \")\n    }) scale(${scale})`;\n  const xforms = transform({ count, w, h });\n  // update existing nodes\n  if (group.innerHTML) {\n    xforms.forEach((xform, i) => {\n      nodes[i].setAttribute(\"transform\", getTransformString(xform));\n    });\n  } else {\n    // create initial nodes\n    group.innerHTML = xforms.map((xform, i) => `\n    <use id='baby_${i}' class='text baby-rad' xlink:href=\"#repeatme\"\n      transform=\"${getTransformString(xform)}\"\n    />\n  `).join(\"\");\n  }\n}\nlet transforms = [chaos, order];\n// initial paint\npaintBabies(chaos);\n// funsies initial animation\nconst chaosTimer = setTimeout(\n  () => window.requestAnimationFrame(() => paintBabies(order)),\n  500,\n);\n\nfunction whileNotInstallingTransforms(cb: () => any) {\n  let isExecuting = false;\n  return async () => {\n    if (isExecuting) return;\n    isExecuting = true;\n    try {\n      /**\n       * update default transforms with remote transforms\n       */\n      if (transforms.length === 2) {\n        const tUrl = window.location.port == \"3333\"\n          ? \"http://localhost:3333/transforms.js\"\n          : (\n            window.location.href.match(/github/)\n              ? `https://cdaringe.github.io/rad/transforms.js`\n              : `${window.location.origin}/transforms.js`\n          );\n        transforms = await import(tUrl).then((r) =>\n          transforms.concat(r.transforms)\n        );\n      }\n    } finally {\n      isExecuting = false;\n      await Promise.resolve(cb());\n    }\n  };\n}\n\nlet transformIndex = 1; // start at 1 to not revisit eager pageload xforms\nconst onClick = window.onclick = whileNotInstallingTransforms(() => {\n  clearTimeout(chaosTimer);\n  ++transformIndex;\n  if (!transforms[transformIndex]) {\n    transformIndex = 0;\n    document.getElementById(\"add_more_transforms\")!.style.display = \"\";\n  }\n  paintBabies(transforms[transformIndex]);\n});\ndocument.getElementById(\"radness\")!.addEventListener(\"click\", onClick);\n"],"names":[],"mappings":"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"}</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/prism.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>const chaos = ({ w , h , count ,  })=>{
+    const xforms = [];
+    const getTranslateProposal = ()=>[
+            Math.random() * w * 0.85,
+            h * Math.random()
+        ]
+    ;
+    const distance = ([a, b], [x, y])=>Math.sqrt(Math.pow(a - x, 2) + Math.pow(b - y, 2))
+    ;
+    const scootchAway = ([a, b], [stepX, stepY] = [
+        10,
+        30
+    ])=>[
+            a + (Math.random() + stepX) * (Math.random() > 0.5 ? 1 : -1),
+            b + (1 + Math.random() + stepY) * (Math.random() > 0.5 ? 1 : -1), 
+        ]
+    ;
+    let i = count;
+    while(i){
+        let translate = getTranslateProposal();
+        while(distance(translate, [
+            700,
+            280
+        ]) < 190){
+            translate = scootchAway(translate);
+        }
+        xforms.push({
+            translate,
+            rotate: [
+                360 * Math.random()
+            ],
+            scale: 0.5
+        });
+        --i;
+    }
+    return xforms;
+};
+const order = ({ w , h , count ,  })=>{
+    const times = (count1)=>"_".repeat(count1).split("")
+    ;
+    const xforms = [];
+    const numRows = 3;
+    const numCols = 17;
+    const ySep = h / (3 + 1);
+    const xSep = w / (17 + 1);
+    times(3).forEach((_, iy)=>{
+        times(17).forEach((_1, ix)=>{
+            xforms.push({
+                translate: [
+                    ix * xSep,
+                    iy * ySep - 35
+                ],
+                rotate: [
+                    70
+                ],
+                scale: 0.5
+            });
+        });
+    });
+    return xforms;
+};
+function paintBabies(transform) {
+    let count = 51;
+    const [w, h] = [
+        800,
+        300
+    ];
+    var group = document.getElementById("repeats");
+    var nodes = Array.from(group.children);
+    const getTransformString = ({ translate , rotate , scale  })=>`translate(${translate.join(" ")}) rotate(${rotate.join(" ")}) scale(${scale})`
+    ;
+    const xforms = transform({
+        count,
+        w,
+        h
+    });
+    if (group.innerHTML) {
+        xforms.forEach((xform, i)=>{
+            nodes[i].setAttribute("transform", getTransformString(xform));
+        });
+    } else {
+        group.innerHTML = xforms.map((xform, i)=>`\n    <use id='baby_${i}' class='text baby-rad' xlink:href="#repeatme"\n      transform="${getTransformString(xform)}"\n    />\n  `
+        ).join("");
+    }
+}
+let transforms = [
+    chaos,
+    order
+];
+paintBabies(chaos);
+const chaosTimer = setTimeout(()=>window.requestAnimationFrame(()=>paintBabies(order)
+    )
+, 500);
+function whileNotInstallingTransforms(cb) {
+    let isExecuting = false;
+    return async ()=>{
+        if (isExecuting) return;
+        isExecuting = true;
+        try {
+            if (transforms.length === 2) {
+                const tUrl = window.location.port == "3333" ? "http://localhost:3333/transforms.js" : window.location.href.match(/github/) ? `https://cdaringe.github.io/rad/transforms.js` : `${window.location.origin}/transforms.js`;
+                transforms = await import(tUrl).then((r)=>transforms.concat(r.transforms)
+                );
+            }
+        } finally{
+            isExecuting = false;
+            await Promise.resolve(cb());
+        }
+    };
+}
+let transformIndex = 1;
+const onClick = window.onclick = whileNotInstallingTransforms(()=>{
+    clearTimeout(chaosTimer);
+    ++transformIndex;
+    if (!transforms[transformIndex]) {
+        transformIndex = 0;
+        document.getElementById("add_more_transforms").style.display = "";
+    }
+    paintBabies(transforms[transformIndex]);
+});
+document.getElementById("radness").addEventListener("click", onClick);
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>
