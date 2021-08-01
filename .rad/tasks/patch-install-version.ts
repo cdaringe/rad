@@ -1,7 +1,7 @@
 import type { Task } from "../../src/mod.ts";
 
 export const task: Task = {
-  fn: async ({ Deno, fs, logger }) => {
+  fn: async ({ Deno, logger }) => {
     const nextVersion = Deno.env.get("NEXT_VERSION");
     if (!nextVersion) throw new Error("NEXT_VERSION not found");
     const isNextBeta = nextVersion.match(/next/i);

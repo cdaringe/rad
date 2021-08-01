@@ -20,13 +20,11 @@ function paintBabies(transform: Transform) {
     });
   } else {
     // create initial nodes
-    group.innerHTML = xforms.map((xform, i) =>
-      `
+    group.innerHTML = xforms.map((xform, i) => `
     <use id='baby_${i}' class='text baby-rad' xlink:href="#repeatme"
       transform="${getTransformString(xform)}"
     />
-  `
-    ).join("");
+  `).join("");
   }
 }
 let transforms = [chaos, order];
