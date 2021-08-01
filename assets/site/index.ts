@@ -3,6 +3,11 @@ import { RadSvgTransform, Transform } from "./common.ts";
 import { chaos } from "./transforms/chaos.ts";
 import { order } from "./transforms/order.ts";
 
+const updateTransformNameUi = (name: string) => {
+  const el = document.getElementById("transform-name");
+  if (el) el.textContent = `(${name})`;
+};
+
 function paintBabies(transform: Transform) {
   let count = 51;
   const [w, h] = [800, 300];
@@ -30,6 +35,7 @@ function paintBabies(transform: Transform) {
 let transforms = [chaos, order];
 // initial paint
 paintBabies(chaos);
+updateTransformNameUi(chaos.name);
 // funsies initial animation
 const chaosTimer = setTimeout(
   () => window.requestAnimationFrame(() => paintBabies(order)),
@@ -73,6 +79,7 @@ const onClick = whileNotInstallingTransforms(() => {
     document.getElementById("add_more_transforms")!.style.display = "";
   }
   const currentTransform = transforms[transformIndex];
+  updateTransformNameUi(currentTransform.name);
   console.info(
     `current transform: ${currentTransform.name} (${transformIndex}/${transforms.length})`,
   );
