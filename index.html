@@ -649,66 +649,72 @@ will await an <code>install</code> to complete!</p>
 </tbody></table>
 
 </div>
-<script>const chaos = ({ w , h , count ,  })=>{
-    const xforms = [];
-    const getTranslateProposal = ()=>[
-            Math.random() * w * 0.85,
-            h * Math.random()
-        ]
-    ;
-    const distance = ([a, b], [x, y])=>Math.sqrt(Math.pow(a - x, 2) + Math.pow(b - y, 2))
-    ;
-    const scootchAway = ([a, b], [stepX, stepY] = [
-        10,
-        30
-    ])=>[
-            a + (Math.random() + stepX) * (Math.random() > 0.5 ? 1 : -1),
-            b + (1 + Math.random() + stepY) * (Math.random() > 0.5 ? 1 : -1), 
-        ]
-    ;
-    let i = count;
-    while(i){
-        let translate = getTranslateProposal();
-        while(distance(translate, [
-            700,
-            280
-        ]) < 190){
-            translate = scootchAway(translate);
-        }
-        xforms.push({
-            translate,
-            rotate: [
-                360 * Math.random()
-            ],
-            scale: 0.5
-        });
-        --i;
-    }
-    return xforms;
-};
-const order = ({ w , h , count ,  })=>{
-    const times = (count1)=>"_".repeat(count1).split("")
-    ;
-    const xforms = [];
-    const numRows = 3;
-    const numCols = 17;
-    const ySep = h / (3 + 1);
-    const xSep = w / (17 + 1);
-    times(3).forEach((_, iy)=>{
-        times(17).forEach((_1, ix)=>{
+<script>const chaos = {
+    name: "chaos",
+    fn: ({ w , h , count ,  })=>{
+        const xforms = [];
+        const getTranslateProposal = ()=>[
+                Math.random() * w * 0.85,
+                h * Math.random()
+            ]
+        ;
+        const distance = ([a, b], [x, y])=>Math.sqrt(Math.pow(a - x, 2) + Math.pow(b - y, 2))
+        ;
+        const scootchAway = ([a, b], [stepX, stepY] = [
+            10,
+            30
+        ])=>[
+                a + (Math.random() + stepX) * (Math.random() > 0.5 ? 1 : -1),
+                b + (1 + Math.random() + stepY) * (Math.random() > 0.5 ? 1 : -1), 
+            ]
+        ;
+        let i = count;
+        while(i){
+            let translate = getTranslateProposal();
+            while(distance(translate, [
+                700,
+                280
+            ]) < 190){
+                translate = scootchAway(translate);
+            }
             xforms.push({
-                translate: [
-                    ix * xSep,
-                    iy * ySep - 35
-                ],
+                translate,
                 rotate: [
-                    70
+                    360 * Math.random()
                 ],
                 scale: 0.5
             });
+            --i;
+        }
+        return xforms;
+    }
+};
+const order = {
+    name: "order",
+    fn: ({ w , h , count ,  })=>{
+        const times = (count1)=>"_".repeat(count1).split("")
+        ;
+        const xforms = [];
+        const numRows = 3;
+        const numCols = 17;
+        const ySep = h / (3 + 1);
+        const xSep = w / (17 + 1);
+        times(3).forEach((_, iy)=>{
+            times(17).forEach((_1, ix)=>{
+                xforms.push({
+                    translate: [
+                        ix * xSep,
+                        iy * ySep - 35
+                    ],
+                    rotate: [
+                        70
+                    ],
+                    scale: 0.5
+                });
+            });
         });
-    });
-    return xforms;
+        return xforms;
+    }
 };
 function paintBabies(transform) {
     let count = 51;
@@ -720,7 +726,7 @@ function paintBabies(transform) {
     var nodes = Array.from(group.children);
     const getTransformString = ({ translate , rotate , scale  })=>`translate(${translate.join(" ")}) rotate(${rotate.join(" ")}) scale(${scale})`
     ;
-    const xforms = transform({
+    const xforms = transform.fn({
         count,
         w,
         h
@@ -760,14 +766,16 @@ function whileNotInstallingTransforms(cb) {
     };
 }
 let transformIndex = 1;
-const onClick = window.onclick = whileNotInstallingTransforms(()=>{
+const onClick = whileNotInstallingTransforms(()=>{
     clearTimeout(chaosTimer);
     ++transformIndex;
     if (!transforms[transformIndex]) {
         transformIndex = 0;
         document.getElementById("add_more_transforms").style.display = "";
     }
-    paintBabies(transforms[transformIndex]);
+    const currentTransform = transforms[transformIndex];
+    console.info(`current transform: ${currentTransform.name} (${transformIndex}/${transforms.length})`);
+    paintBabies(currentTransform);
 });
 document.getElementById("radness").addEventListener("click", onClick);
 </script>
