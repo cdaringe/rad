@@ -7,6 +7,7 @@ import type {
   Funcarooni,
   Makearooni,
   Task,
+  Toolkit,
 } from "./Task.ts";
 import { from, Radness } from "./Radness.ts";
 import { path } from "./3p/std.ts";
@@ -130,4 +131,5 @@ export type {
   Makearooni,
   Radness,
   Task,
+  Toolkit,
 };
