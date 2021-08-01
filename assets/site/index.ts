@@ -12,7 +12,7 @@ function paintBabies(transform: Transform) {
     `translate(${translate.join(" ")}) rotate(${
       rotate.join(" ")
     }) scale(${scale})`;
-  const xforms = transform({ count, w, h });
+  const xforms = transform.fn({ count, w, h });
   // update existing nodes
   if (group.innerHTML) {
     xforms.forEach((xform, i) => {
@@ -65,13 +65,17 @@ function whileNotInstallingTransforms(cb: () => any) {
 }
 
 let transformIndex = 1; // start at 1 to not revisit eager pageload xforms
-const onClick = window.onclick = whileNotInstallingTransforms(() => {
+const onClick = whileNotInstallingTransforms(() => {
   clearTimeout(chaosTimer);
   ++transformIndex;
   if (!transforms[transformIndex]) {
     transformIndex = 0;
     document.getElementById("add_more_transforms")!.style.display = "";
   }
-  paintBabies(transforms[transformIndex]);
+  const currentTransform = transforms[transformIndex];
+  console.info(
+    `current transform: ${currentTransform.name} (${transformIndex}/${transforms.length})`,
+  );
+  paintBabies(currentTransform);
 });
 document.getElementById("radness")!.addEventListener("click", onClick);
