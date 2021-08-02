@@ -1,5 +1,5 @@
 import { Transform } from "./common.ts";
-import { transform as orbit } from "./transforms/0001-orbit.ts";
+import { transform as orbit } from "./transforms/orbit.ts";
 
 // supplemental transforms
 export const transforms: Transform[] = [

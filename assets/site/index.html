@@ -21,7 +21,6 @@
       }
 
       /* page */
-      @import url(https://fonts.googleapis.com/css?family=Open+Sans:800);
       html,
       body {
         height: 100%;
@@ -47,9 +46,10 @@
 
       /* hero */
       .baby-rad {
-        -webkit-transition: all 5s;
-        -o-transition: all 5s;
-        transition: all 5s;
+        -webkit-transition: transform 5s;
+        -webkit-transition: -webkit-transform 5s;
+        -o-transition: transform 5s;
+        transition: transform 5s;
       }
       svg#radness text {
         fill: white;
@@ -82,7 +82,7 @@
       }
       svg#radness {
         background: #303030;
-        font: 5em/1 Open Sans, Impact;
+        font: 5em/1 Impact, sans-serif;
         text-transform: uppercase;
         margin: 0;
         width: 100%;
@@ -172,7 +172,6 @@
         RAD
       </text>
     </svg>
-    <!-- <a href=""><img width="60px" style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a> -->
     <div id="hero_actions">
       <span id="transform-name"></span>
       <a

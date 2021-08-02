@@ -5,7 +5,7 @@ export const order: Transform = {
   fn: ({
     w,
     h,
-    count,
+    count: _,
   }) => {
     const times = (count: number) => "_".repeat(count).split("");
     const xforms: RadSvgTransform[] = [];
