@@ -5,18 +5,20 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Attach",
+      "port": 9229,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "pwa-node"
+    },
+    {
       "name": "Debug Deno",
       "type": "pwa-node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "deno",
       "program": "src/bin.ts",
-      "runtimeArgs": [
-        "run",
-        "--unstable",
-        "--inspect-brk",
-        "--allow-all"
-      ],
+      "runtimeArgs": ["run", "--unstable", "--inspect-brk", "--allow-all"],
       "args": ["site"],
       "outputCapture": "std",
       "attachSimplePort": 9229
