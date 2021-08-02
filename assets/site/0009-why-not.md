@@ -11,7 +11,7 @@ it not to dump on anyone or any tool, but articulate feature gaps.
 | gulp/grunt   | ✓        |              |            |          |             | ✓          | ✓         |                    |
 | make         |          |              | ✓          | ✓        | ✓           |            |           |                    |
 | npm-scripts  | ✓        |              |            |          |             |            |           | ✓                  |
-| **rad**      | ✓        | ✓            |            | ✓        | ✓           | (soon!)    | ✓         |                    |
+| **rad**      | ✓        | ✓            |            | ✓        | ✓           | ✓          | ✓         |                    |
 | velociraptor |          | partial      |            |          |             |            |           | partial            |
 
 ant, scons, ninja, etc were omitted. haven't used 'em! other builders, such as
