@@ -120,6 +120,10 @@ Deno.test({
     const makearooni: Makearooni = {
       target: targetFilename,
       prereqs: [inputFilename],
+      mapPrereqToTarget: ({ toolkit }) => {
+        assert(toolkit);
+        return targetFilename;
+      },
       cwd: testDir,
       onMake: async (
         _toolkit,

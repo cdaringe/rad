@@ -97,6 +97,7 @@ export type Makearooni =
           oldExt: string,
           newExt: string,
         ) => string;
+        toolkit: Toolkit;
       },
     ) => string;
   })
@@ -177,6 +178,7 @@ export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
                   prereq: walkEntry.path,
                   cwd,
                   reroot: getReRoot(walkEntry.path),
+                  toolkit,
                 },
               ),
             );
