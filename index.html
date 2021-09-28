@@ -4,11 +4,11 @@
     <title>rad - general purpose, typed build tools</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism.min.css"
       rel="stylesheet"
     />
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-okaidia.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-okaidia.min.css"
       rel="stylesheet"
     />
     <style>
@@ -211,7 +211,6 @@ Command tasks, function tasks, and make-style tasks supported.</p>
 <td><a href="https://github.com/cdaringe/rad/actions?query=workflow%3Anext"><img src="https://github.com/cdaringe/rad/workflows/next/badge.svg?branch=next" alt="next"></a></td>
 </tr>
 </tbody></table>
-<p><code>rad@6.x</code> now supports <code>Deno@1.12.x+</code>!</p>
 <h2 id="usage">Usage</h2>
 <p>Rad is generally used as a CLI:</p>
 <p><code>$ rad &lt;task-name&gt; [--help]</code></p>
@@ -219,7 +218,7 @@ Command tasks, function tasks, and make-style tasks supported.</p>
 <p>It can be used as a library too :).</p>
 <p>Rad always consumes a <code>rad.ts</code> file, such as the one shown here:</p>
 <pre><code class="language-ts">// rad.ts
-import { Task, Tasks } from &quot;https://deno.land/x/rad@v6.4.0/src/mod.ts&quot;;
+import { Task, Tasks } from &quot;https://deno.land/x/rad@v6.5.0/src/mod.ts&quot;;
 
 // command/shell tasks
 const format = `prettier --write`;
@@ -267,7 +266,7 @@ the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p>
 <tbody><tr>
 <td>cli</td>
 <td><code>deno</code></td>
-<td><code>deno install --unstable -f -A -n rad https://raw.githubusercontent.com/cdaringe/rad/v6.4.0/src/bin.ts</code></td>
+<td><code>deno install --unstable -f -A -n rad https://raw.githubusercontent.com/cdaringe/rad/v6.5.0/src/bin.ts</code></td>
 </tr>
 <tr>
 <td>cli</td>
@@ -277,12 +276,12 @@ the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p>
 <tr>
 <td>cli</td>
 <td><code>curl</code></td>
-<td><code>curl -fsSL <a href="https://raw.githubusercontent.com/cdaringe/rad/v6.4.0/assets/install.sh">https://raw.githubusercontent.com/cdaringe/rad/v6.4.0/assets/install.sh</a> | sh</code> (versioned)<br /><code>curl -fsSL <a href="https://raw.githubusercontent.com/cdaringe/rad/main/assets/install.sh">https://raw.githubusercontent.com/cdaringe/rad/main/assets/install.sh</a> | sh</code> (latest)</td>
+<td><code>curl -fsSL <a href="https://raw.githubusercontent.com/cdaringe/rad/v6.5.0/assets/install.sh">https://raw.githubusercontent.com/cdaringe/rad/v6.5.0/assets/install.sh</a> | sh</code> (versioned)<br /><code>curl -fsSL <a href="https://raw.githubusercontent.com/cdaringe/rad/main/assets/install.sh">https://raw.githubusercontent.com/cdaringe/rad/main/assets/install.sh</a> | sh</code> (latest)</td>
 </tr>
 <tr>
 <td>library</td>
 <td><code>deno</code></td>
-<td><code>import * as rad from https://github.com/cdaringe/rad/blob/main/v6.4.0/mod.ts</code></td>
+<td><code>import * as rad from https://github.com/cdaringe/rad/blob/main/v6.5.0/mod.ts</code></td>
 </tr>
 </tbody></table>
 <p><sup>1</sup>For docker users, consider making a nice shell alias</p>
@@ -322,134 +321,6 @@ great for running other programs, not for plumbing data</li>
 <p>See
 <a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></p>
 <p>Read more on our <a href="https://cdaringe.github.io/rad/">documentation site</a></p>
-
-<h1 id="why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</h1>
-<p>your build tool is probably great. keep using it if you love it. the intent here
-it not to dump on anyone or any tool, but articulate feature gaps.</p>
-<table>
-<thead>
-<tr>
-<th>tool</th>
-<th>DSL-less</th>
-<th>static types</th>
-<th>standalone</th>
-<th>polyglot</th>
-<th>incremental</th>
-<th>debug-able</th>
-<th>beautiful</th>
-<th>dependency manager</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>bazel</td>
-<td></td>
-<td></td>
-<td></td>
-<td>✓</td>
-<td>✓</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>denox</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>gradle</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>✓</td>
-<td></td>
-<td>✓</td>
-<td>✓</td>
-</tr>
-<tr>
-<td>gulp/grunt</td>
-<td>✓</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>✓</td>
-<td>✓</td>
-<td></td>
-</tr>
-<tr>
-<td>make</td>
-<td></td>
-<td></td>
-<td>✓</td>
-<td>✓</td>
-<td>✓</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>npm-scripts</td>
-<td>✓</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>✓</td>
-</tr>
-<tr>
-<td><strong>rad</strong></td>
-<td>✓</td>
-<td>✓</td>
-<td></td>
-<td>✓</td>
-<td>✓</td>
-<td>✓</td>
-<td>✓</td>
-<td></td>
-</tr>
-<tr>
-<td>velociraptor</td>
-<td></td>
-<td>partial</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>partial</td>
-</tr>
-</tbody></table>
-<p>ant, scons, ninja, etc were omitted. haven&#39;t used &#39;em! other builders, such as
-cargo, dune, nx, and friends were omitted, as they are not generally considered
-general purpose. npm-scripts &amp; the Deno tools are not general purpose either,
-but included merely by proximity of underlying tech stacks used.</p>
-<p>Here are some genuine, not-trying-be-rude-opinions.</p>
-<ul>
-<li><code>bazel</code> is complex. maybe you need that complexity. 🤷🏻‍♀️</li>
-<li><code>gradle</code> is full of magic and is often hard to reason about <em>where</em> behavior
-comes from. Once kotlin integration is first class, it&#39;s worth revisiting
-gradle.</li>
-<li><code>gulp</code>/<code>grunt</code> have no make-style tasks, are generally node only,
-comparatively slow, &amp; stringly typed in various places.</li>
-<li><code>make</code> is great, but has a lame DSL and is coupled to a poor scripting
-language</li>
-<li><code>npm-scripts</code>/<code>velociraptor</code> are simple, but suffer related drawbacks to gulp,
-grunt, and make.</li>
-</ul>
-<p>Loose typing, unneeded DSLs, lack of great static analysis, and <em>other</em> gaps
-leave room for improvement in this space. <code>rad</code> is the first tool to bring a
-subjectively <em>powerful</em> scripting language into the build system space coupled
-with great static analysis and make-capable performance.</p>
 
 <h2 id="manual">Manual</h2>
 <p>Your guide to <code>rad</code>!</p>
@@ -707,7 +578,7 @@ will await an <code>install</code> to complete!</p>
 </tr>
 <tr>
 <td><code>logger</code></td>
-<td>the <code>rad</code> logger! a standard <code>Deno</code> logger with the commonplace log-level methods (e.g. <code>.info(...)</code>, <code>.debug(...)</code>, etc). see <a href="https://github.com/cdaringe/rad/blob/v6.4.0/src/logger.ts">the source</a></td>
+<td>the <code>rad</code> logger! a standard <code>Deno</code> logger with the commonplace log-level methods (e.g. <code>.info(...)</code>, <code>.debug(...)</code>, etc). see <a href="https://github.com/cdaringe/rad/blob/v6.5.0/src/logger.ts">the source</a></td>
 </tr>
 <tr>
 <td><code>path</code></td>
@@ -731,7 +602,7 @@ v8.</p>
 </ul>
 <pre><code class="language-bash">#!/bin/sh
 # generated by deno install
-exec deno run --allow-read --allow-write --allow-net --allow-env --allow-run --allow-plugin --allow-hrtime --unstable &#39;https://raw.githubusercontent.com/cdaringe/rad/v6.3.5/src/bin.ts&#39; &quot;$@&quot;
+exec deno run --allow-read --allow-write --allow-net --allow-env --allow-run --allow-plugin --allow-hrtime --unstable &#39;https://raw.githubusercontent.com/cdaringe/rad/v6.5.0/src/bin.ts&#39; &quot;$@&quot;
 </code></pre>
 <ul>
 <li>extract the <code>deno run ...</code> command, drop the leading <code>exec</code> and trailing <code>$@</code>,
@@ -741,14 +612,142 @@ or equivalents for your shell</li>
 <p>Example:</p>
 <pre><code class="language-bash">deno  \
   run --inspect-brk -A --allow-plugin --allow-hrtime --unstable \
-  &#39;https://raw.githubusercontent.com/cdaringe/rad/v6.3.5/src/bin.ts&#39; \
+  &#39;https://raw.githubusercontent.com/cdaringe/rad/v6.5.0/src/bin.ts&#39; \
   test
 # ^ add any args of interest
 </code></pre>
 <p>Finally, ensure you have setup your debugger/IDE of choices to connect. See this
 project&#39;s <code>&lt;root&gt;/.vscode/launch.json</code> to see example settings &amp; the
-<a href="https://deno.land/manual@v1.5.4/getting_started/debugging_your_code">deno debugging</a>
+<a href="https://deno.land/manual@v6.5.0/getting_started/debugging_your_code">deno debugging</a>
 documentation for more.</p>
+
+<h1 id="why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</h1>
+<p>your build tool is probably great. keep using it if you love it. the intent here
+it not to dump on anyone or any tool, but articulate feature gaps.</p>
+<table>
+<thead>
+<tr>
+<th>tool</th>
+<th>DSL-less</th>
+<th>static types</th>
+<th>standalone</th>
+<th>polyglot</th>
+<th>incremental</th>
+<th>debug-able</th>
+<th>beautiful</th>
+<th>dependency manager</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bazel</td>
+<td></td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>denox</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>gradle</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>gulp/grunt</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>make</td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>npm-scripts</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>rad</strong></td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>velociraptor</td>
+<td></td>
+<td>partial</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>partial</td>
+</tr>
+</tbody></table>
+<p>ant, scons, ninja, etc were omitted. haven&#39;t used &#39;em! other builders, such as
+cargo, dune, nx, and friends were omitted, as they are not generally considered
+general purpose. npm-scripts &amp; the Deno tools are not general purpose either,
+but included merely by proximity of underlying tech stacks used.</p>
+<p>Here are some genuine, not-trying-be-rude-opinions.</p>
+<ul>
+<li><code>bazel</code> is complex. maybe you need that complexity. 🤷🏻‍♀️</li>
+<li><code>gradle</code> is full of magic and is often hard to reason about <em>where</em> behavior
+comes from. Once kotlin integration is first class, it&#39;s worth revisiting
+gradle.</li>
+<li><code>gulp</code>/<code>grunt</code> have no make-style tasks, are generally node only,
+comparatively slow, &amp; stringly typed in various places.</li>
+<li><code>make</code> is great, but has a lame DSL and is coupled to a poor scripting
+language</li>
+<li><code>npm-scripts</code>/<code>velociraptor</code> are simple, but suffer related drawbacks to gulp,
+grunt, and make.</li>
+</ul>
+<p>Loose typing, unneeded DSLs, lack of great static analysis, and <em>other</em> gaps
+leave room for improvement in this space. <code>rad</code> is the first tool to bring a
+subjectively <em>powerful</em> scripting language into the build system space coupled
+with great static analysis and make-capable performance.</p>
 </div>
     <script>
       const chaos = {
@@ -891,7 +890,7 @@ const onClick = installSupplementalTransforms(()=>{
 document.getElementById("radness").addEventListener("click", onClick);
 ;
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/plugins/autoloader/prism-autoloader.min.js"></script>
   </body>
 </html>
