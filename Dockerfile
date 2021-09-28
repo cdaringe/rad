@@ -1,6 +1,6 @@
 # usage: docker run --rm -v $PWD:/rad rad TASK
 # build: docker build -t rad .
-FROM denoland/deno:alpine-1.12.2
+FROM denoland/deno:alpine-1.13.2
 RUN mkdir /radinstall
 WORKDIR /radinstall
 COPY . .
