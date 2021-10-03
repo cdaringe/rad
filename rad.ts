@@ -42,6 +42,9 @@ const test: Task = {
 const lint: Task = `deno --unstable lint .rad examples src test`;
 const check: Task = { dependsOn: [format, lint, test] };
 
+const syncNextMain: Task =
+  `git checkout main && git merge next && git push origin main && git checkout next && git merge main`;
+
 export const tasks: Tasks = {
   ...{ coverage, cov: coverage },
   ...{ l: lint, lint },
@@ -50,5 +53,6 @@ export const tasks: Tasks = {
   ...{ testUnit, tu: testUnit, testIntegration, ti: testIntegration },
   ...{ s: site, site },
   ...{ c: check, check },
+  ...{ snm: syncNextMain, syncNextMain },
   patchInstallVersion,
 };
