@@ -3,15 +3,27 @@ import { task as site } from "./.rad/tasks/site.ts";
 import { task as patchInstallVersion } from "./.rad/tasks/patch-install-version.ts";
 
 const DENO_VERSION = Deno.version.deno;
+const COVERAGE_DIRNAME = ".coverage";
 
 const format: Task = { fn: ({ sh }) => sh(`deno fmt`) };
 
 const testUnit: Task = {
   async fn({ sh, logger }) {
     logger.info(`:: unit tests`);
-    await sh(`deno test --unstable -A --coverage=.coverage`);
+    await sh([
+      `rm -rf ${COVERAGE_DIRNAME}`,
+      `deno test --unstable -A --coverage=${COVERAGE_DIRNAME}`,
+    ].join(" && "));
   },
 };
+
+/**
+ * @warn coverage borked per https://github.com/denoland/deno/issues/10936
+ */
+const coverage: Task = [
+  `deno coverage ${COVERAGE_DIRNAME} --lcov > ${COVERAGE_DIRNAME}/out.lcov`,
+  `genhtml -o ${COVERAGE_DIRNAME}/html ${COVERAGE_DIRNAME}/out.lcov`,
+].join(" && ");
 
 const testIntegration: Task = {
   async fn({ sh, logger }) {
@@ -31,6 +43,7 @@ const lint: Task = `deno --unstable lint .rad examples src test`;
 const check: Task = { dependsOn: [format, lint, test] };
 
 export const tasks: Tasks = {
+  ...{ coverage, cov: coverage },
   ...{ l: lint, lint },
   ...{ f: format, format },
   ...{ t: test, test },

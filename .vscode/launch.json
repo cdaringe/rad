@@ -5,6 +5,16 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "debug-current-test",
+      "type": "pwa-node",
+      "request": "launch",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "deno",
+      "runtimeArgs": ["test", "--unstable", "--inspect-brk", "--allow-all"],
+      "attachSimplePort": 9229
+    },
+    {
       "name": "Attach",
       "port": 9229,
       "request": "attach",

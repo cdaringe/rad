@@ -148,7 +148,7 @@ const site: Task = {
        * changedPrereqs, // AsyncIterable<WalkInfo>
        * getChangedPrereqFilenames, // Promise<string>
        */
-    },
+    }
   ) => {
     await fs.mkdirp("public");
     logger.info("collecting prereq filenames");
@@ -156,7 +156,7 @@ const site: Task = {
     const html = await Promise.all(
       filenames.map((filename) =>
         Deno.readTextFile(filename).then((markdown) => marked(markdown))
-      ),
+      )
     ).then((htmlSnippets) => htmlSnippets.join("\n"));
     await Deno.writeTextFile("./public/index.html", html);
   },
@@ -321,5 +321,5 @@ deno  \
 
 Finally, ensure you have setup your debugger/IDE of choices to connect. See this
 project's `<root>/.vscode/launch.json` to see example settings & the
-[deno debugging](https://deno.land/manual@v6.5.0/getting_started/debugging_your_code)
+[deno debugging](https://deno.land/manual/getting_started/debugging_your_code)
 documentation for more.

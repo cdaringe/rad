@@ -26,7 +26,22 @@ export const createFsUtil = ({ logger }: WithLogger) => {
     return Deno.mkdir(filename, recursiveOpts);
   }
 
+  function exists(path: string) {
+    logger.debug(`exists: ${path}`);
+    return Deno.stat(path).then(() => true, () => false);
+  }
+
+  /**
+   * file:///path/to/file => /path/to/file
+   */
+  function defile(path: string) {
+    return path.replace("file://", "");
+  }
+
   return {
+    df: defile,
+    defile,
+    exists,
     readFile,
     writeFile,
     mkdirp,
