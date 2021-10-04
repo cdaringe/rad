@@ -109,6 +109,8 @@ export type Makearooni =
    */
     prereqs: string[];
     onMake: TaskFn<{
+      target?: string;
+      getTarget?: (we: fs.WalkEntry) => string;
       /**
      * prereqs that have been modified since the target has been modified.
      * all prereqs are passed if the target is missing, phony, or older than
@@ -194,6 +196,16 @@ export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
       return onMake(
         toolkit,
         {
+          target: "target" in task ? task.target : undefined,
+          getTarget: "mapPrereqToTarget" in task
+            ? (walkEntry: fs.WalkEntry) =>
+              task.mapPrereqToTarget({
+                prereq: walkEntry.path,
+                cwd,
+                reroot: getReRoot(walkEntry.path),
+                toolkit,
+              })
+            : undefined,
           prereqs: getPrereqs((i) => Promise.resolve(!!i)),
           changedPrereqs: changedPrereqs(),
           getPrereqFilenames: () =>
