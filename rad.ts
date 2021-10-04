@@ -43,7 +43,7 @@ const lint: Task = `deno --unstable lint .rad examples src test`;
 const check: Task = { dependsOn: [format, lint, test] };
 
 const syncNextMain: Task =
-  `git checkout main && git merge next && git push origin main && git checkout next && git merge main`;
+  `git fetch origin main && git rebase origin/main && git checkout main && git merge next && git push origin main && git checkout next && git merge main`;
 
 export const tasks: Tasks = {
   ...{ coverage, cov: coverage },
