@@ -4,7 +4,7 @@ import "https://cdn.jsdelivr.net/npm/marked/marked.min.js";
 
 const { basename } = path.posix;
 // deno-lint-ignore no-explicit-any
-const marked = (window as any).marked;
+const marked = (window as any).marked.marked;
 const pruneNoSite = (str: string) => str.replaceAll(/.*NOSITE.*$/img, "");
 const createSiteDir = (fs: Toolkit["fs"]) => fs.mkdirp("public");
 const groupFilesByExt = (filenames: string[]) =>
