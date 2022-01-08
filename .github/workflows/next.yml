@@ -19,7 +19,7 @@ jobs:
       # https://github.com/denolib/setup-deno
       - uses: denolib/setup-deno@master
         with:
-          deno-version: 1.13.2
+          deno-version: 1.17.2
       - name: test
         run: ./rad test
       - name: site

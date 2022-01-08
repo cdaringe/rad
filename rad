@@ -1,1 +1,2 @@
+#!/usr/bin/env sh
 deno run --unstable -A  src/bin.ts --log-level info "$@"
