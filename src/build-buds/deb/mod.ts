@@ -48,7 +48,7 @@ export async function buildSingle(filename: string, options: BuildOptions) {
  * emitted JS into babel or acorn, do a simple find/replace.
  *
  * Rewrite `import ... from "foo/bar.ts"` to `import ... from "https://hostname/esm/foo/bar.ts"
- * given options.rewriteImportsImportMap of:
+ * given options.rewriteImportMap of:
  *
  * {
  *   "imports": {
@@ -57,8 +57,15 @@ export async function buildSingle(filename: string, options: BuildOptions) {
  * }
  */
 const rewriteImports: ((options: BuildOptions) => ReWriteImports) = (options) =>
-  (code, _f) => {
-    return Object.entries(options.rewriteImportsImportMap?.imports || {})
+  async (code, _f) => {
+    const importMap = options.rewriteImportMap
+      ? options.rewriteImportMap?.imports || {}
+      : options.rewriteImportMapPath
+      ? await Deno.readTextFile(options.rewriteImportMapPath!).then((v) =>
+        JSON.parse(v) as Deno.ImportMap
+      )
+      : {};
+    return Object.entries(importMap)
       .reduce(
         (transformed, [oldBase, newBase]) =>
           transformed.replaceAll(

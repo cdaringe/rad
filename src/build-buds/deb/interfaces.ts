@@ -2,7 +2,9 @@ export type BuildOptions = {
   /** modules (and their associated graph) to compile */
   moduleFilenames: string[];
   /** rewrite all matching imports to use the specified base(s) */
-  rewriteImportsImportMap?: Deno.ImportMap;
+  rewriteImportMap?: Deno.ImportMap;
+  /** rewrite all matching imports to use the specified base(s) */
+  rewriteImportMapPath?: string;
   /**
    * move compiled artifacts into outDir. outDir **must** be a relative
    * path to Deno.cwd()
