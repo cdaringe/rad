@@ -58,11 +58,11 @@ export async function buildSingle(filename: string, options: BuildOptions) {
  */
 const rewriteImports: ((options: BuildOptions) => ReWriteImports) = (options) =>
   async (code, _f) => {
-    const importMap = options.rewriteImportMap
+    const importMap: Deno.ImportMap["imports"] = options.rewriteImportMap
       ? options.rewriteImportMap?.imports || {}
       : options.rewriteImportMapPath
       ? await Deno.readTextFile(options.rewriteImportMapPath!).then((v) =>
-        JSON.parse(v) as Deno.ImportMap
+        (JSON.parse(v) as Deno.ImportMap).imports
       )
       : {};
     return Object.entries(importMap)
