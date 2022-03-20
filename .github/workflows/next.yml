@@ -27,7 +27,7 @@ jobs:
 
       # release
       - name: setup-node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 16
       - name: Release
