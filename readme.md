@@ -89,7 +89,7 @@ the [releases page](https://github.com/cdaringe/rad/releases).
 ```bash
 # shell profile, e.g. .bash_profile
 function rad() {
-  docker run --unstable --rm -v $PWD:/rad cdaringe/rad --log-level info "$@";
+  docker run --rm -v $PWD:/rad cdaringe/rad --log-level info "$@";
 }
 ```
 

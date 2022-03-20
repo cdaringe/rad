@@ -8,7 +8,7 @@ const replaceAtIndex = (
   str.substring(i + pattern.length, str.length);
 
 function strReplaceLast(str: string, pattern: string, replacement: string) {
-  var i = str.lastIndexOf(pattern);
+  const i = str.lastIndexOf(pattern);
   if (i < 0) return str;
   return replaceAtIndex(str, pattern, replacement, i);
 }

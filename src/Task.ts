@@ -67,9 +67,7 @@ export type Dependarooni = {
   dependsOnSerial?: boolean;
 };
 
-/**
- *
- */
+/** */
 export type Funcarooni = Dependarooni & {
   fn: TaskFn;
 };
@@ -104,32 +102,32 @@ export type Makearooni =
   & {
     cwd?: string;
     /**
-   * globs, filenames, of input files that will be considered as inputs to
-   * building the target
-   */
+     * globs, filenames, of input files that will be considered as inputs to
+     * building the target
+     */
     prereqs: string[];
     onMake: TaskFn<{
       target?: string;
       getTarget?: (we: fs.WalkEntry) => string;
       /**
-     * prereqs that have been modified since the target has been modified.
-     * all prereqs are passed if the target is missing, phony, or older than
-     * all prereqs.
-     */
+       * prereqs that have been modified since the target has been modified.
+       * all prereqs are passed if the target is missing, phony, or older than
+       * all prereqs.
+       */
       changedPrereqs: AsyncIterable<WalkEntry>;
       /**
-     * all prereqs, regardless of if they are older than the target
-     */
+       * all prereqs, regardless of if they are older than the target
+       */
       prereqs: AsyncIterable<WalkEntry>;
       /**
-     * a sugar function that collects all items in the `prereqs` iterator,
-     * and maps into the filenames for prereq (vs the full file data)
-     */
+       * a sugar function that collects all items in the `prereqs` iterator,
+       * and maps into the filenames for prereq (vs the full file data)
+       */
       getPrereqFilenames: () => Promise<string[]>;
       /**
-     * a sugar function that collects changed items in the `prereqs` iterator,
-     * and maps into the filenames for prereq (vs the full file data)
-     */
+       * a sugar function that collects changed items in the `prereqs` iterator,
+       * and maps into the filenames for prereq (vs the full file data)
+       */
       getChangedPrereqFilenames: () => Promise<string[]>;
     }>;
   };
@@ -295,13 +293,13 @@ export function execute(task: RadTask, { logger }: WithLogger) {
     logger.info(`${bold(task.name)} ${italic("start")}`);
     const dependentResults: unknown[] =
       await (task.dependsOnSerial
-        ? ((async () => {
+        ? (async () => {
           const results = [];
           for (const dependent of dependents) {
             results.push(await execute(dependent, { logger }));
           }
           return results;
-        }))()
+        })()
         : Promise.all(
           dependents.map((dependent) => execute(dependent, { logger })),
         ));

@@ -7,7 +7,7 @@ export const tasks: Tasks = {
       // const input = path.join(__dirname, "./doc.md");
       // const output = path.join(__dirname, "./build/dummy.md");
       // logger.info(`reading ${input}`)
-      // var content = (await fs.readFile(input)).toString();
+      // let content = (await fs.readFile(input)).toString();
       // content += `\nCreated on ${new Date().toISOString()}`;
       // logger.info(`writing ${output}`)
       // await fs.mkdirp(path.dirname(output));

@@ -29,7 +29,7 @@ export const transform: Transform = {
       return c;
     });
     const count_by_ring_index = ring_circumferences.map((c, _) =>
-      Math.floor((count * c / sum_circumferences))
+      Math.floor(count * c / sum_circumferences)
     );
     const radians_intervals_by_ring_index = count_by_ring_index.map((num, _) =>
       (2 * Math.PI) / num

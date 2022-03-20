@@ -22,7 +22,7 @@ const mod = {
   deepMakeTreeDirname: path.resolve(__dirname, "deep.tree.dependent"),
   makeMultiTarget: path.resolve(__dirname, "make.multi.target"),
   async copyContents(src: string, dest: string) {
-    var files = await Deno.readDir(src);
+    const files = await Deno.readDir(src);
     for await (const fileinfo of files) {
       const filename = fileinfo.name;
       if (!filename || filename === "." || filename === "..") continue;
@@ -40,7 +40,7 @@ const mod = {
     }
   },
   async createTestFolderContext() {
-    var dirname = path.join(
+    const dirname = path.join(
       await Deno.makeTempDir(),
       `rad-${Math.random().toString().substr(3, 5)}`,
     );
@@ -52,8 +52,8 @@ const mod = {
   },
   async loadFixture(src: string, dst: string) {
     await this.copyContents(src, dst);
-    var radFilename = path.resolve(dst, "rad.ts");
-    var radness: Radness = await import(radFilename);
+    const radFilename = path.resolve(dst, "rad.ts");
+    const radness: Radness = await import(radFilename);
     return { radFilename, radness };
   },
   getTestLogger,

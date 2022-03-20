@@ -86,13 +86,13 @@ export function fromTasks(userTasks: Radness["tasks"], { logger }: WithLogger) {
 export async function run(
   { name, graph, logger }: { name: string; graph: TaskGraph } & WithLogger,
 ) {
-  var task = graph.graph[name];
+  const task = graph.graph[name];
   if (!name) {
     throw new errors.RadError(
       `task name required, given ${String(name)}`,
     );
   }
   if (!task) throw new errors.RadError(`task "${name}" not found`);
-  var res = await execute(task, { logger });
+  const res = await execute(task, { logger });
   return res;
 }

@@ -31,7 +31,7 @@ Deno.test({
 Deno.test({
   name: fixtures.asTestName("bin entry", import.meta),
   fn: async function testEntry() {
-    var { dirname, radFilename } = await fixtures.createTestFolderContext();
+    const { dirname, radFilename } = await fixtures.createTestFolderContext();
     await fixtures.copyContents(fixtures.basicDirname, dirname);
     await assertThrowsAsync(
       async () => {

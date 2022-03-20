@@ -15,8 +15,8 @@ const getTransformString = ({ translate, rotate, scale }: RadSvgTransform) =>
 
 function renderBabies(transform: Transform) {
   const [w, h] = [800, 300];
-  var group = document.getElementById("repeats")!;
-  // var nodes = Array.from(group.children);
+  const group = document.getElementById("repeats")!;
+  // const nodes = Array.from(group.children);
   const xforms = transform.fn({ count: 51, w, h });
   // update existing nodes
   if (!group.innerHTML) {

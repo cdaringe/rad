@@ -9,7 +9,7 @@ export const chaos: Transform = {
   }) => {
     const xforms: RadSvgTransform[] = [];
     const getTranslateProposal: () => Point =
-      () => [(Math.random() * w * .85), (h * Math.random())];
+      () => [Math.random() * w * .85, h * Math.random()];
     const distance = ([a, b]: Point, [x, y]: Point) =>
       Math.sqrt(
         Math.pow(a - x, 2) + Math.pow(b - y, 2),

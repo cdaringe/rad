@@ -13,7 +13,7 @@ import { from, Radness } from "./Radness.ts";
 import { path } from "./3p/std.ts";
 import { asFileUrl } from "./util/fs.ts";
 
-var DEFAULT_RADFILENAME = path.resolve("rad.ts");
+const DEFAULT_RADFILENAME = path.resolve("rad.ts");
 
 export async function getRadFilename({ radFilename, logger }: InitOptions) {
   let nextRadfilename = radFilename;
@@ -29,7 +29,7 @@ export async function getRadFilename({ radFilename, logger }: InitOptions) {
     logger.debug(`radfile resolved from ${radFilename} to ${nextRadfilename}`);
     return nextRadfilename;
   }
-  var radFileExists = await Deno.lstat(DEFAULT_RADFILENAME).catch((err) => {
+  const radFileExists = await Deno.lstat(DEFAULT_RADFILENAME).catch((err) => {
     logger.debug(err);
     false;
   });
@@ -46,7 +46,7 @@ export type InitOptions = {
   logger: Logger;
 };
 export async function init(opts: InitOptions) {
-  var radFilename = await getRadFilename(opts);
+  const radFilename = await getRadFilename(opts);
   return import(asFileUrl(radFilename)).then((mod) => from(mod));
 }
 
