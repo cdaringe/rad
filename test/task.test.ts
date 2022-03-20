@@ -185,7 +185,7 @@ Deno.test({
      * I2 changes => only I2 marked as changed, O2 updated
      * O1 asserted unchanged
      */
-    var { dirname } = await fixtures.createTestFolderContext();
+    const { dirname } = await fixtures.createTestFolderContext();
     const [
       i1,
       i2,
@@ -198,7 +198,7 @@ Deno.test({
       path.resolve(dirname, "out/b.outext"),
     ];
     await fixtures.copyContents(fixtures.makeMultiTarget, dirname);
-    var radness = await rad.init(
+    const radness = await rad.init(
       {
         radFilename: path.join(dirname, "rad.ts"),
         ...fixtures.withTestLogger,

@@ -102,12 +102,12 @@ export async function suchRad(args: flagsMod.Args): Promise<RadExecResult> {
     await rad.createRadfile(Deno.cwd(), { logger });
     return {};
   }
-  var taskName = last(args._) as string;
-  var radness = await rad.init({
+  const taskName = last(args._) as string;
+  const radness = await rad.init({
     radFilename: args.radfile || args.r,
     logger,
   });
-  var tree = rad.createTaskGraph(radness, { logger });
+  const tree = rad.createTaskGraph(radness, { logger });
   if (args.list || args.tasks) {
     console.log(`${Object.keys(tree.graph).sort().join("\n")}`);
     return {};

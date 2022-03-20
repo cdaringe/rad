@@ -1,8 +1,9 @@
+// deno-lint-ignore-file
 // modified from https://github.com/notatestuser/treeify
 // for Deno compat
 
 function makePrefix(key, last) {
-  var str = (last ? "└" : "├");
+  var str = last ? "└" : "├";
   if (key) {
     str += "─ ";
   } else {
@@ -19,7 +20,7 @@ function filterKeys(obj, hideFunctions) {
       continue;
     }
     // ... and hide any keys mapped to functions if we've been told to
-    if (hideFunctions && ((typeof obj[branch]) === "function")) {
+    if (hideFunctions && typeof obj[branch] === "function") {
       continue;
     }
     keys.push(branch);
@@ -59,7 +60,8 @@ function growBranch(
     line += makePrefix(key, last) + key;
 
     // append values and the circular reference indicator
-    showValues && (typeof root !== "object" || root instanceof Date) &&
+    showValues &&
+      (typeof root !== "object" || root instanceof Date) &&
       (line += ": " + root);
     circular && (line += " (circular ref.)");
 

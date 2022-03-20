@@ -74,8 +74,3 @@ const rewriteImports: ((options: BuildOptions) => ReWriteImports) = (options) =>
         code,
       );
   };
-
-const readImportMap = (f: string) =>
-  Deno.readTextFile(
-    f,
-  ).then((v) => JSON.parse(v) as Deno.ImportMap);

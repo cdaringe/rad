@@ -5,7 +5,7 @@ import { task as patchInstallVersion } from "./.rad/tasks/patch-install-version.
 const DENO_VERSION = Deno.version.deno;
 const COVERAGE_DIRNAME = ".coverage";
 
-const format: Task = { fn: ({ sh }) => sh(`deno fmt`) };
+const format: Task = `deno fmt`;
 
 const testUnit: Task = {
   async fn({ sh, logger }) {
@@ -40,7 +40,7 @@ const test: Task = {
   dependsOnSerial: true,
 };
 const lint: Task = `deno --unstable lint .rad examples src test`;
-const check: Task = { dependsOn: [format, lint, test] };
+const check: Task = { dependsOn: [format, lint, test], dependsOnSerial: true };
 
 const syncNextMain: Task =
   `git fetch origin main && git rebase origin/main && git checkout main && git merge next && git push origin main && git checkout next && git merge main`;

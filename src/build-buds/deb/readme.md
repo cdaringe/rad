@@ -9,11 +9,13 @@ Compiles:
 
 **Why**
 
-You can't import `.ts` modules from browser `ESM`. Use this module to convert your `deno` style typescript to be browser ready.
+You can't import `.ts` modules from browser `ESM`. Use this module to convert
+your `deno` style typescript to be browser ready.
 
 ## Example
 
-The following shows some deno modules you may have written, that you now want to upload and use in the browser:
+The following shows some deno modules you may have written, that you now want to
+upload and use in the browser:
 
 ### Input modules
 
@@ -47,7 +49,8 @@ await build({
 });
 ```
 
-Upload the outputs to some CDN or HTTP host, and you're ready to use modules from the browser.
+Upload the outputs to some CDN or HTTP host, and you're ready to use modules
+from the browser.
 
 ### Output
 
