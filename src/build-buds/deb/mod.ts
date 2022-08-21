@@ -1,6 +1,7 @@
 // deb - deno-esm-browser
 import type { BuildOptions, ReWriteImports } from "./interfaces.ts";
 import { path } from "../../3p/std.ts";
+import { emit, importmap } from "./3p.ts";
 
 export const build = (options: BuildOptions) =>
   Promise.all(
@@ -8,32 +9,36 @@ export const build = (options: BuildOptions) =>
   ).then((res) => res.flat());
 
 export async function buildSingle(filename: string, options: BuildOptions) {
-  const out = await Deno.emit(filename, {
-    check: true,
-    ...options.emitOptions,
-  });
+  const out = await emit.emit(filename, options.emitOptions);
   await Promise.all(
-    Object.entries(out.files).map(async ([f, code]) => {
-      const filename = f.replace("file://", "");
+    Object.entries(out).map(async ([f, code]) => {
+      const filenameJs = f.replace("file://", "").replace(/ts$/, "js");
       await Deno.writeTextFile(
-        filename,
+        filenameJs,
         await (options.rewriteImports
           ? options.rewriteImports(code, f)
           : rewriteImports(options)(code, f)),
       );
+
+      // update out
+      const temp = out[f];
+      delete out[f];
+      out[filenameJs] = temp;
+
       const outDir = options.outDir;
       if (outDir) {
         if (outDir.startsWith(path.SEP)) {
           throw new Error(`outDir must be relative to CWD`);
         }
-        const relativeFilename = path.relative(Deno.cwd(), filename);
+        const relativeFilename = path.relative(Deno.cwd(), filenameJs);
         const outFilename = path.join(outDir, relativeFilename);
         await Deno.mkdir(path.dirname(outFilename), { recursive: true });
-        await Deno.rename(filename, outFilename);
-        // update compilation entry
-        const stats = out.files[f];
-        delete out.files[f];
-        out.files[f.replace(filename, outFilename)] = stats;
+        await Deno.rename(filenameJs, outFilename);
+
+        // update out
+        const temp = out[filenameJs];
+        delete out[filenameJs];
+        out[outFilename] = temp;
       }
     }),
   );
@@ -43,7 +48,7 @@ export async function buildSingle(filename: string, options: BuildOptions) {
 /**
  * Rewrite imports according to a provided importMap.
  * This is an inelegant solution, & is better fitted for an AST transform.
- * However, Deno.emit (rather, the typescript compiler), does not allow
+ * However, emit (rather, the typescript compiler), does not allow
  * for user transforms on compile. Thus, rather than build re-parse the
  * emitted JS into babel or acorn, do a simple find/replace.
  *
@@ -56,15 +61,18 @@ export async function buildSingle(filename: string, options: BuildOptions) {
  *   }
  * }
  */
-const rewriteImports: ((options: BuildOptions) => ReWriteImports) = (options) =>
-  async (code, _f) => {
-    const importMap: Deno.ImportMap["imports"] = options.rewriteImportMap
-      ? options.rewriteImportMap?.imports || {}
-      : options.rewriteImportMapPath
-      ? await Deno.readTextFile(options.rewriteImportMapPath!).then((v) =>
-        (JSON.parse(v) as Deno.ImportMap).imports
-      )
-      : {};
+const rewriteImports: (options: BuildOptions) => ReWriteImports =
+  (options) => async (code, _f) => {
+    const importMap = options.rewriteImportMap
+      ? (options.rewriteImportMap?.imports || {} as importmap.SpecifierMap)
+      : (options.rewriteImportMapPath || {} as importmap.SpecifierMap);
+    if (!importMap) {
+      throw new Error("missing import map")
+        ? await Deno.readTextFile(options.rewriteImportMapPath!).then((v) =>
+          (JSON.parse(v) as importmap.ImportMap).imports
+        )
+        : {};
+    }
     return Object.entries(importMap)
       .reduce(
         (transformed, [oldBase, newBase]) =>

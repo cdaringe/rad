@@ -1,5 +1,6 @@
 import type { Task, Toolkit } from "../../src/mod.ts";
 import { path } from "../../src/3p/std.ts";
+import { emit } from "./deps.ts";
 import "https://cdn.jsdelivr.net/npm/marked/marked.min.js";
 
 const { basename } = path.posix;
@@ -46,10 +47,10 @@ export const task: Task = {
       await Promise.all(
         [
           fs.readFile(htmlIndexFilename),
-          Deno.emit("assets/site/index.ts", emitOpts).then((res) =>
+          emit("assets/site/index.ts", emitOpts).then((res) =>
             Object.values(res.files)[0]
           ),
-          Deno.emit("assets/site/supplemental-transforms.ts", emitOpts).then(
+          emit("assets/site/supplemental-transforms.ts", emitOpts).then(
             async (res) => {
               const files = Object.values(res.files);
               await Deno.writeTextFile("public/transforms.js", files[0]);

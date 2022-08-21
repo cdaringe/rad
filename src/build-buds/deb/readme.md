@@ -1,4 +1,4 @@
-# deno esm browser
+# (deb) deno esm browser
 
 Compile `deno` typescript modules for ready-to-import browser modules.
 
