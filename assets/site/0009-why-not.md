@@ -7,6 +7,7 @@ it not to dump on anyone or any tool, but articulate feature gaps.
 | ------------ | -------- | ------------ | ---------- | -------- | ----------- | ---------- | --------- | ------------------ |
 | bazel        |          |              |            | ✓        | ✓           |            |           |                    |
 | denox        |          |              |            |          |             |            |           |                    |
+| deno scripts | ✓        |              |            |          |             |            |           |                    |
 | gradle       |          |              |            |          | ✓           |            | ✓         | ✓                  |
 | gulp/grunt   | ✓        |              |            |          |             | ✓          | ✓         |                    |
 | make         |          |              | ✓          | ✓        | ✓           |            |           |                    |
