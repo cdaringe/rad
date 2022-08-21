@@ -28,10 +28,6 @@ const mdFilesToHtmlParts = (
   mdFilenames: string[],
   fs: Toolkit["fs"],
 ) => mdFilenames.map(async (f) => siteMarkdownToHtml(await fs.readFile(f)));
-const emitOpts = {
-  bundle: "module" as const,
-  compilerOptions: { sourceMap: false },
-};
 
 export const task: Task = {
   target: "public/index.html",
@@ -47,13 +43,10 @@ export const task: Task = {
       await Promise.all(
         [
           fs.readFile(htmlIndexFilename),
-          emit("assets/site/index.ts", emitOpts).then((res) =>
-            Object.values(res.files)[0]
-          ),
-          emit("assets/site/supplemental-transforms.ts", emitOpts).then(
+          emit.bundle("assets/site/index.ts").then((res) => res.code),
+          emit.bundle("assets/site/supplemental-transforms.ts").then(
             async (res) => {
-              const files = Object.values(res.files);
-              await Deno.writeTextFile("public/transforms.js", files[0]);
+              await Deno.writeTextFile("public/transforms.js", res.code);
               return ""; // appease Promise.all<string> typecheck
             },
           ),
