@@ -1,5 +1,3 @@
-import { emit } from "https://deno.land/x/emit@0.5.0/mod.ts";
-
 export * as colors from "https://deno.land/std@0.108.0/fmt/colors.ts";
 export * as flags from "https://deno.land/std@0.108.0/flags/mod.ts";
 export * as fs from "https://deno.land/std@0.108.0/fs/mod.ts";

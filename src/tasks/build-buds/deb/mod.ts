@@ -1,6 +1,6 @@
 // deb - deno-esm-browser
 import type { BuildOptions, ReWriteImports } from "./interfaces.ts";
-import { path } from "../../3p/std.ts";
+import { path } from "../../../3p/std.ts";
 import { emit, importmap } from "./3p.ts";
 
 export const build = (options: BuildOptions) =>

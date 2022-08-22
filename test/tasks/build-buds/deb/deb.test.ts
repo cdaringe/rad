@@ -1,7 +1,7 @@
-import { build } from "../../../src/build-buds/deb/mod.ts";
-import { path } from "../../../src/3p/std.ts";
-import { assert, assertEquals } from "../../../src/3p/std.test.ts";
-import { globSimple } from "../../../src/util/glob.ts";
+import { build } from "../../../../src/tasks/build-buds/deb/mod.ts";
+import { path } from "../../../../src/3p/std.ts";
+import { assert, assertEquals } from "../../../../src/3p/std.test.ts";
+import { globSimple } from "../../../../src/util/glob.ts";
 
 const { dirname, join, fromFileUrl } = path;
 
@@ -70,8 +70,8 @@ Deno.test({
     const out = compilations[0]!;
     const filenames = Object.keys(out).sort();
     const expectedFilenames = [
-      ".tmp_deb_out/test/build-buds/deb/fixtures/foo/mod.js",
-      ".tmp_deb_out/test/build-buds/deb/fixtures/bar/mod.js",
+      ".tmp_deb_out/test/tasks/build-buds/deb/fixtures/foo/mod.js",
+      ".tmp_deb_out/test/tasks/build-buds/deb/fixtures/bar/mod.js",
     ].sort();
     assertEquals(
       filenames,
