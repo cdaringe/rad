@@ -31,8 +31,16 @@ const mdFilesToHtmlParts = (
 
 export const task: Task = {
   target: "public/index.html",
-  prereqs: ["assets/site/**/*.{html,md}"],
-  onMake: async ({ task: _, fs }, { getPrereqFilenames }) => {
+  prereqs: ["assets/site/**/*.{html,md,ts,js}", "readme.md"],
+  onMake: async (
+    { task: _, fs, logger },
+    { getChangedPrereqFilenames, getPrereqFilenames },
+  ) => {
+    const changed = await getChangedPrereqFilenames();
+    if (!changed.length) {
+      logger.info("skipped");
+      return;
+    }
     await createSiteDir(fs);
     const { html, md } = await getPrereqFilenames().then(groupFilesByExt);
     const mdContentsP = mdFilesToHtmlParts(["./readme.md", ...md], fs);
