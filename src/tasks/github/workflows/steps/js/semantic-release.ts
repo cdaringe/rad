@@ -10,8 +10,7 @@ export const make = ({ dryRun = false, packageManager = "npm" }: SemRel) => ({
     NPM_TOKEN: "${{ secrets.NPM_TOKEN }}",
   },
   run: `
-${packageManager} init -y \
-&& ${packageManager} install -D \
+${packageManager} install -D \
   "semantic-release" \
   "@semantic-release/commit-analyzer" \
   "@semantic-release/release-notes-generator" \
