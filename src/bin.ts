@@ -7,6 +7,9 @@ import { execute } from "./Task.ts";
 import { asTree } from "./TaskGraph.ts";
 import { flags as flagsMod } from "./3p/std.ts";
 import { version } from "./version.ts";
+import { path } from "./3p/std.ts";
+
+const DEFAULT_RADFILENAME = path.resolve("rad.ts");
 
 const flags = {
   alias: {
@@ -104,7 +107,7 @@ export async function suchRad(args: flagsMod.Args): Promise<RadExecResult> {
   }
   const taskName = last(args._) as string;
   const radness = await rad.init({
-    radFilename: args.radfile || args.r,
+    radFilename: args.radfile || args.r || DEFAULT_RADFILENAME,
     logger,
   });
   const tree = rad.createTaskGraph(radness, { logger });
