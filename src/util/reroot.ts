@@ -13,7 +13,8 @@ function strReplaceLast(str: string, pattern: string, replacement: string) {
   return replaceAtIndex(str, pattern, replacement, i);
 }
 
-export const getReRoot = (filename: string) =>
+export const getReRoot =
+  (filename: string) =>
   (oldRoot: string, newRoot: string, oldExt?: string, newExt?: string) => {
     let next = filename;
     if (oldExt && newExt) next = strReplaceLast(next, oldExt, newExt);

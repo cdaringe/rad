@@ -46,8 +46,12 @@ export type InitOptions = {
   logger: Logger;
 };
 export async function init(opts: InitOptions) {
-  const radFilename = await getRadFilename(opts);
-  return import(asFileUrl(radFilename)).then((mod) => from(mod));
+  if (opts.radFilename.startsWith("https:")) {
+    return import(opts.radFilename).then((mod) => from(mod));
+  } else {
+    const radFilename = await getRadFilename(opts);
+    return import(asFileUrl(radFilename)).then((mod) => from(mod));
+  }
 }
 
 export function getCustomImportUrl({
