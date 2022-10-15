@@ -1,6 +1,6 @@
 # usage: docker run --rm -v $PWD:/rad rad TASK
 # build: docker build --progress=plain -t rad -t cdaringe/rad -t cdaringe/rad:6-latest -t cdaringe/rad:latest .
-FROM denoland/deno:alpine-1.24.3
+FROM denoland/deno:alpine-1.26.1
 RUN mkdir /radinstall
 ENV RAD="deno run --unstable -A  /radinstall/src/bin.ts --log-level info"
 WORKDIR /radinstall
