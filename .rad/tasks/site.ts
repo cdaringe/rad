@@ -33,7 +33,7 @@ export const task: Task = {
   target: "public/index.html",
   prereqs: ["assets/site/**/*.{html,md,ts,js}", "readme.md"],
   onMake: async (
-    { task: _, fs, logger, sh },
+    { task: _, fs, logger },
     { getChangedPrereqFilenames, getPrereqFilenames },
   ) => {
     const changed = await getChangedPrereqFilenames();

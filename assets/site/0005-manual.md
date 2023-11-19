@@ -76,9 +76,9 @@ will get executed by `rad` in a child process, a la
 `bash -c 'echo "hello, world!"'` under the hood if you are using the `bash`
 shell.
 
-> ☝🏼Command tasks should tend to be _fast_. If the executed command is not fast,
-> you may consider trying a function or make style task to speed things up, if
-> feasible.
+> ☝🏼Command tasks should tend to be _fast_. If the executed command is not
+> fast, you may consider trying a function or make style task to speed things
+> up, if feasible.
 
 #### Function tasks
 

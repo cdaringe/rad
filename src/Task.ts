@@ -188,7 +188,7 @@ export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
             );
           }
           const targetChangedTime = await getModifiedTimeOrVeryOld(targetPath);
-          const preReqChangedTime = (Number(modified) || Number(created) || 0);
+          const preReqChangedTime = Number(modified) || Number(created) || 0;
           const isPrereqChanged = preReqChangedTime >=
             targetChangedTime;
           if (isPrereqChanged) {

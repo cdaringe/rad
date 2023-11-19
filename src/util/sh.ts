@@ -7,6 +7,7 @@ export async function sh(
   const { logger } = opts || {};
   const shell = Deno.env.get("SHELL") || "sh";
   logger?.debug([shell, "-c", cmd].join(" "));
+  // deno-lint-ignore no-deprecated-deno-api
   const proc = Deno.run({
     cmd: ["sh", "-c", cmd],
     stdin: "inherit",
