@@ -3,14 +3,30 @@
   <head>
     <title>rad - general purpose, typed build tools</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- init prism css -->
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/themes/prism.min.css"
       rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css"
+      integrity="sha512-mIs9kKbaw6JZFfSuo+MovjU+Ntggfoj8RwAmJbVXQ5mkAX5LlgETQEweFPI18humSPHymTb5iikEOKWF7I8ncQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     />
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/themes/prism-okaidia.min.css"
       rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css"
+      integrity="sha512-Dqf5696xtofgH089BgZJo2lSWTvev4GFo+gA2o4GullFY65rzQVQLQVlzLvYwTo0Bb2Gpb6IqwxYWtoMonfdhQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autolinker/prism-autolinker.min.css"
+      integrity="sha512-4ZmAB2UXPu3Rgy5ZClpqnJ/zXXZBdulFXY1eWMLgIjp2HWgkHGIpr1b7kmCK+rdD5NYfivTp47UR+bQ4oTBllQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
     <style>
       /* prefixed by https://autoprefixer.github.io (PostCSS: v7.0.26, autoprefixer: v9.7.3) */
       /**
@@ -186,7 +202,7 @@
       >
       <a id="click_prompt" onclick="onClick()">^click-me</a>
     </div>
-    <div class="content"><h1 id="rad-💯">rad 💯</h1>
+    <div class="content"><h1>rad 💯</h1>
 <p>A general purpose build tool. Concise, statically typed, batteries included.
 Command tasks, function tasks, and make-style tasks supported.</p>
 <p>Jump to:</p>
@@ -213,14 +229,14 @@ Command tasks, function tasks, and make-style tasks supported.</p>
 <td><a href="https://github.com/cdaringe/rad/actions?query=workflow%3Anext"><img src="https://github.com/cdaringe/rad/workflows/next/badge.svg?branch=next" alt="next"></a></td>
 </tr>
 </tbody></table>
-<h2 id="usage">Usage</h2>
+<h2>Usage</h2>
 <p>Rad is generally used as a CLI:</p>
 <p><code>$ rad &lt;task-name&gt; [--help]</code></p>
 <p>For example, <code>$ rad build</code> or <code>$ rad --log-level=info test</code>!</p>
 <p>It can be used as a library too :).</p>
 <p>Rad always consumes a <code>rad.ts</code> file, such as the one shown here:</p>
 <pre><code class="language-ts">// rad.ts
-import { Task, Tasks } from &quot;https://deno.land/x/rad@v6.9.1/src/mod.ts&quot;;
+import { Task, Tasks } from &quot;https://deno.land/x/rad@v6.10.0/src/mod.ts&quot;;
 
 // command/shell tasks
 const format = `prettier --write`;
@@ -253,7 +269,7 @@ export const tasks: Tasks = {
   test,
 };
 </code></pre>
-<h2 id="install">Install</h2>
+<h2>Install</h2>
 <p>There are a few formal ways to use <code>rad</code>. Regardless of the route you choose,
 know that all strategies support using pinned versions, adherent to semver. See
 the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p>
@@ -268,7 +284,7 @@ the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p>
 <tbody><tr>
 <td>cli</td>
 <td><code>deno</code></td>
-<td><code>deno install --unstable -f -A -n rad https://raw.githubusercontent.com/cdaringe/rad/v6.9.1/src/bin.ts</code></td>
+<td><code>deno install --unstable -f -A -n rad https://raw.githubusercontent.com/cdaringe/rad/v6.10.0/src/bin.ts</code></td>
 </tr>
 <tr>
 <td>cli</td>
@@ -278,12 +294,12 @@ the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p>
 <tr>
 <td>cli</td>
 <td><code>curl</code></td>
-<td><code>curl -fsSL <a href="https://raw.githubusercontent.com/cdaringe/rad/v6.9.1/assets/install.sh">https://raw.githubusercontent.com/cdaringe/rad/v6.9.1/assets/install.sh</a> | sh</code> (versioned)<br /><code>curl -fsSL <a href="https://raw.githubusercontent.com/cdaringe/rad/main/assets/install.sh">https://raw.githubusercontent.com/cdaringe/rad/main/assets/install.sh</a> | sh</code> (latest)</td>
+<td><code>curl -fsSL <a href="https://raw.githubusercontent.com/cdaringe/rad/v6.10.0/assets/install.sh">https://raw.githubusercontent.com/cdaringe/rad/v6.10.0/assets/install.sh</a> | sh</code> (versioned)<br /><code>curl -fsSL <a href="https://raw.githubusercontent.com/cdaringe/rad/main/assets/install.sh">https://raw.githubusercontent.com/cdaringe/rad/main/assets/install.sh</a> | sh</code> (latest)</td>
 </tr>
 <tr>
 <td>library</td>
 <td><code>deno</code></td>
-<td><code>import * as rad from https://github.com/cdaringe/rad/blob/main/v6.9.1/mod.ts</code></td>
+<td><code>import * as rad from https://github.com/cdaringe/rad/blob/main/v6.10.0/mod.ts</code></td>
 </tr>
 </tbody></table>
 <p><sup>1</sup>For docker users, consider making a nice shell alias</p>
@@ -292,7 +308,7 @@ function rad() {
   docker run --rm -v $PWD:/rad cdaringe/rad --log-level info &quot;$@&quot;;
 }
 </code></pre>
-<h2 id="what-is-it">What is it</h2>
+<h2>What is it</h2>
 <p>A build tool! It competes with make, npm-scripts, velociraptor, bazel, gradle,
 ant, gulp, or any of the other many tools out there! On various metrics, <code>rad</code>
 is subjectively better than some of the outstanding tools out there, and in some
@@ -324,7 +340,152 @@ great for running other programs, not for plumbing data</li>
 <a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></p>
 <p>Read more on our <a href="https://cdaringe.github.io/rad/">documentation site</a></p>
 
-<h1 id="why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</h1>
+<h1>rad 💯</h1>
+<p>A general purpose build tool. Concise, statically typed, batteries included.
+Command tasks, function tasks, and make-style tasks supported.</p>
+<p>Jump to:</p>
+<ol start="2">
+<li><a href="#usage">Usage</a></li>
+<li><a href="#install">Install</a></li>
+<li><a href="#what-is-it">What</a></li>
+<li><a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">Why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></li>
+<li><a href="https://cdaringe.github.io/rad/#manual">Manual</a></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>branch</th>
+<th>status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>main</td>
+<td><a href="https://github.com/cdaringe/rad/actions?query=workflow%3Amain"><img src="https://github.com/cdaringe/rad/workflows/main/badge.svg" alt="main"></a></td>
+</tr>
+<tr>
+<td>next</td>
+<td><a href="https://github.com/cdaringe/rad/actions?query=workflow%3Anext"><img src="https://github.com/cdaringe/rad/workflows/next/badge.svg?branch=next" alt="next"></a></td>
+</tr>
+</tbody></table>
+<h2>Usage</h2>
+<p>Rad is generally used as a CLI:</p>
+<p><code>$ rad &lt;task-name&gt; [--help]</code></p>
+<p>For example, <code>$ rad build</code> or <code>$ rad --log-level=info test</code>!</p>
+<p>It can be used as a library too :).</p>
+<p>Rad always consumes a <code>rad.ts</code> file, such as the one shown here:</p>
+<pre><code class="language-ts">// rad.ts
+import { Task, Tasks } from &quot;https://deno.land/x/rad@v6.10.0/src/mod.ts&quot;;
+
+// command/shell tasks
+const format = `prettier --write`;
+const test = `deno test`;
+
+// function tasks
+const compile: Task = {
+  dependsOn: [format],
+  fn: ({ sh, ...toolkit }) =&gt; sh(&quot;tsc&quot;),
+};
+const greet = {
+  fn: () =&gt; Deno.writeTextFile(&quot;/tmp/hello&quot;, &quot;world&quot;),
+};
+
+// make-style tasks
+const transpile: Task = {
+  target: &quot;phony&quot;,
+  prereqs: [&quot;prereq1&quot;, &quot;prereq2&quot;],
+  async onMake({ logger }, { changedPrereqs /*, prereqs */ }) {
+    for await (const req of changedPrereqs) {
+      logger.info(`req: ${req.path} ${req.isFile}`);
+    }
+  },
+};
+
+export const tasks: Tasks = {
+  compile,
+  format,
+  greet,
+  test,
+};
+</code></pre>
+<h2>Install</h2>
+<p>There are a few formal ways to use <code>rad</code>. Regardless of the route you choose,
+know that all strategies support using pinned versions, adherent to semver. See
+the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p>
+<table>
+<thead>
+<tr>
+<th>usage</th>
+<th>install-method</th>
+<th>install-steps</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>cli</td>
+<td><code>deno</code></td>
+<td><code>deno install --unstable -f -A -n rad https://raw.githubusercontent.com/cdaringe/rad/v6.10.0/src/bin.ts</code></td>
+</tr>
+<tr>
+<td>cli</td>
+<td><code>docker</code></td>
+<td><code>docker pull cdaringe/rad</code> <sup>1</sup></td>
+</tr>
+<tr>
+<td>cli</td>
+<td><code>curl</code></td>
+<td><code>curl -fsSL <a href="https://raw.githubusercontent.com/cdaringe/rad/v6.10.0/assets/install.sh">https://raw.githubusercontent.com/cdaringe/rad/v6.10.0/assets/install.sh</a> | sh</code> (versioned)<br /><code>curl -fsSL <a href="https://raw.githubusercontent.com/cdaringe/rad/main/assets/install.sh">https://raw.githubusercontent.com/cdaringe/rad/main/assets/install.sh</a> | sh</code> (latest)</td>
+</tr>
+<tr>
+<td>library</td>
+<td><code>deno</code></td>
+<td><code>import * as rad from https://github.com/cdaringe/rad/blob/main/v6.10.0/mod.ts</code></td>
+</tr>
+</tbody></table>
+<p><sup>1</sup>For docker users, consider making a nice shell alias</p>
+<pre><code class="language-bash"># shell profile, e.g. .bash_profile
+function rad() {
+  docker run --rm -v $PWD:/rad cdaringe/rad --log-level info &quot;$@&quot;;
+}
+</code></pre>
+<h2>What is it</h2>
+<p>A build tool! It competes with make, npm-scripts, velociraptor, bazel, gradle,
+ant, gulp, or any of the other many tools out there! On various metrics, <code>rad</code>
+is subjectively better than some of the outstanding tools out there, and in some
+cases, not-so-much. We invite you to understand some of its core characteristics
+and interfaces.</p>
+<p><code>rad</code> offers:</p>
+<ul>
+<li>simple, <strong>programmable</strong> task interfaces</li>
+<li><strong>easy to understand</strong>, declarative build steps</li>
+<li><strong>type-checked</strong> tasks</li>
+<li><strong>no quirky DSLs</strong> (<code>make</code>, <code>gradle</code>, and friends 😢). <strong>your build is code</strong>,
+not an arbitrary language or stringly (read: bummerly) typed script runner.</li>
+<li>productive toolkit API for nuanced tasks that benefit from programming. see
+<a href="#toolkit">toolkit</a><!-- @todo write toolkit docs--></li>
+<li>bottom-up, <code>make</code>-style build targets<ul>
+<li>fast builds, skip redundant work when inputs haven&#39;t changed</li>
+</ul>
+</li>
+<li>cli mode, or library mode</li>
+<li>portability. build automation for <em>any</em> language or project, in many
+environments (*limited to <em>Deno</em> target architectures, for the time being.
+long term, we may package this in <code>Rust</code>)</li>
+<li>great UX</li>
+<li>debug-ability. 🐛 inspect your data, tasks, or even <em>rad</em> itself</li>
+<li>employs a real scripting language--<strong>not</strong> <code>bash/sh</code>! shell languages are
+great for running other programs, not for plumbing data</li>
+</ul>
+<p>See
+<a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></p>
+<p>Read more on our <a href="https://cdaringe.github.io/rad/">documentation site</a></p>
+
+<h1>build buds</h1>
+<p>Some interesting build functions that are not <em>integrated</em> into <code>rad</code> are
+checked into the <code>rad</code> repository. These are generally considered unofficial or
+unsupported tools that may be of interest to rad users.</p>
+<p>See <a href="https://github.com/cdaringe/rad/tree/next/src/build-buds">build-buds</a> in
+GitHub.</p>
+
+<h1>why not <code>&lt;my-favorite-build-tool&gt;</code>?</h1>
 <p>your build tool is probably great. keep using it if you love it. the intent here
 it not to dump on anyone or any tool, but articulate feature gaps.</p>
 <table>
@@ -355,6 +516,17 @@ it not to dump on anyone or any tool, but articulate feature gaps.</p>
 <tr>
 <td>denox</td>
 <td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>deno scripts</td>
+<td>✓</td>
 <td></td>
 <td></td>
 <td></td>
@@ -452,16 +624,9 @@ leave room for improvement in this space. <code>rad</code> is the first tool to 
 subjectively <em>powerful</em> scripting language into the build system space coupled
 with great static analysis and make-capable performance.</p>
 
-<h1 id="build-buds">build buds</h1>
-<p>Some interesting build functions that are not <em>integrated</em> into <code>rad</code> are
-checked into the <code>rad</code> repository. These are generally considered unofficial or
-unsupported tools that may be of interest to rad users.</p>
-<p>See <a href="https://github.com/cdaringe/rad/tree/next/src/build-buds">build-buds</a> in
-GitHub.</p>
-
-<h2 id="manual">Manual</h2>
+<h2>Manual</h2>
 <p>Your guide to <code>rad</code>!</p>
-<h3 id="understanding-rad">Understanding rad</h3>
+<h3>Understanding rad</h3>
 <ul>
 <li><code>rad</code> is written in typescript and runs on <a href="https://deno.land/">deno</a></li>
 <li>You write tasks, then ask <code>rad</code> to run them</li>
@@ -469,14 +634,14 @@ GitHub.</p>
 it through its task graph executor</li>
 </ul>
 <p>🤯</p>
-<h3 id="getting-started">Getting started</h3>
+<h3>Getting started</h3>
 <p>The first step to using rad is installation. Please see the <a href="#install">install</a>
 section for guidance.</p>
 <p>The CLI also has a decent help page. Once you have installed rad, try running
 <code>rad --help</code>, to grow acquainted with some of the options you may expect to use
 down the road.</p>
 <p>Next up, creating a radfile!</p>
-<h4 id="setting-up-radts">Setting up rad.ts</h4>
+<h4>Setting up rad.ts</h4>
 <p>To create a new radfile (<code>rad.ts</code>), run the following command:</p>
 <p><code>$ rad -l info --init</code></p>
 <p>rad.ts should have <em>two</em> key traits:</p>
@@ -495,11 +660,11 @@ statement</li>
 <p><code>rad</code> will look in the working directory for your radfile by default. If you so
 choose, you may place <code>rad.ts</code> elsewhere, and tell rad where to find it using
 the <code>-r/--radfile</code> flag. Next up, let&#39;s define those tasks.</p>
-<h3 id="tasks">Tasks</h3>
+<h3>Tasks</h3>
 <p>Tasks can take a couple of different forms. Generally, you can simply refer to
 the <code>Task</code> type in your radfile and get cracking. Let&#39;s write a few tasks of
 each type.</p>
-<h4 id="command-tasks">Command tasks</h4>
+<h4>Command tasks</h4>
 <p>Command tasks are the simplest tasks. they are shell commands for rad to
 execute:</p>
 <pre><code class="language-ts">// rad.ts
@@ -516,11 +681,11 @@ will get executed by <code>rad</code> in a child process, a la
 <code>bash -c &#39;echo &quot;hello, world!&quot;&#39;</code> under the hood if you are using the <code>bash</code>
 shell.</p>
 <blockquote>
-<p>☝🏼Command tasks should tend to be <em>fast</em>. If the executed command is not fast,
-you may consider trying a function or make style task to speed things up, if
-feasible.</p>
+<p>☝🏼Command tasks should tend to be <em>fast</em>. If the executed command is not
+fast, you may consider trying a function or make style task to speed things
+up, if feasible.</p>
 </blockquote>
-<h4 id="function-tasks">Function tasks</h4>
+<h4>Function tasks</h4>
 <p>Function tasks are the most capable of all tasks. All other task types
 internally get transformed into a function task. To use function tasks, create a
 POJO with a <code>fn</code> key and function value. <code>fn</code> brings one
@@ -545,7 +710,7 @@ export const tasks: Tasks = { build };
 section, you will see the other interesting utilities provided to do great
 things with! You can of course also simply run rad, and introspect the toolkit
 API if you are using a deno plugin in your code editor!</p>
-<h4 id="make-tasks">Make tasks</h4>
+<h4>Make tasks</h4>
 <p>Make tasks are in honor of <a href="https://www.gnu.org/software/make/">gnu make</a>. Our
 make task is intentionally not feature complete with the proper make task--but
 it does have an essential core parity--providing an API to access <em>only files
@@ -621,7 +786,7 @@ force you to have 1:1 mappings between inputs and outputs. If prereqs <code>a</c
 <code>b</code> mapped to <code>foo</code> and <code>c</code> mapped to <code>bar</code>--no problem, you can express that
 easily in <code>mapPrereqToTarget</code>!</p>
 <p>Check out the type definitions for more on make tasks!</p>
-<h3 id="task-dependencies">Task dependencies</h3>
+<h3>Task dependencies</h3>
 <p>All task types, except command style tasks, accept an optional <code>dependsOn</code>
 array. <code>dependsOn</code> is an array of task references. Task references must be
 <strong>actual task references</strong>--string based task lookups are not supported,
@@ -675,7 +840,7 @@ will await an <code>install</code> to complete!</p>
       └─ install
 </code></pre>
 <p>Dude. Nice! We can have nice things!</p>
-<h3 id="toolkit">Toolkit</h3>
+<h3>Toolkit</h3>
 <p>The <code>toolkit</code> is the first argument to <code>function</code> based tasks!</p>
 <p>It has the following type!</p>
 <pre><code class="language-ts">export type Toolkit = {
@@ -715,7 +880,7 @@ will await an <code>install</code> to complete!</p>
 </tr>
 <tr>
 <td><code>logger</code></td>
-<td>the <code>rad</code> logger! a standard <code>Deno</code> logger with the commonplace log-level methods (e.g. <code>.info(...)</code>, <code>.debug(...)</code>, etc). see <a href="https://github.com/cdaringe/rad/blob/v6.9.1/src/logger.ts">the source</a></td>
+<td>the <code>rad</code> logger! a standard <code>Deno</code> logger with the commonplace log-level methods (e.g. <code>.info(...)</code>, <code>.debug(...)</code>, etc). see <a href="https://github.com/cdaringe/rad/blob/v6.10.0/src/logger.ts">the source</a></td>
 </tr>
 <tr>
 <td><code>path</code></td>
@@ -730,7 +895,7 @@ will await an <code>install</code> to complete!</p>
 <td><code>AsyncIterable</code> utility functions</td>
 </tr>
 </tbody></table>
-<h3 id="debugging">Debugging</h3>
+<h3>Debugging</h3>
 <p>To debug your tasks, you can use <code>deno</code>&#39;s built in debugging functionality from
 v8.</p>
 <ul>
@@ -739,7 +904,7 @@ v8.</p>
 </ul>
 <pre><code class="language-bash">#!/bin/sh
 # generated by deno install
-exec deno run --allow-read --allow-write --allow-net --allow-env --allow-run --allow-hrtime --unstable &#39;https://raw.githubusercontent.com/cdaringe/rad/v6.9.1/src/bin.ts&#39; &quot;$@&quot;
+exec deno run --allow-read --allow-write --allow-net --allow-env --allow-run --allow-hrtime --unstable &#39;https://raw.githubusercontent.com/cdaringe/rad/v6.10.0/src/bin.ts&#39; &quot;$@&quot;
 </code></pre>
 <ul>
 <li>extract the <code>deno run ...</code> command, drop the leading <code>exec</code> and trailing <code>$@</code>,
@@ -749,7 +914,7 @@ or equivalents for your shell</li>
 <p>Example:</p>
 <pre><code class="language-bash">deno  \
   run --inspect-brk -A --allow-run --allow-hrtime --unstable \
-  &#39;https://raw.githubusercontent.com/cdaringe/rad/v6.9.1/src/bin.ts&#39; \
+  &#39;https://raw.githubusercontent.com/cdaringe/rad/v6.10.0/src/bin.ts&#39; \
   test
 # ^ add any args of interest
 </code></pre>
@@ -759,29 +924,22 @@ project&#39;s <code>&lt;root&gt;/.vscode/launch.json</code> to see example setti
 documentation for more.</p>
 </div>
     <script>
-      // deno-fmt-ignore-file
-// deno-lint-ignore-file
-// This code was bundled using `deno bundle` and it's not recommended to edit it manually
-
-const chaos = {
+      const chaos = {
     name: "chaos",
     fn: ({ w , h , count ,  })=>{
         const xforms = [];
         const getTranslateProposal = ()=>[
-                Math.random() * w * 0.85,
+                Math.random() * w * .85,
                 h * Math.random()
-            ]
-        ;
-        const distance = ([a, b], [x, y])=>Math.sqrt(Math.pow(a - x, 2) + Math.pow(b - y, 2))
-        ;
+            ];
+        const distance = ([a, b], [x, y])=>Math.sqrt(Math.pow(a - x, 2) + Math.pow(b - y, 2));
         const scootchAway = ([a, b], [stepX, stepY] = [
             10,
             30
         ])=>[
                 a + (Math.random() + stepX) * (Math.random() > 0.5 ? 1 : -1),
                 b + (1 + Math.random() + stepY) * (Math.random() > 0.5 ? 1 : -1), 
-            ]
-        ;
+            ];
         let i = count;
         while(i){
             let translate = getTranslateProposal();
@@ -806,8 +964,7 @@ const chaos = {
 const order = {
     name: "order",
     fn: ({ w , h , count: _ ,  })=>{
-        const times = (count)=>"_".repeat(count).split("")
-        ;
+        const times = (count)=>"_".repeat(count).split("");
         const xforms = [];
         const ySep = h / (3 + 1);
         const xSep = w / (17 + 1);
@@ -832,10 +989,7 @@ const updateTransformNameUi = (name)=>{
     const el = document.getElementById("transform-name");
     if (el) el.textContent = `(${name})`;
 };
-const getTransformString = ({ translate , rotate , scale  })=>`translate(${translate.map((v)=>`${v}px`
-    ).join(", ")}) rotate(${rotate.map((v)=>`${v}deg`
-    ).join(" ")}) scale(${scale})`
-;
+const getTransformString = ({ translate , rotate , scale  })=>`translate(${translate.map((v)=>`${v}px`).join(", ")}) rotate(${rotate.map((v)=>`${v}deg`).join(" ")}) scale(${scale})`;
 function renderBabies(transform) {
     const [w, h] = [
         800,
@@ -848,8 +1002,7 @@ function renderBabies(transform) {
         h
     });
     if (!group.innerHTML) {
-        group.innerHTML = xforms.map((_, i)=>`<use id='baby_${i}' class='text baby-rad' xlink:href="#repeatme" />`
-        ).join("");
+        group.innerHTML = xforms.map((_, i)=>`<use id='baby_${i}' class='text baby-rad' xlink:href="#repeatme" />`).join("");
     }
     Array.from(group.children).forEach((el_, i)=>{
         const xform = xforms[i];
@@ -869,16 +1022,13 @@ let transforms = [
 const initialTransformsLength = transforms.length;
 renderBabies(chaos);
 updateTransformNameUi(chaos.name);
-const chaosTimer = setTimeout(()=>window.requestAnimationFrame(()=>renderBabies(order)
-    )
-, 500);
+const chaosTimer = setTimeout(()=>window.requestAnimationFrame(()=>renderBabies(order)), 500);
 function installSupplementalTransforms(cb) {
     return async ()=>{
         try {
             if (transforms.length === initialTransformsLength) {
                 const tUrl = window.location.port == "3333" ? `${window.location.origin}/transforms.js` : window.location.href.match(/github/) ? `https://cdaringe.github.io/rad/transforms.js` : `${window.location.origin}/transforms.js`;
-                transforms = await import(tUrl).then((r)=>transforms.concat(r.transforms)
-                );
+                transforms = await import(tUrl).then((r)=>transforms.concat(r.transforms));
             }
         } finally{
             await Promise.resolve(cb());
@@ -899,9 +1049,46 @@ const onClick = installSupplementalTransforms(()=>{
     renderBabies(currentTransform);
 });
 document.getElementById("radness").addEventListener("click", onClick);
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImZpbGU6Ly8vaG9tZS9ydW5uZXIvd29yay9yYWQvcmFkL2Fzc2V0cy9zaXRlL3RyYW5zZm9ybXMvY2hhb3MudHMiLCJmaWxlOi8vL2hvbWUvcnVubmVyL3dvcmsvcmFkL3JhZC9hc3NldHMvc2l0ZS90cmFuc2Zvcm1zL29yZGVyLnRzIiwiZmlsZTovLy9ob21lL3J1bm5lci93b3JrL3JhZC9yYWQvYXNzZXRzL3NpdGUvaW5kZXgudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgUG9pbnQsIFJhZFN2Z1RyYW5zZm9ybSwgVHJhbnNmb3JtIH0gZnJvbSBcIi4uL2NvbW1vbi50c1wiO1xuXG5leHBvcnQgY29uc3QgY2hhb3M6IFRyYW5zZm9ybSA9IHtcbiAgbmFtZTogXCJjaGFvc1wiLFxuICBmbjogKHtcbiAgICB3LFxuICAgIGgsXG4gICAgY291bnQsXG4gIH0pID0+IHtcbiAgICBjb25zdCB4Zm9ybXM6IFJhZFN2Z1RyYW5zZm9ybVtdID0gW107XG4gICAgY29uc3QgZ2V0VHJhbnNsYXRlUHJvcG9zYWw6ICgpID0+IFBvaW50ID1cbiAgICAgICgpID0+IFtNYXRoLnJhbmRvbSgpICogdyAqIC44NSwgaCAqIE1hdGgucmFuZG9tKCldO1xuICAgIGNvbnN0IGRpc3RhbmNlID0gKFthLCBiXTogUG9pbnQsIFt4LCB5XTogUG9pbnQpID0+XG4gICAgICBNYXRoLnNxcnQoXG4gICAgICAgIE1hdGgucG93KGEgLSB4LCAyKSArIE1hdGgucG93KGIgLSB5LCAyKSxcbiAgICAgICk7XG4gICAgY29uc3Qgc2Nvb3RjaEF3YXkgPSAoXG4gICAgICBbYSwgYl06IFBvaW50LFxuICAgICAgW3N0ZXBYLCBzdGVwWV06IFBvaW50ID0gWzEwLCAzMF0sXG4gICAgKTogUG9pbnQgPT4gW1xuICAgICAgYSArICgoTWF0aC5yYW5kb20oKSkgKyBzdGVwWCkgKiAoTWF0aC5yYW5kb20oKSA+IDAuNSA/IDEgOiAtMSksXG4gICAgICBiICsgKCgxICsgTWF0aC5yYW5kb20oKSkgKyBzdGVwWSkgKiAoTWF0aC5yYW5kb20oKSA+IDAuNSA/IDEgOiAtMSksXG4gICAgXTtcbiAgICBsZXQgaSA9IGNvdW50O1xuICAgIHdoaWxlIChpKSB7XG4gICAgICBsZXQgdHJhbnNsYXRlOiBQb2ludCA9IGdldFRyYW5zbGF0ZVByb3Bvc2FsKCk7XG4gICAgICB3aGlsZSAoZGlzdGFuY2UodHJhbnNsYXRlLCBbNzAwLCAyODBdKSA8IDE5MCkge1xuICAgICAgICB0cmFuc2xhdGUgPSBzY29vdGNoQXdheSh0cmFuc2xhdGUpO1xuICAgICAgfVxuICAgICAgeGZvcm1zLnB1c2goe1xuICAgICAgICB0cmFuc2xhdGUsXG4gICAgICAgIHJvdGF0ZTogWzM2MCAqIE1hdGgucmFuZG9tKCldLFxuICAgICAgICBzY2FsZTogMC41LFxuICAgICAgfSk7XG4gICAgICAtLWk7XG4gICAgfVxuICAgIHJldHVybiB4Zm9ybXM7XG4gIH0sXG59O1xuIiwiaW1wb3J0IHsgUmFkU3ZnVHJhbnNmb3JtLCBUcmFuc2Zvcm0gfSBmcm9tIFwiLi4vY29tbW9uLnRzXCI7XG5cbmV4cG9ydCBjb25zdCBvcmRlcjogVHJhbnNmb3JtID0ge1xuICBuYW1lOiBcIm9yZGVyXCIsXG4gIGZuOiAoe1xuICAgIHcsXG4gICAgaCxcbiAgICBjb3VudDogXyxcbiAgfSkgPT4ge1xuICAgIGNvbnN0IHRpbWVzID0gKGNvdW50OiBudW1iZXIpID0+IFwiX1wiLnJlcGVhdChjb3VudCkuc3BsaXQoXCJcIik7XG4gICAgY29uc3QgeGZvcm1zOiBSYWRTdmdUcmFuc2Zvcm1bXSA9IFtdO1xuICAgIGNvbnN0IG51bVJvd3MgPSAzO1xuICAgIGNvbnN0IG51bUNvbHMgPSAxNztcbiAgICBjb25zdCB5U2VwID0gaCAvIChudW1Sb3dzICsgMSk7XG4gICAgY29uc3QgeFNlcCA9IHcgLyAobnVtQ29scyArIDEpO1xuICAgIHRpbWVzKG51bVJvd3MpLmZvckVhY2goKF8sIGl5KSA9PiB7XG4gICAgICB0aW1lcyhudW1Db2xzKS5mb3JFYWNoKChfLCBpeCkgPT4ge1xuICAgICAgICB4Zm9ybXMucHVzaCh7XG4gICAgICAgICAgdHJhbnNsYXRlOiBbaXggKiB4U2VwLCBpeSAqIHlTZXAgLSAzNV0sXG4gICAgICAgICAgcm90YXRlOiBbNzBdLFxuICAgICAgICAgIHNjYWxlOiAwLjUsXG4gICAgICAgIH0pO1xuICAgICAgfSk7XG4gICAgfSk7XG4gICAgcmV0dXJuIHhmb3JtcztcbiAgfSxcbn07XG4iLCIvLy8gPHJlZmVyZW5jZSBsaWI9XCJkb21cIiAvPlxuaW1wb3J0IHsgUmFkU3ZnVHJhbnNmb3JtLCBUcmFuc2Zvcm0gfSBmcm9tIFwiLi9jb21tb24udHNcIjtcbmltcG9ydCB7IGNoYW9zIH0gZnJvbSBcIi4vdHJhbnNmb3Jtcy9jaGFvcy50c1wiO1xuaW1wb3J0IHsgb3JkZXIgfSBmcm9tIFwiLi90cmFuc2Zvcm1zL29yZGVyLnRzXCI7XG5cbmNvbnN0IHVwZGF0ZVRyYW5zZm9ybU5hbWVVaSA9IChuYW1lOiBzdHJpbmcpID0+IHtcbiAgY29uc3QgZWwgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcInRyYW5zZm9ybS1uYW1lXCIpO1xuICBpZiAoZWwpIGVsLnRleHRDb250ZW50ID0gYCgke25hbWV9KWA7XG59O1xuXG5jb25zdCBnZXRUcmFuc2Zvcm1TdHJpbmcgPSAoeyB0cmFuc2xhdGUsIHJvdGF0ZSwgc2NhbGUgfTogUmFkU3ZnVHJhbnNmb3JtKSA9PlxuICBgdHJhbnNsYXRlKCR7dHJhbnNsYXRlLm1hcCgodikgPT4gYCR7dn1weGApLmpvaW4oXCIsIFwiKX0pIHJvdGF0ZSgke1xuICAgIHJvdGF0ZS5tYXAoKHYpID0+IGAke3Z9ZGVnYCkuam9pbihcIiBcIilcbiAgfSkgc2NhbGUoJHtzY2FsZX0pYDtcblxuZnVuY3Rpb24gcmVuZGVyQmFiaWVzKHRyYW5zZm9ybTogVHJhbnNmb3JtKSB7XG4gIGNvbnN0IFt3LCBoXSA9IFs4MDAsIDMwMF07XG4gIGNvbnN0IGdyb3VwID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJyZXBlYXRzXCIpITtcbiAgLy8gY29uc3Qgbm9kZXMgPSBBcnJheS5mcm9tKGdyb3VwLmNoaWxkcmVuKTtcbiAgY29uc3QgeGZvcm1zID0gdHJhbnNmb3JtLmZuKHsgY291bnQ6IDUxLCB3LCBoIH0pO1xuICAvLyB1cGRhdGUgZXhpc3Rpbmcgbm9kZXNcbiAgaWYgKCFncm91cC5pbm5lckhUTUwpIHtcbiAgICBncm91cC5pbm5lckhUTUwgPSB4Zm9ybXMubWFwKChfLCBpKSA9PlxuICAgICAgYDx1c2UgaWQ9J2JhYnlfJHtpfScgY2xhc3M9J3RleHQgYmFieS1yYWQnIHhsaW5rOmhyZWY9XCIjcmVwZWF0bWVcIiAvPmBcbiAgICApLmpvaW4oXCJcIik7XG4gIH1cbiAgQXJyYXkuZnJvbShncm91cC5jaGlsZHJlbikuZm9yRWFjaCgoZWxfLCBpKSA9PiB7XG4gICAgY29uc3QgeGZvcm0gPSB4Zm9ybXNbaV07XG4gICAgY29uc3QgZWwgPSBlbF8gYXMgSFRNTEVsZW1lbnQ7XG4gICAgaWYgKHhmb3JtKSB7XG4gICAgICBlbC5zdHlsZS50cmFuc2Zvcm0gPSBnZXRUcmFuc2Zvcm1TdHJpbmcoeGZvcm0pO1xuICAgICAgZWwuc3R5bGUub3BhY2l0eSA9IFwiMVwiO1xuICAgIH0gZWxzZSB7XG4gICAgICBlbC5zdHlsZS5vcGFjaXR5ID0gXCIwXCI7XG4gICAgfVxuICB9KTtcbn1cbmxldCB0cmFuc2Zvcm1zID0gW2NoYW9zLCBvcmRlcl07XG5jb25zdCBpbml0aWFsVHJhbnNmb3Jtc0xlbmd0aCA9IHRyYW5zZm9ybXMubGVuZ3RoO1xuXG4vLyBpbml0aWFsIHBhaW50XG5yZW5kZXJCYWJpZXMoY2hhb3MpO1xudXBkYXRlVHJhbnNmb3JtTmFtZVVpKGNoYW9zLm5hbWUpO1xuLy8gZnVuc2llcyBpbml0aWFsIGFuaW1hdGlvblxuY29uc3QgY2hhb3NUaW1lciA9IHNldFRpbWVvdXQoXG4gICgpID0+IHdpbmRvdy5yZXF1ZXN0QW5pbWF0aW9uRnJhbWUoKCkgPT4gcmVuZGVyQmFiaWVzKG9yZGVyKSksXG4gIDUwMCxcbik7XG5cbmZ1bmN0aW9uIGluc3RhbGxTdXBwbGVtZW50YWxUcmFuc2Zvcm1zKGNiOiAoKSA9PiBhbnkpIHtcbiAgcmV0dXJuIGFzeW5jICgpID0+IHtcbiAgICB0cnkge1xuICAgICAgLyoqXG4gICAgICAgKiB1cGRhdGUgZGVmYXVsdCB0cmFuc2Zvcm1zIHdpdGggcmVtb3RlIHRyYW5zZm9ybXNcbiAgICAgICAqL1xuICAgICAgaWYgKHRyYW5zZm9ybXMubGVuZ3RoID09PSBpbml0aWFsVHJhbnNmb3Jtc0xlbmd0aCkge1xuICAgICAgICBjb25zdCB0VXJsID0gd2luZG93LmxvY2F0aW9uLnBvcnQgPT0gXCIzMzMzXCJcbiAgICAgICAgICA/IGAke3dpbmRvdy5sb2NhdGlvbi5vcmlnaW59L3RyYW5zZm9ybXMuanNgXG4gICAgICAgICAgOiAoXG4gICAgICAgICAgICB3aW5kb3cubG9jYXRpb24uaHJlZi5tYXRjaCgvZ2l0aHViLylcbiAgICAgICAgICAgICAgPyBgaHR0cHM6Ly9jZGFyaW5nZS5naXRodWIuaW8vcmFkL3RyYW5zZm9ybXMuanNgXG4gICAgICAgICAgICAgIDogYCR7d2luZG93LmxvY2F0aW9uLm9yaWdpbn0vdHJhbnNmb3Jtcy5qc2BcbiAgICAgICAgICApO1xuICAgICAgICB0cmFuc2Zvcm1zID0gYXdhaXQgaW1wb3J0KHRVcmwpLnRoZW4oKHIpID0+XG4gICAgICAgICAgdHJhbnNmb3Jtcy5jb25jYXQoci50cmFuc2Zvcm1zKVxuICAgICAgICApO1xuICAgICAgfVxuICAgIH0gZmluYWxseSB7XG4gICAgICBhd2FpdCBQcm9taXNlLnJlc29sdmUoY2IoKSk7XG4gICAgfVxuICB9O1xufVxuXG5sZXQgdHJhbnNmb3JtSW5kZXggPSAxOyAvLyBzdGFydCBhdCAxIHRvIG5vdCByZXZpc2l0IGVhZ2VyIHBhZ2Vsb2FkIHhmb3Jtc1xuY29uc3Qgb25DbGljayA9IGluc3RhbGxTdXBwbGVtZW50YWxUcmFuc2Zvcm1zKCgpID0+IHtcbiAgY2xlYXJUaW1lb3V0KGNoYW9zVGltZXIpO1xuICArK3RyYW5zZm9ybUluZGV4O1xuICBpZiAoIXRyYW5zZm9ybXNbdHJhbnNmb3JtSW5kZXhdKSB7XG4gICAgdHJhbnNmb3JtSW5kZXggPSAwO1xuICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKFwiYWRkX21vcmVfdHJhbnNmb3Jtc1wiKSEuc3R5bGUuZGlzcGxheSA9IFwiXCI7XG4gIH1cbiAgY29uc3QgY3VycmVudFRyYW5zZm9ybSA9IHRyYW5zZm9ybXNbdHJhbnNmb3JtSW5kZXhdO1xuICB1cGRhdGVUcmFuc2Zvcm1OYW1lVWkoY3VycmVudFRyYW5zZm9ybS5uYW1lKTtcbiAgY29uc29sZS5pbmZvKFxuICAgIGBjdXJyZW50IHRyYW5zZm9ybTogJHtjdXJyZW50VHJhbnNmb3JtLm5hbWV9ICgke3RyYW5zZm9ybUluZGV4fS8ke3RyYW5zZm9ybXMubGVuZ3RofSlgLFxuICApO1xuICByZW5kZXJCYWJpZXMoY3VycmVudFRyYW5zZm9ybSk7XG59KTtcbmRvY3VtZW50LmdldEVsZW1lbnRCeUlkKFwicmFkbmVzc1wiKSEuYWRkRXZlbnRMaXN0ZW5lcihcImNsaWNrXCIsIG9uQ2xpY2spO1xuIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUVPLE1BQU0sS0FBSyxHQUFjO0lBQzlCLElBQUksRUFBRSxPQUFPO0lBQ2IsRUFBRSxFQUFFLENBQUMsRUFDSCxDQUFDLENBQUEsRUFDRCxDQUFDLENBQUEsRUFDRCxLQUFLLENBQUEsSUFDTixHQUFLO1FBQ0osTUFBTSxNQUFNLEdBQXNCLEVBQUUsQUFBQztRQUNyQyxNQUFNLG9CQUFvQixHQUN4QixJQUFNO2dCQUFDLElBQUksQ0FBQyxNQUFNLEVBQUUsR0FBRyxDQUFDLEdBQUcsR0FBRztnQkFBRSxDQUFDLEdBQUcsSUFBSSxDQUFDLE1BQU0sRUFBRTthQUFDLEFBQUM7UUFDckQsTUFBTSxRQUFRLEdBQUcsQ0FBQyxDQUFDLENBQUMsRUFBRSxDQUFDLENBQVEsRUFBRSxDQUFDLENBQUMsRUFBRSxDQUFDLENBQVEsR0FDNUMsSUFBSSxDQUFDLElBQUksQ0FD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
 ;
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+    <!-- init prism js -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"
+      integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"
+      integrity="sha512-st608h+ZqzliahyzEpETxzU0f7z7a9acN6AFvYmHvpFhmcFuKT8a22TT5TpKpjDa3pt3Wv7Z3SdQBCBdDPhyWA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"
+      integrity="sha512-/kVH1uXuObC0iYgxxCKY41JdWOkKOxorFVmip+YVifKsJ4Au/87EisD1wty7vxN2kAhnWh6Yc8o/dSAXj6Oz7A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/show-language/prism-show-language.min.js"
+      integrity="sha512-d1t+YumgzdIHUL78me4B9NzNTu9Lcj6RdGVbdiFDlxRV9JTN9s+iBQRhUqLRq5xtWUp1AD+cW2sN2OlST716fw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autolinker/prism-autolinker.min.js"
+      integrity="sha512-h92O152CCXt3xEUWDYTGLz58u+IOpZU8Z2MEkkBsXsRlAhckPFeEolarVn7tOhTVbjsJPpyknL0CFUrc2rlgPQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"
+      integrity="sha512-SkmBfuA2hqjzEVpmnMt/LINrjop3GKWqsuLSSB3e7iBmYK7JuWw4ldmmxwD9mdm2IRTTi0OxSAfEGvgEi0i2Kw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
   </body>
 </html>
