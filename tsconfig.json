@@ -1,13 +1,11 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
-    "module": "commonjs",
+    "module": "ES2020",
     "noEmit": true,
     "lib": ["ESNext"],
     "strict": true,
-    "target": "es2018"
+    "target": "ES2020"
   },
-  "include": [
-    "./**/*.ts"
-  ]
+  "include": ["./**/*.ts"]
 }

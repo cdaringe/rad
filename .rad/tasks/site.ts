@@ -1,5 +1,6 @@
 import type { Task, Toolkit } from "../../src/mod.ts";
 import { path } from "../../src/3p/std.ts";
+import { emit } from "./deps.ts";
 import "https://cdn.jsdelivr.net/npm/marked/marked.min.js";
 
 const { basename } = path.posix;
@@ -27,15 +28,19 @@ const mdFilesToHtmlParts = (
   mdFilenames: string[],
   fs: Toolkit["fs"],
 ) => mdFilenames.map(async (f) => siteMarkdownToHtml(await fs.readFile(f)));
-const emitOpts = {
-  bundle: "module" as const,
-  compilerOptions: { sourceMap: false },
-};
 
 export const task: Task = {
   target: "public/index.html",
-  prereqs: ["assets/site/**/*.{html,md}"],
-  onMake: async ({ task: _, fs }, { getPrereqFilenames }) => {
+  prereqs: ["assets/site/**/*.{html,md,ts,js}", "readme.md"],
+  onMake: async (
+    { task: _, fs, logger, sh },
+    { getChangedPrereqFilenames, getPrereqFilenames },
+  ) => {
+    const changed = await getChangedPrereqFilenames();
+    if (!changed.length) {
+      logger.info("skipped");
+      return;
+    }
     await createSiteDir(fs);
     const { html, md } = await getPrereqFilenames().then(groupFilesByExt);
     const mdContentsP = mdFilesToHtmlParts(["./readme.md", ...md], fs);
@@ -46,13 +51,10 @@ export const task: Task = {
       await Promise.all(
         [
           fs.readFile(htmlIndexFilename),
-          Deno.emit("assets/site/index.ts", emitOpts).then((res) =>
-            Object.values(res.files)[0]
-          ),
-          Deno.emit("assets/site/supplemental-transforms.ts", emitOpts).then(
+          emit.bundle("assets/site/index.ts").then((res) => res.code),
+          emit.bundle("assets/site/supplemental-transforms.ts").then(
             async (res) => {
-              const files = Object.values(res.files);
-              await Deno.writeTextFile("public/transforms.js", files[0]);
+              await Deno.writeTextFile("public/transforms.js", res.code);
               return ""; // appease Promise.all<string> typecheck
             },
           ),

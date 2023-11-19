@@ -163,8 +163,8 @@ export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
       const changedPrereqs = () =>
         getPrereqs(async (walkEntry) => {
           const {
-            birthtime: created = Date.now(),
-            mtime: modified = Date.now(),
+            birthtime: created = new Date(0),
+            mtime: modified = new Date(0),
           } = await Deno.stat(walkEntry.path);
           const targetPath = "target" in task
             ? await glob(
@@ -183,12 +183,29 @@ export const makearooniToFuncarooni: (task: Makearooni) => Funcarooni = (
               ),
             );
           if ("mapPrereqToTarget" in task) {
-            toolkit.logger.debug( // @todo move to debug level
+            toolkit.logger.debug(
               `mapPrereqToTarget: ${walkEntry.path} => ${targetPath}`,
             );
           }
-          const isPrereqChanged = (Number(modified) || Number(created) || 0) >=
-            await getModifiedTimeOrVeryOld(targetPath);
+          const targetChangedTime = await getModifiedTimeOrVeryOld(targetPath);
+          const preReqChangedTime = (Number(modified) || Number(created) || 0);
+          const isPrereqChanged = preReqChangedTime >=
+            targetChangedTime;
+          if (isPrereqChanged) {
+            toolkit.logger.debug(`prereq triggered task. ${
+              JSON.stringify({
+                prereq: {
+                  path: walkEntry.path,
+                  modified,
+                  created,
+                },
+                target: {
+                  path: targetPath,
+                  modified: targetChangedTime,
+                },
+              })
+            }`);
+          }
           return isPrereqChanged;
         });
       return onMake(

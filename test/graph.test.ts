@@ -15,9 +15,9 @@ const basicRadness: Radness = {
 const sumDependentResultsWith = (
   input: string,
 ) =>
-  // deno-lint-ignore no-explicit-any
-  ({ dependentResults }: { dependentResults: any[] }) =>
-    dependentResults.reduce((acc, v) => acc + v, input) as TaskFn;
+// deno-lint-ignore no-explicit-any
+({ dependentResults }: { dependentResults: any[] }) =>
+  dependentResults.reduce((acc, v) => acc + v, input) as TaskFn;
 
 const d: Task = {
   fn: sumDependentResultsWith("d"),

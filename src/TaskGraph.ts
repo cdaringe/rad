@@ -65,9 +65,11 @@ export function fromTasks(userTasks: Radness["tasks"], { logger }: WithLogger) {
       (userDependentTask) => {
         const taskName = userTaskNamesByTask.get(userDependentTask);
         if (!taskName) {
-          throw new errors.RadInvalidTaskError(
-            `failed to find task name. check \`dependsOn\` of task "${task.name}"`,
-          );
+          throw new errors.RadInvalidTaskError([
+            `Task not found. All tasks, including dependents, must be`,
+            `explicitly added to your rad.ts tasks export.`,
+            `check \`dependsOn\` of task "${task.name}"`,
+          ].join(" "));
         }
         const internalTask = graph[taskName];
         if (!internalTask) {

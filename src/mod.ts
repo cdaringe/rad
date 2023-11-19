@@ -13,32 +13,17 @@ import { from, Radness } from "./Radness.ts";
 import { path } from "./3p/std.ts";
 import { asFileUrl } from "./util/fs.ts";
 
-const DEFAULT_RADFILENAME = path.resolve("rad.ts");
-
 export async function getRadFilename({ radFilename, logger }: InitOptions) {
-  let nextRadfilename = radFilename;
-  if (radFilename) {
-    nextRadfilename = path.isAbsolute(radFilename)
-      ? radFilename
-      : path.resolve(radFilename);
-    if (!await Deno.lstat(radFilename).catch(() => false)) {
-      throw new errors.RadMissingRadFile(
-        `cannot read radfile "${radFilename}". does it exist?`,
-      );
-    }
-    logger.debug(`radfile resolved from ${radFilename} to ${nextRadfilename}`);
-    return nextRadfilename;
-  }
-  const radFileExists = await Deno.lstat(DEFAULT_RADFILENAME).catch((err) => {
-    logger.debug(err);
-    false;
-  });
-  if (!radFileExists) {
+  const nextRadfilename = path.isAbsolute(radFilename)
+    ? radFilename
+    : path.resolve(radFilename);
+  if (!await Deno.lstat(radFilename).catch(() => false)) {
     throw new errors.RadMissingRadFile(
-      [`cannot find radfile "${DEFAULT_RADFILENAME}"`].join(""),
+      `cannot read radfile "${radFilename}". does it exist?`,
     );
   }
-  return DEFAULT_RADFILENAME;
+  logger.debug(`radfile resolved from ${radFilename} to ${nextRadfilename}`);
+  return nextRadfilename;
 }
 
 export type InitOptions = {
@@ -46,8 +31,12 @@ export type InitOptions = {
   logger: Logger;
 };
 export async function init(opts: InitOptions) {
-  const radFilename = await getRadFilename(opts);
-  return import(asFileUrl(radFilename)).then((mod) => from(mod));
+  if (opts.radFilename.startsWith("https:")) {
+    return import(opts.radFilename).then((mod) => from(mod));
+  } else {
+    const radFilename = await getRadFilename(opts);
+    return import(asFileUrl(radFilename)).then((mod) => from(mod));
+  }
 }
 
 export function getCustomImportUrl({
