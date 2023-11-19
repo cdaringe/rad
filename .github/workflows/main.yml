@@ -26,8 +26,7 @@ jobs:
       # release
       - name: setup-node
         uses: actions/setup-node@v3
-        with:
-          node-version: 16
+        with: 20 16
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
