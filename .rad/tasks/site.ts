@@ -43,7 +43,9 @@ export const task: Task = {
     }
     await createSiteDir(fs);
     const { html, md } = await getPrereqFilenames().then(groupFilesByExt);
-    const mdContentsP = mdFilesToHtmlParts(["./readme.md", ...md], fs);
+    logger.info(`html: ${html.join(", ")}`);
+    logger.info(`md: ${md.join(", ")}`);
+    const mdContentsP = mdFilesToHtmlParts(md, fs);
     const htmlIndexFilename = html[0];
     if (!htmlIndexFilename) throw new Error(`html index page not found`);
     // race: read input files, write some artifacts
