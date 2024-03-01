@@ -13,4 +13,4 @@ cd "$( dirname -- "$SCRIPT_PATH"; )" > '/dev/null';
 SCRIPT_PATH="$( pwd; )";
 popd  > '/dev/null';
 
-deno run --unstable -A "$SCRIPT_PATH/src/bin.ts" --log-level info "$@"
+deno run -A "$SCRIPT_PATH/src/bin.ts" --log-level info "$@"
