@@ -11,7 +11,7 @@
       "program": "${file}",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "deno",
-      "runtimeArgs": ["test", "--unstable", "--inspect-brk", "--allow-all"],
+      "runtimeArgs": ["test", "--inspect-brk", "--allow-all"],
       "attachSimplePort": 9229
     },
     {
@@ -28,7 +28,7 @@
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "deno",
       "program": "src/bin.ts",
-      "runtimeArgs": ["run", "--unstable", "--inspect-brk", "--allow-all"],
+      "runtimeArgs": ["run", "--inspect-brk", "--allow-all"],
       "args": ["site"],
       "outputCapture": "std",
       "attachSimplePort": 9229
