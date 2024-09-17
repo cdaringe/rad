@@ -12,7 +12,7 @@ const testUnit: Task = {
     logger.info(`:: unit tests`);
     await sh([
       `rm -rf ${COVERAGE_DIRNAME}`,
-      `deno test --unstable -A --coverage=${COVERAGE_DIRNAME}`,
+      `deno test -A --coverage=${COVERAGE_DIRNAME}`,
     ].join(" && "));
   },
 };
@@ -39,7 +39,7 @@ const test: Task = {
   dependsOn: [testUnit, testIntegration],
   dependsOnSerial: true,
 };
-const lint: Task = `deno --unstable lint .rad examples src test`;
+const lint: Task = `deno lint .rad examples src test`;
 const check: Task = { dependsOn: [format, lint, test], dependsOnSerial: true };
 
 const syncNextMain: Task =
