@@ -13,6 +13,6 @@ jobs:
       # https://github.com/denolib/setup-deno
       - uses: denolib/setup-deno@master
         with:
-          deno-version: 1.38.2
+          deno-version: 1.46.3
       - name: check
         run: ./rad check
