@@ -203,14 +203,18 @@
       <a id="click_prompt" onclick="onClick()">^click-me</a>
     </div>
     <div class="content"><h1>rad 💯</h1>
-<p>A general purpose build tool. Concise, statically typed, batteries included.
-Command tasks, function tasks, and make-style tasks supported.</p>
+<p>A general purpose build tool.</p>
+<ul>
+<li>Concise, statically typed, batteries included.</li>
+<li>No DSL, no stringly typed tasks, no malarkey.</li>
+<li>Command tasks, function tasks, and <code>make</code>-like tasks supported.</li>
+</ul>
 <p>Jump to:</p>
 <ol start="2">
 <li><a href="#usage">Usage</a></li>
 <li><a href="#install">Install</a></li>
 <li><a href="#what-is-it">What</a></li>
-<li><a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">Why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></li>
+<li><a href="https://cdaringe.github.io/rad/#why-not">Why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></li>
 <li><a href="https://cdaringe.github.io/rad/#manual">Manual</a></li>
 </ol>
 <table>
@@ -229,6 +233,7 @@ Command tasks, function tasks, and make-style tasks supported.</p>
 <td><a href="https://github.com/cdaringe/rad/actions?query=workflow%3Anext"><img src="https://github.com/cdaringe/rad/workflows/next/badge.svg?branch=next" alt="next"></a></td>
 </tr>
 </tbody></table>
+<p><a id="usage" href="#usage"></a></p>
 <h2>Usage</h2>
 <p>Rad is generally used as a CLI:</p>
 <p><code>$ rad &lt;task-name&gt; [--help]</code></p>
@@ -269,6 +274,7 @@ export const tasks: Tasks = {
   test,
 };
 </code></pre>
+<p><a id="install" href="#install"></a></p>
 <h2>Install</h2>
 <p>There are a few formal ways to use <code>rad</code>. Regardless of the route you choose,
 know that all strategies support using pinned versions, adherent to semver. See
@@ -284,7 +290,7 @@ the <a href="https://github.com/cdaringe/rad/releases">releases page</a>.</p>
 <tbody><tr>
 <td>cli</td>
 <td><code>deno</code></td>
-<td><code>deno install -f -A -n rad https://raw.githubusercontent.com/cdaringe/rad/v6.11.0/src/bin.ts</code></td>
+<td><code>deno install --global -f -A -n rad https://raw.githubusercontent.com/cdaringe/rad/v6.11.0/src/bin.ts</code></td>
 </tr>
 <tr>
 <td>cli</td>
@@ -308,6 +314,7 @@ function rad() {
   docker run --rm -v $PWD:/rad cdaringe/rad --log-level info &quot;$@&quot;;
 }
 </code></pre>
+<p><a id="what-is-it" href="#what-is-it"></a></p>
 <h2>What is it</h2>
 <p>A build tool! It competes with make, npm-scripts, velociraptor, bazel, gradle,
 ant, gulp, or any of the other many tools out there! On various metrics, <code>rad</code>
@@ -340,145 +347,6 @@ great for running other programs, not for plumbing data</li>
 <a href="https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool">why not <code>&lt;my-favorite-build-tool&gt;</code>?</a></p>
 <p>Read more on our <a href="https://cdaringe.github.io/rad/">documentation site</a></p>
 
-<h1>why not <code>&lt;my-favorite-build-tool&gt;</code>?</h1>
-<p>your build tool is probably great. keep using it if you love it. the intent here
-it not to dump on anyone or any tool, but articulate feature gaps.</p>
-<table>
-<thead>
-<tr>
-<th>tool</th>
-<th>DSL-less</th>
-<th>static types</th>
-<th>standalone</th>
-<th>polyglot</th>
-<th>incremental</th>
-<th>debug-able</th>
-<th>beautiful</th>
-<th>dependency manager</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>bazel</td>
-<td></td>
-<td></td>
-<td></td>
-<td>✓</td>
-<td>✓</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>denox</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>deno scripts</td>
-<td>✓</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>gradle</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>✓</td>
-<td></td>
-<td>✓</td>
-<td>✓</td>
-</tr>
-<tr>
-<td>gulp/grunt</td>
-<td>✓</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>✓</td>
-<td>✓</td>
-<td></td>
-</tr>
-<tr>
-<td>make</td>
-<td></td>
-<td></td>
-<td>✓</td>
-<td>✓</td>
-<td>✓</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>npm-scripts</td>
-<td>✓</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>✓</td>
-</tr>
-<tr>
-<td><strong>rad</strong></td>
-<td>✓</td>
-<td>✓</td>
-<td></td>
-<td>✓</td>
-<td>✓</td>
-<td>✓</td>
-<td>✓</td>
-<td></td>
-</tr>
-<tr>
-<td>velociraptor</td>
-<td></td>
-<td>partial</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>partial</td>
-</tr>
-</tbody></table>
-<p>ant, scons, ninja, etc were omitted. haven&#39;t used &#39;em! other builders, such as
-cargo, dune, nx, and friends were omitted, as they are not generally considered
-general purpose. npm-scripts &amp; the Deno tools are not general purpose either,
-but included merely by proximity of underlying tech stacks used.</p>
-<p>Here are some genuine, not-trying-be-rude-opinions.</p>
-<ul>
-<li><code>bazel</code> is complex. maybe you need that complexity. 🤷🏻‍♀️</li>
-<li><code>gradle</code> is full of magic and is often hard to reason about <em>where</em> behavior
-comes from. Once kotlin integration is first class, it&#39;s worth revisiting
-gradle.</li>
-<li><code>gulp</code>/<code>grunt</code> have no make-style tasks, are generally node only,
-comparatively slow, &amp; stringly typed in various places.</li>
-<li><code>make</code> is great, but has a lame DSL and is coupled to a poor scripting
-language</li>
-<li><code>npm-scripts</code>/<code>velociraptor</code> are simple, but suffer related drawbacks to gulp,
-grunt, and make.</li>
-</ul>
-<p>Loose typing, unneeded DSLs, lack of great static analysis, and <em>other</em> gaps
-leave room for improvement in this space. <code>rad</code> is the first tool to bring a
-subjectively <em>powerful</em> scripting language into the build system space coupled
-with great static analysis and make-capable performance.</p>
-
 <h1>build buds</h1>
 <p>Some interesting build functions that are not <em>integrated</em> into <code>rad</code> are
 checked into the <code>rad</code> repository. These are generally considered unofficial or
@@ -487,6 +355,7 @@ unsupported tools that may be of interest to rad users.</p>
 <li><a href="https://github.com/cdaringe/rad/tree/next/src/tasks/build-buds/deb">deno esm browser</a></li>
 </ul>
 
+<p><a id="manual" href="#manual"></a></p>
 <h2>Manual</h2>
 <p>Your guide to <code>rad</code>!</p>
 <h3>Understanding rad</h3>
@@ -703,6 +572,7 @@ will await an <code>install</code> to complete!</p>
       └─ install
 </code></pre>
 <p>Dude. Nice! We can have nice things!</p>
+<p><a id='toolkit'></a></p>
 <h3>Toolkit</h3>
 <p>The <code>toolkit</code> is the first argument to <code>function</code> based tasks!</p>
 <p>It has the following type!</p>
@@ -785,6 +655,146 @@ or equivalents for your shell</li>
 project&#39;s <code>&lt;root&gt;/.vscode/launch.json</code> to see example settings &amp; the
 <a href="https://deno.land/manual/getting_started/debugging_your_code">deno debugging</a>
 documentation for more.</p>
+
+<p><a id="why-not" href="#why-not"></a></p>
+<h1>why not <code>&lt;my-favorite-build-tool&gt;</code>?</h1>
+<p>your build tool is probably great. keep using it if you love it. the intent here
+it not to dump on anyone or any tool, but articulate feature gaps.</p>
+<table>
+<thead>
+<tr>
+<th>tool</th>
+<th>DSL-less</th>
+<th>static types</th>
+<th>standalone</th>
+<th>polyglot</th>
+<th>incremental</th>
+<th>debug-able</th>
+<th>beautiful</th>
+<th>dependency manager</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bazel</td>
+<td></td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>denox</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>deno scripts</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>gradle</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>gulp/grunt</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>make</td>
+<td></td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>npm-scripts</td>
+<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>rad</strong></td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>velociraptor</td>
+<td></td>
+<td>partial</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>partial</td>
+</tr>
+</tbody></table>
+<p>ant, scons, ninja, etc were omitted. haven&#39;t used &#39;em! other builders, such as
+cargo, dune, nx, and friends were omitted, as they are not generally considered
+general purpose. npm-scripts &amp; the Deno tools are not general purpose either,
+but included merely by proximity of underlying tech stacks used.</p>
+<p>Here are some genuine, not-trying-be-rude-opinions.</p>
+<ul>
+<li><code>bazel</code> is complex. maybe you need that complexity. 🤷🏻‍♀️</li>
+<li><code>gradle</code> is full of magic and is often hard to reason about <em>where</em> behavior
+comes from. Once kotlin integration is first class, it&#39;s worth revisiting
+gradle.</li>
+<li><code>gulp</code>/<code>grunt</code> have no make-style tasks, are generally node only,
+comparatively slow, &amp; stringly typed in various places.</li>
+<li><code>make</code> is great, but has a lame DSL and is coupled to a poor scripting
+language</li>
+<li><code>npm-scripts</code>/<code>velociraptor</code> are simple, but suffer related drawbacks to gulp,
+grunt, and make.</li>
+</ul>
+<p>Loose typing, unneeded DSLs, lack of great static analysis, and <em>other</em> gaps
+leave room for improvement in this space. <code>rad</code> is the first tool to bring a
+subjectively <em>powerful</em> scripting language into the build system space coupled
+with great static analysis and make-capable performance.</p>
 </div>
     <script>
       const chaos = {
@@ -953,5 +963,36 @@ document.getElementById("radness").addEventListener("click", onClick);
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const links = document.querySelectorAll('a[href^="#"]');
+        links.forEach(link => {
+          link.addEventListener('click', function(event) {
+            event.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+              history.pushState(null, null, `#${targetId}`);
+              window.document.body.scrollTo({
+                top: targetElement.offsetTop,
+                behavior: 'smooth'
+              });
+            }
+          });
+        });
+
+        window.addEventListener('popstate', function() {
+          const targetId = location.hash.substring(1);
+          const targetElement = document.getElementById(targetId);
+          if (targetElement) {
+            window.document.body.scrollTo({
+              top: targetElement.offsetTop,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+      </script>
   </body>
 </html>
