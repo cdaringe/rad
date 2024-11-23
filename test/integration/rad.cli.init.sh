@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 set -ex
-deno install -f -A -n rad $PWD/src/bin.ts
+printf "\n\n📣 The following script is an integration test, testing users install rad. It is intended to be run within a docker container!\n\n";
+
+deno install --global -f -A -n rad $PWD/src/bin.ts
 mkdir -p /test-rad-project
 cd /test-rad-project
 export RAD_IMPORT_URL=/radness/src/mod.ts

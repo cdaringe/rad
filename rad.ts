@@ -1,5 +1,5 @@
 import type { Task, Tasks } from "./src/mod.ts";
-import { task as site } from "./.rad/tasks/site.ts";
+import { buildSite, serveSite } from "./.rad/tasks/site.ts";
 import { task as patchInstallVersion } from "./.rad/tasks/patch-install-version.ts";
 
 const DENO_VERSION = Deno.version.deno;
@@ -30,7 +30,7 @@ const testIntegration: Task = {
     if (Deno.env.get("RAD_SKIP_INTEGRATION_TESTS")) return;
     logger.info(`:: cli integration tests in docker`);
     await sh(
-      `docker run --name rad-integration --rm -v $PWD:/radness --entrypoint /radness/test/integration/rad.cli.init.sh --workdir /radness denoland/deno:alpine-${DENO_VERSION}`,
+      `docker run --name rad-integration --rm -v $PWD:$PWD --entrypoint $PWD/test/integration/rad.cli.init.sh --workdir $PWD denoland/deno:alpine-${DENO_VERSION}`,
     );
   },
 };
@@ -51,7 +51,7 @@ export const tasks: Tasks = {
   ...{ f: format, format },
   ...{ t: test, test },
   ...{ testUnit, tu: testUnit, testIntegration, ti: testIntegration },
-  ...{ s: site, site },
+  ...{ s: buildSite, site: buildSite, serveSite, serve: serveSite },
   ...{ c: check, check },
   ...{ snm: syncNextMain, syncNextMain },
   patchInstallVersion,

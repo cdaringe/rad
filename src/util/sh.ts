@@ -1,26 +1,38 @@
 import type { Logger } from "../logger.ts";
 
+interface RadCommandOptionsExtensions {
+  ignoreExitCode?: boolean;
+  logger: Logger;
+  shell?: string;
+}
+
 export async function sh(
   cmd: string,
-  opts?: { encoding?: "utf-8"; ignoreExitCode?: boolean; logger: Logger },
+  opts?: Partial<Deno.CommandOptions & RadCommandOptionsExtensions> | null,
 ) {
-  const { logger } = opts || {};
-  const shell = Deno.env.get("SHELL") || "sh";
+  const {
+    ignoreExitCode,
+    logger,
+    shell: userRequestedShell,
+    ...denoCommandOptions
+  } = opts || {};
+  const shell = userRequestedShell ?? Deno.env.get("SHELL") ?? "sh";
   logger?.debug([shell, "-c", cmd].join(" "));
-  // deno-lint-ignore no-deprecated-deno-api
-  const proc = Deno.run({
-    cmd: ["sh", "-c", cmd],
+  const proc = new Deno.Command(shell, {
+    args: ["-c", cmd],
     stdin: "inherit",
     stdout: "inherit",
     stderr: "inherit",
+    ...denoCommandOptions,
   });
   logger?.debug(`sh: running process ${cmd}`);
-  const { code } = await proc.status();
+  const result = await proc.output();
+  const { code, success } = result;
   logger?.debug(`sh: exit code ${code}`);
-  if (code != 0 && !opts?.ignoreExitCode) {
+  const isThrowing = !success && !ignoreExitCode;
+  if (isThrowing) {
     throw new Error(
       `non-zero exit code: ${code}`,
     );
   }
-  proc.close();
 }

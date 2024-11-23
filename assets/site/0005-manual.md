@@ -1,3 +1,5 @@
+<a id="manual" href="#manual"></a>
+
 ## Manual
 
 Your guide to `rad`!
@@ -148,7 +150,7 @@ const site: Task = {
        * changedPrereqs, // AsyncIterable<WalkInfo>
        * getChangedPrereqFilenames, // Promise<string>
        */
-    },
+    }
   ) => {
     await fs.mkdirp("public");
     logger.info("collecting prereq filenames");
@@ -156,7 +158,7 @@ const site: Task = {
     const html = await Promise.all(
       filenames.map((filename) =>
         Deno.readTextFile(filename).then((markdown) => marked(markdown))
-      ),
+      )
     ).then((htmlSnippets) => htmlSnippets.join("\n"));
     await Deno.writeTextFile("./public/index.html", html);
   },
@@ -258,6 +260,8 @@ $ rad ci --print-graph
 ```
 
 Dude. Nice! We can have nice things!
+
+<a id='toolkit'></a>
 
 ### Toolkit
 

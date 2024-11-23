@@ -1,3 +1,5 @@
+<a id="why-not" href="#why-not"></a>
+
 # why not `<my-favorite-build-tool>`?
 
 your build tool is probably great. keep using it if you love it. the intent here

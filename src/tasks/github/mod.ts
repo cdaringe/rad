@@ -42,7 +42,8 @@ export const workflows = ({ lang }: { lang: Lang }) => {
           await fs.mkdirp(`.github/workflows`);
           await fs.writeFile(
             `.github/workflows/${key}.yml`,
-            yaml.stringify(content, { indent: 2 }),
+            // deno-lint-ignore no-explicit-any
+            yaml.stringify(content as any, { indent: 2 }),
           );
         }),
       );

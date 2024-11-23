@@ -4,8 +4,9 @@ import { emit } from "./deps.ts";
 import "https://cdn.jsdelivr.net/npm/marked/marked.min.js";
 
 const { basename } = path.posix;
+
 // deno-lint-ignore no-explicit-any
-const marked = (window as any).marked.marked;
+const marked = (globalThis as any).marked.marked;
 const pruneNoSite = (str: string) => str.replaceAll(/.*NOSITE.*$/img, "");
 const createSiteDir = (fs: Toolkit["fs"]) => fs.mkdirp("public");
 const groupFilesByExt = (filenames: string[]) =>
@@ -29,7 +30,7 @@ const mdFilesToHtmlParts = (
   fs: Toolkit["fs"],
 ) => mdFilenames.map(async (f) => siteMarkdownToHtml(await fs.readFile(f)));
 
-export const task: Task = {
+export const buildSite: Task = {
   target: "public/index.html",
   prereqs: ["assets/site/**/*.{html,md,ts,js}", "readme.md"],
   onMake: async (
@@ -70,4 +71,9 @@ export const task: Task = {
         .replace(/bodybody/g, sections.join("\n")),
     );
   },
+};
+
+export const serveSite: Task = {
+  dependsOn: [buildSite],
+  fn: ({ sh }) => sh(`pnpm dlx httpster -d public`),
 };

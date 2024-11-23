@@ -6,8 +6,11 @@
 
 # rad 💯
 
-A general purpose build tool. Concise, statically typed, batteries included.
-Command tasks, function tasks, and make-style tasks supported.
+A general purpose build tool.
+
+- Concise, statically typed, batteries included.
+- No DSL, no stringly typed tasks, no malarkey.
+- Command tasks, function tasks, and `make`-like tasks supported.
 
 Jump to:
 
@@ -15,13 +18,15 @@ Jump to:
 2. [Usage](#usage)
 3. [Install](#install)
 4. [What](#what-is-it)
-5. [Why not `<my-favorite-build-tool>`?](https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool)
+5. [Why not `<my-favorite-build-tool>`?](https://cdaringe.github.io/rad/#why-not)
 6. [Manual](https://cdaringe.github.io/rad/#manual)
 
 | branch | status                                                                                                                                         |
 | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | main   | [![main](https://github.com/cdaringe/rad/workflows/main/badge.svg)](https://github.com/cdaringe/rad/actions?query=workflow%3Amain)             |
 | next   | [![next](https://github.com/cdaringe/rad/workflows/next/badge.svg?branch=next)](https://github.com/cdaringe/rad/actions?query=workflow%3Anext) |
+
+<a id="usage" href="#usage"></a>
 
 ## Usage
 
@@ -71,6 +76,8 @@ export const tasks: Tasks = {
 };
 ```
 
+<a id="install" href="#install"></a>
+
 ## Install
 
 There are a few formal ways to use `rad`. Regardless of the route you choose,
@@ -79,7 +86,7 @@ the [releases page](https://github.com/cdaringe/rad/releases).
 
 | usage   | install-method | install-steps                                                                                                                                                                                                                        |
 | ------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| cli     | `deno`         | `deno install -f -A -n rad https://raw.githubusercontent.com/cdaringe/rad/v6.11.0/src/bin.ts`                                                                                                                                        |
+| cli     | `deno`         | `deno install --global -f -A -n rad https://raw.githubusercontent.com/cdaringe/rad/v6.11.0/src/bin.ts`                                                                                                                               |
 | cli     | `docker`       | `docker pull cdaringe/rad` <sup>1</sup>                                                                                                                                                                                              |
 | cli     | `curl`         | <code>curl -fsSL https://raw.githubusercontent.com/cdaringe/rad/v6.11.0/assets/install.sh \| sh</code> (versioned)<br /><code>curl -fsSL https://raw.githubusercontent.com/cdaringe/rad/main/assets/install.sh \| sh</code> (latest) |
 | library | `deno`         | `import * as rad from https://github.com/cdaringe/rad/blob/main/v6.11.0/mod.ts`                                                                                                                                                      |
@@ -92,6 +99,8 @@ function rad() {
   docker run --rm -v $PWD:/rad cdaringe/rad --log-level info "$@";
 }
 ```
+
+<a id="what-is-it" href="#what-is-it"></a>
 
 ## What is it
 
