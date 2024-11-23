@@ -21,8 +21,9 @@ const testUnit: Task = {
  * @warn coverage borked per https://github.com/denoland/deno/issues/10936
  */
 const coverage: Task = [
-  `deno coverage ${COVERAGE_DIRNAME} --lcov > ${COVERAGE_DIRNAME}/out.lcov`,
-  `genhtml -o ${COVERAGE_DIRNAME}/html ${COVERAGE_DIRNAME}/out.lcov`,
+  `deno coverage --include="${Deno.cwd()}" ${COVERAGE_DIRNAME} --lcov > ${COVERAGE_DIRNAME}/out.lcov`,
+  `genhtml --ignore-errors inconsistent --ignore-errors range -o ${COVERAGE_DIRNAME}/html ${COVERAGE_DIRNAME}/out.lcov`,
+  `pnpm dlx httpster -d ${COVERAGE_DIRNAME}/html/`,
 ].join(" && ");
 
 const testIntegration: Task = {
@@ -46,13 +47,13 @@ const syncNextMain: Task =
   `git fetch origin main && git rebase origin/main && git checkout main && git merge next && git push origin main && git checkout next && git merge main`;
 
 export const tasks: Tasks = {
+  ...{ c: check, check },
   ...{ coverage, cov: coverage },
-  ...{ l: lint, lint },
   ...{ f: format, format },
+  ...{ l: lint, lint },
+  ...{ s: buildSite, site: buildSite, serveSite, serve: serveSite },
+  ...{ snm: syncNextMain, syncNextMain },
   ...{ t: test, test },
   ...{ testUnit, tu: testUnit, testIntegration, ti: testIntegration },
-  ...{ s: buildSite, site: buildSite, serveSite, serve: serveSite },
-  ...{ c: check, check },
-  ...{ snm: syncNextMain, syncNextMain },
   patchInstallVersion,
 };
