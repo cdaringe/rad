@@ -131,7 +131,7 @@ and interfaces.
   great for running other programs, not for plumbing data
 
 See
-[why not `<my-favorite-build-tool>`?](https://cdaringe.github.io/rad/#why-not-my-favorite-build-tool)
+[why not `<my-favorite-build-tool>`?](https://cdaringe.github.io/rad/#why-not)
 
 Read more on our [documentation site](https://cdaringe.github.io/rad/)
 
