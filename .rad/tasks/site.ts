@@ -13,12 +13,14 @@ const groupFilesByExt = (filenames: string[]) =>
   filenames.reduce(
     ({ html, md }, filename) => ({
       html: filename.match(/html$/) ? [filename, ...html] : html,
-      md: (filename.match(/md$/) ? [filename, ...md] : md).sort(
-        (a: string, b: string) =>
-          parseInt(basename(a.substr(0, 4))) >
-              parseInt(basename(b.substr(0, 4)))
-            ? 1
-            : 0,
+      md: (filename.match(/md$/) ? [filename, ...md] : md).toSorted(
+        (a: string, b: string) => {
+          const aInt = parseInt(basename(a).substr(0, 4));
+          const bInt = parseInt(basename(b).substr(0, 4));
+          if (Number.isNaN(b)) return -1;
+          if (Number.isNaN(a)) return 1;
+          return aInt - bInt;
+        },
       ),
     }),
     { html: [] as string[], md: [] as string[] },
