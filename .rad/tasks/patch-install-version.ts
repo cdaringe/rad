@@ -30,4 +30,5 @@ export const task: Task = {
       await Deno.writeTextFile(filename, nextContent);
     }
   },
+  name: "patch-install-version-in-assets",
 };

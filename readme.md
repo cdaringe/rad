@@ -45,8 +45,9 @@ Rad always consumes a `rad.ts` file, such as the one shown here:
 import { Task, Tasks } from "https://deno.land/x/rad@v7.0.0/src/mod.ts";
 
 // command/shell tasks
-const format = `prettier --write`;
-const test = `deno test`;
+// [name: string, cmd: string]
+const format = ["format", `prettier --write`];
+const test = ["test", `deno test`];
 
 // function tasks
 const compile: Task = {
@@ -84,10 +85,10 @@ There are a few formal ways to use `rad`. Regardless of the route you choose,
 know that all strategies support using pinned versions, adherent to semver. See
 the [releases page](https://github.com/cdaringe/rad/releases).
 
-| usage   | install-method | install-steps                                                                                                                                                                                                                        |
-| ------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| usage   | install-method | install-steps                                                                                                                                                                                                                       |
+| ------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | cli     | `deno`         | `deno install --global -f -A -n rad https://raw.githubusercontent.com/cdaringe/rad/v7.0.0/src/bin.ts`                                                                                                                               |
-| cli     | `docker`       | `docker pull cdaringe/rad` <sup>1</sup>                                                                                                                                                                                              |
+| cli     | `docker`       | `docker pull cdaringe/rad` <sup>1</sup>                                                                                                                                                                                             |
 | cli     | `curl`         | <code>curl -fsSL https://raw.githubusercontent.com/cdaringe/rad/v7.0.0/assets/install.sh \| sh</code> (versioned)<br /><code>curl -fsSL https://raw.githubusercontent.com/cdaringe/rad/main/assets/install.sh \| sh</code> (latest) |
 | library | `deno`         | `import * as rad from https://github.com/cdaringe/rad/blob/main/v7.0.0/mod.ts`                                                                                                                                                      |
 

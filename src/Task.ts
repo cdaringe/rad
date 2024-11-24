@@ -63,6 +63,7 @@ export type TaskFn<A2 = undefined, R = any> = (
 export type Task = Dependarooni | Funcarooni | Commandarooni | Makearooni;
 
 export type Dependarooni = {
+  name?: string;
   dependsOn?: Task[];
   dependsOnSerial?: boolean;
 };
@@ -72,7 +73,7 @@ export type Funcarooni = Dependarooni & {
   fn: TaskFn;
 };
 export type Commandarooni =
-  | string
+  | [name: string, cmd: string]
   | (Dependarooni & {
     cmd: string;
   });
@@ -243,8 +244,11 @@ export const asFuncarooni = (
   task: Task,
   { logger }: WithLogger,
 ): Funcarooni => {
-  if (typeof task === "string") {
-    return { fn: ({ sh }) => sh(task, { logger }) } as Funcarooni;
+  if (Array.isArray(task)) {
+    return {
+      name: task[0],
+      fn: ({ sh }) => sh(task[1], { logger }),
+    } as Funcarooni;
   } else if ("cmd" in task) {
     const { cmd: _cmd, ...rest } = task;
     return { fn: ({ sh }) => sh(task.cmd, { logger }), ...rest } as Funcarooni;
@@ -271,17 +275,20 @@ export type RadTask<Result = unknown> = {
   dependsOnSerial?: boolean;
   fn: TaskFn;
   kind?: string;
+  alias: string;
   name: string;
   report?: TaskReport;
   state: TaskState;
 };
+
+type PartialWithArray<T> = T extends any[] ? T : Partial<T>;
 
 /**
  * creates a RadTask from a Task (a user provided task), without
  * `dependsOn` hydrated
  */
 export function getPartialFromUserTask(
-  { key, value }: { key: string; value: Partial<Task> },
+  { key, value }: { key: string; value: PartialWithArray<Task> },
   { logger }: WithLogger,
 ): RadTask {
   if (!key) throw new errors.RadInvalidTaskError(`missing task key`);
@@ -292,52 +299,62 @@ export function getPartialFromUserTask(
   const validated: Exclude<Task, string> = asFuncarooni(value, { logger });
   const task: RadTask = {
     ...validated,
+    alias: key,
     dependsOn: [],
     fn: (("fn" in validated && validated.fn) || noop) as TaskFn, // other task types are responsible for overwriting this
-    name: key,
+    name:
+      (Array.isArray(value)
+        ? value[0]
+        : typeof value === "object"
+        ? value.name
+        : undefined) ??
+        key,
     state: TASK_STATES.IDLE,
   };
   return task;
 }
 
+export async function executeDependents(
+  task: RadTask,
+  logger: Logger,
+): Promise<unknown[]> {
+  const { dependsOn = [], dependsOnSerial } = task;
+  if (dependsOnSerial) {
+    const results: unknown[] = [];
+    for (const dependent of dependsOn) {
+      results.push(await execute(dependent, { logger }));
+    }
+    return results;
+  }
+  return Promise.all(
+    dependsOn.map((dependent) => execute(dependent, { logger })),
+  );
+}
 export function execute(task: RadTask, { logger }: WithLogger) {
-  const dependents = task.dependsOn || [];
   const getTotalDuration = timer();
   const getDependentsDuration = timer();
   if (task.complete) return task.complete;
   task.complete = async function executeToCompletion() {
     task.state = TASK_STATES.RUNNING_WAITING_UPSTREAM;
     logger.info(`${bold(task.name)} ${italic("start")}`);
-    const dependentResults: unknown[] =
-      await (task.dependsOnSerial
-        ? (async () => {
-          const results = [];
-          for (const dependent of dependents) {
-            results.push(await execute(dependent, { logger }));
-          }
-          return results;
-        })()
-        : Promise.all(
-          dependents.map((dependent) => execute(dependent, { logger })),
-        ));
+    const dependentResults: unknown[] = await executeDependents(task, logger);
     const dependentsDuration = getDependentsDuration();
     const getActiveDuration = timer();
     let result: undefined | unknown;
     task.state = TASK_STATES.RUNNING_ACTIVE;
     try {
-      result = await Promise.resolve(
-        task.fn({
-          Deno,
-          dependentResults,
-          fs: fsU.createFsUtil({ logger }),
-          logger,
-          iter,
-          path,
-          sh: (cmd, opts) => sh(cmd, { logger, ...opts }),
-          sleep,
-          task,
-        }, undefined),
-      );
+      const toolkit: Toolkit = {
+        Deno,
+        dependentResults,
+        fs: fsU.createFsUtil({ logger }),
+        logger,
+        iter,
+        path,
+        sh: (cmd, opts) => sh(cmd, { logger, ...opts }),
+        sleep,
+        task,
+      };
+      result = await Promise.resolve(task.fn(toolkit, undefined));
       task.state = TASK_STATES.FINISHED_OK;
       return result;
     } catch (error) {
@@ -360,20 +377,24 @@ export function execute(task: RadTask, { logger }: WithLogger) {
           ? green("ok")
           : red("not ok"),
       };
-      const { message, timing: { active, total } } = task.report!;
-      logger.info(
-        `${bold(task.name)} ${
-          italic(
-            "end",
-          )
-        } : ${message} : active ${active} ms (${
-          ((active / total) * 100)
-            .toFixed(
-              0,
-            )
-        }%): total ${total} ms `,
-      );
+      logReport(task, logger);
     }
   }();
   return task.complete!;
 }
+
+const logReport = (task: RadTask, logger: Logger) => {
+  const { message, timing: { active, total } } = task.report!;
+  logger.info(
+    `${bold(task.name)} ${
+      italic(
+        "end",
+      )
+    } : ${message} : active ${active} ms (${
+      ((active / total) * 100)
+        .toFixed(
+          0,
+        )
+    }%): total ${total} ms `,
+  );
+};

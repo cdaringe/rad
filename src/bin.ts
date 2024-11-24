@@ -112,7 +112,28 @@ export async function suchRad(args: flagsMod.Args): Promise<RadExecResult> {
   });
   const tree = rad.createTaskGraph(radness, { logger });
   if (args.list || args.tasks) {
-    console.log(`${Object.keys(tree.graph).sort().join("\n")}`);
+    const taskDescriptors = Object.values(tree.graph).reduce<
+      Record<string, Set<string>>
+    >((acc, currentTask) => {
+      const alaises = acc[currentTask.name] || new Set();
+      const { alias, name } = currentTask;
+      if (alias !== name) {
+        alaises.add(alias);
+        delete acc[alias];
+      }
+      return {
+        ...acc,
+        [name]: alaises,
+      };
+    }, {});
+    const formattedDescriptors = Object.entries(taskDescriptors).map(
+      ([key, aliases]) => {
+        const aliasText = aliases.size ? ` (${[...aliases].join(", ")})` : "";
+        return ["  ", key, aliasText].join("");
+      },
+    );
+    const report = ["tasks:", ...formattedDescriptors].join("\n");
+    console.log(report);
     return {};
   }
   if (args["print-graph"] || args.p) {

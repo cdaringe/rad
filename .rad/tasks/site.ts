@@ -33,6 +33,7 @@ const mdFilesToHtmlParts = (
 ) => mdFilenames.map(async (f) => siteMarkdownToHtml(await fs.readFile(f)));
 
 export const buildSite: Task = {
+  name: "build-site",
   target: "public/index.html",
   prereqs: ["assets/site/**/*.{html,md,ts,js}", "readme.md"],
   onMake: async (

@@ -20,8 +20,8 @@ jobs:
       - uses: denolib/setup-deno@master
         with:
           deno-version: 1.46.3
-      - name: check
-        run: ./rad check
+      - name: ci
+        run: ./rad ci
       - name: site
         run: ./rad -l info site
 

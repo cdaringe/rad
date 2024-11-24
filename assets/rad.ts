@@ -1,6 +1,6 @@
 import type { Task, Tasks } from "https://deno.land/x/rad/src/mod.ts";
 
-const meet: Task = `echo "hi friend."`;
+const meet: Task = ["meet", `echo "hi friend."`];
 
 /**
  * example rad tasks
@@ -17,8 +17,8 @@ export const tasks: Tasks = {
   /**
    * command style tasks
    */
-  build: `tsc`,
-  format: `deno fmt`,
+  build: ["build", `tsc`],
+  format: ["format", `deno fmt`],
   meet,
   /**
    * function style tasks
