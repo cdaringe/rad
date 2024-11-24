@@ -246,6 +246,7 @@ const test = [&quot;test&quot;, `deno test`];
 const compile: Task = {
   dependsOn: [format],
   fn: ({ sh, ...toolkit }) =&gt; sh(&quot;tsc&quot;),
+  // name: &quot;compile&quot; [optional]
 };
 const greet = {
   fn: () =&gt; Deno.writeTextFile(&quot;/tmp/hello&quot;, &quot;world&quot;),
