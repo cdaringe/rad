@@ -12,12 +12,7 @@ export const createFsUtil = ({ logger }: WithLogger) => {
     );
   }
 
-  // deno-lint-ignore no-explicit-any
-  function writeFile(filename: string, data: any) {
-    logger.debug(`write file: ${filename}`);
-    const encoder = new TextEncoder();
-    return Deno.writeFileSync(filename, encoder.encode(data));
-  }
+  const writeFile = Deno.writeTextFile;
 
   function mkdirp(filename: string, opts?: Deno.MkdirOptions) {
     const recursiveOpts = opts || {};

@@ -56,7 +56,7 @@ const compile: Task = {
   // name: "compile" [optional]
 };
 const greet = {
-  fn: () => Deno.writeTextFile("/tmp/hello", "world"),
+  fn: ({ fs }) => fs.writeFile("/tmp/hello", "world"),
 };
 
 // make-style tasks
