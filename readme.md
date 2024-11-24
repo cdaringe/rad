@@ -53,6 +53,7 @@ const test = ["test", `deno test`];
 const compile: Task = {
   dependsOn: [format],
   fn: ({ sh, ...toolkit }) => sh("tsc"),
+  // name: "compile" [optional]
 };
 const greet = {
   fn: () => Deno.writeTextFile("/tmp/hello", "world"),
