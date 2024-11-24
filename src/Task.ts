@@ -281,6 +281,7 @@ export type RadTask<Result = unknown> = {
   state: TaskState;
 };
 
+// deno-lint-ignore no-explicit-any
 type PartialWithArray<T> = T extends any[] ? T : Partial<T>;
 
 /**
