@@ -249,7 +249,9 @@ export const asFuncarooni = (
       name: task[0],
       fn: ({ sh }) => sh(task[1], { logger }),
     } as Funcarooni;
-  } else if (typeof task === "object" && task && "cmd" in task) {
+  } else if (typeof task === "string") {
+    return asFuncarooni({ cmd: task }, { logger });
+  } else if ("cmd" in task) {
     const { cmd: _cmd, ...rest } = task;
     return { fn: ({ sh }) => sh(task.cmd, { logger }), ...rest } as Funcarooni;
   } else if ("prereqs" in task) {
